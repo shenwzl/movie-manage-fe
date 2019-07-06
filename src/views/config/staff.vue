@@ -1,0 +1,126 @@
+<template>
+  <div class="app-container">
+    <el-button type="primary" @click="createStaffDialog = true">创建新员工</el-button>
+    <el-table :data="staffs">
+      <el-table-column prop="id" label="员工id" />
+      <el-table-column prop="name" label="姓名" />
+      <el-table-column prop="cellphone" label="电话" />
+      <el-table-column prop="ascription" label="员工类型">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.ascription === 1 ? '内部员工' : '外部员工' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="state" label="状态">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.state === 0 ? '正常' : '禁用' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
+          <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-dialog
+      :title="isEdit ? '修改员工信息' : '新增员工'"
+      :visible.sync="createStaffDialog"
+    >
+      <el-form :model="newStaff">
+        <el-form-item label="姓名" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="newStaff.name" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="电话" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="newStaff.cellphone" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="员工类型" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-select v-model="newStaff.ascription" autocomplete="off">
+                <el-option label="内部员工" :value="1" />
+                <el-option label="外部员工" :value="2" />
+              </el-select>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="createStaffDialog = false">取 消</el-button>
+        <el-button type="primary" :loading="createLoading" @click="createStaff">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-pagination
+      layout="prev, pager, next"
+      :total="userTotal"
+      @current-change="handlePageChange"
+    />
+  </div>
+</template>
+<script>
+import { mapActions, mapGetters } from 'vuex'
+export default {
+  data: function() {
+    return {
+      newStaff: {
+        name: '',
+        cellphone: '',
+        ascription: ''
+      },
+      createStaffDialog: false,
+      permissionDialog: false,
+      permissionInfo: 0,
+      page: 1,
+      pageSize: 10,
+      isEdit: false,
+      createLoading: false
+    }
+  },
+  computed: {
+    ...mapGetters(['staffs', 'userTotal'])
+  },
+  beforeMount() {
+    this.getStaffs({ page: this.page, pageSize: this.pageSize })
+  },
+  methods: {
+    ...mapActions([
+      'getStaffs',
+      'addStaff'
+    ]),
+    handleChange(row) {
+      this.newStaff = row
+      this.isEdit = true
+      this.createStaffDialog = true
+    },
+    setPermission() {
+    },
+    createStaff() {
+      this.addStaff(this.newStaff).then(res => {
+        this.createStaffDialog = false
+        this.newStaff = {}
+        this.isEdit = false
+        this.getStaffs({ page: this.page, pageSize: this.pageSize })
+      })
+    },
+    handlePageChange(page) {
+      this.page = page
+      this.getStaffs({ page: this.page, pageSize: this.pageSize })
+    },
+    handleStateChange(row) {}
+  }
+}
+</script>
+
+<style scoped>
+.el-pagination {
+  text-align: right;
+  margin-top: 20px;
+}
+</style>

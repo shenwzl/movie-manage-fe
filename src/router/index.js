@@ -46,119 +46,105 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
+    redirect: '/',
+    name: '项目管理',
     meta: {
-      title: 'Nested',
-      icon: 'nested'
+      title: '项目管理',
+      icon: 'chart'
     },
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: '',
+        component: () => import('@/views/projects/index'),
+        meta: { title: '', icon: 'dashboard' },
+        hidden: true
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        path: 'add',
+        component: () => import('@/views/projects/add'),
+        meta: { title: '新建', icon: 'dashboard' },
+        hidden: true
+      },
+      {
+        path: 'edit/:projectId',
+        component: () => import('@/views/projects/edit'),
+        meta: { title: '编辑', icon: 'dashboard' },
+        hidden: true
+      },
+      {
+        path: 'detail/:projectId',
+        component: () => import('@/views/projects/detail'),
+        meta: { title: '查看', icon: 'dashboard' },
+        hidden: true
       }
     ]
   },
 
   {
-    path: 'external-link',
+    path: '/config',
     component: Layout,
+    meta: { title: '项目配置管理', icon: 'guide' },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'staff',
+        component: () => import('@/views/config/staff'),
+        name: '员工管理',
+        meta: { title: '员工管理', icon: 'guide', noCache: true }
+      },
+      {
+        path: 'contract',
+        component: () => import('@/views/config/contract'),
+        name: '合同主体管理',
+        meta: { title: '合同主体管理', icon: 'guide', noCache: true }
+      },
+      {
+        path: 'provider',
+        component: () => import('@/views/config/provider'),
+        name: '供应商管理',
+        meta: { title: '供应商管理', icon: 'guide', noCache: true }
+      },
+      {
+        path: 'fee',
+        component: () => import('@/views/config/fee'),
+        name: '费用项管理',
+        meta: { title: '费用项管理', icon: 'guide', noCache: true }
       }
     ]
   },
 
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/user/index'),
+        name: '用户管理',
+        meta: { title: '用户管理', icon: 'guide', noCache: true }
+      }
+    ]
+  },
+
+  {
+    path: '/permission',
+    component: Layout,
+    meta: { title: '权限管理', icon: 'guide' },
+    children: [
+      {
+        path: 'roles',
+        component: () => import('@/views/permission/roles'),
+        name: '角色管理',
+        meta: { title: '角色管理', icon: 'guide', noCache: true }
+      },
+      {
+        path: 'user',
+        component: () => import('@/views/permission/user'),
+        name: '用户角色赋予',
+        meta: { title: '用户角色赋予', icon: 'guide', noCache: true }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
