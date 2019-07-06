@@ -8,35 +8,10 @@ export function getStaffs(params = {}) {
   })
 }
 
-export function getProviders(params = {}) {
+export function deleteStaff(staffId) {
   return request({
-    url: '/providers',
-    method: 'get',
-    params
-  })
-}
-
-export function getFees(params = {}) {
-  return request({
-    url: '/fees',
-    method: 'get',
-    params
-  })
-}
-
-export function addFee(data) {
-  return request({
-    url: '/fees',
-    method: 'post',
-    data
-  })
-}
-
-export function addProvider(data) {
-  return request({
-    url: '/providers',
-    method: 'post',
-    data
+    url: `/staffs/${staffId}`,
+    method: 'delete'
   })
 }
 
@@ -48,6 +23,73 @@ export function addStaff(data) {
   })
 }
 
+export function recoverStaff(staffId) {
+  return request({
+    url: `/staffs/${staffId}/recover`,
+    method: 'put'
+  })
+}
+
+export function getFees(params = {}) {
+  return request({
+    url: '/fee_categories',
+    method: 'get',
+    params
+  })
+}
+
+export function deleteFee(feeId) {
+  return request({
+    url: `/fee_categories/${feeId}`,
+    method: 'delete'
+  })
+}
+
+export function addFee(data) {
+  return request({
+    url: '/fee_categories',
+    method: 'post',
+    data
+  })
+}
+
+export function recoverFee(feeId) {
+  return request({
+    url: `/fee_categories/${feeId}/recover`,
+    method: 'put'
+  })
+}
+
+export function getProviders(params = {}) {
+  return request({
+    url: '/providers',
+    method: 'get',
+    params
+  })
+}
+
+export function deleteProvider(providerId) {
+  return request({
+    url: `/providers/${providerId}`,
+    method: 'delete'
+  })
+}
+
+export function addProvider(data) {
+  return request({
+    url: '/providers',
+    method: 'post',
+    data
+  })
+}
+
+export function recoverProvider(providerId) {
+  return request({
+    url: `/provider/${providerId}/recover`,
+    method: 'put'
+  })
+}
+
 export function getContracts(params = {}) {
   return request({
     url: '/contract_subjects',
@@ -56,11 +98,25 @@ export function getContracts(params = {}) {
   })
 }
 
+export function deleteContract(contractsId) {
+  return request({
+    url: `/contract_subjects/${contractsId}`,
+    method: 'delete'
+  })
+}
+
 export function addContracts(data) {
   return request({
     url: '/contract_subjects',
     method: 'post',
     data
+  })
+}
+
+export function recoverContract(contractId) {
+  return request({
+    url: `/contract_sunjects/${contractId}/recover`,
+    method: 'put'
   })
 }
 

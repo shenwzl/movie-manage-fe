@@ -9,6 +9,9 @@ const getters = {
   providers: state => state.config.providers,
   staffs: state => state.config.staffs,
   fees: state => state.config.fees,
-  contracts: state => state.config.contracts
+  contracts: state => state.config.contracts,
+  roles: state => state.permission.roles,
+  permissions: state => state.permission.permissions,
+  total: state => state.total
 }
 export default getters

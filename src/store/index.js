@@ -6,16 +6,24 @@ import settings from './modules/settings'
 import user from './modules/user'
 import users from './modules/users'
 import config from './modules/config'
+import permission from './modules/permission'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
+  state: {
+    total: 0
+  },
+  mutations: {
+    SET_TOTAL: (state, total) => { state.total = total }
+  },
   modules: {
     app,
     settings,
     user,
     users,
-    config
+    config,
+    permission
   },
   getters
 })

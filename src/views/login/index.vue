@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { validemail } from '@/utils/validate'
+// import { validemail } from '@/utils/validate'
 
 export default {
   name: 'Login',

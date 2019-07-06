@@ -76,7 +76,9 @@ export default {
   methods: {
     ...mapActions([
       'getContracts',
-      'addContracts'
+      'addContracts',
+      'deleteContract',
+      'recoverContract'
     ]),
     handleChange(row) {
       this.newContract = row
@@ -101,7 +103,19 @@ export default {
       this.page = page
       this.getContracts({ page: this.page, pageSize: this.pageSize })
     },
-    handleStateChange(row) {}
+    handleStateChange(row) {
+      if (!row.state) {
+        this.deleteContract(row.id).then(res => {
+          this.$message.success('更新成功')
+          this.getContracts({ page: this.page, pageSize: this.pageSize })
+        })
+      } else {
+        this.recoverContract(row.id).then(res => {
+          this.$message.success('更新成功')
+          this.getContracts({ page: this.page, pageSize: this.pageSize })
+        })
+      }
+    }
   }
 }
 </script>

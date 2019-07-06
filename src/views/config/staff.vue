@@ -92,7 +92,9 @@ export default {
   methods: {
     ...mapActions([
       'getStaffs',
-      'addStaff'
+      'addStaff',
+      'deleteStaff',
+      'recoverStaff'
     ]),
     handleChange(row) {
       this.newStaff = row
@@ -113,7 +115,19 @@ export default {
       this.page = page
       this.getStaffs({ page: this.page, pageSize: this.pageSize })
     },
-    handleStateChange(row) {}
+    handleStateChange(row) {
+      if (!row.state) {
+        this.deleteStaff(row.id).then(res => {
+          this.$message.success('更新成功')
+          this.getStaff({ page: this.page, pageSize: this.pageSize })
+        })
+      } else {
+        this.recoverStaff(row.id).then(res => {
+          this.$message.success('更新成功')
+          this.getStaffs({ page: this.page, pageSize: this.pageSize })
+        })
+      }
+    }
   }
 }
 </script>

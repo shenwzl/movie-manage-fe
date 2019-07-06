@@ -129,8 +129,15 @@ export const constantRoutes = [
   {
     path: '/permission',
     component: Layout,
-    meta: { title: '权限管理', icon: 'guide' },
+    redirect: 'noRedirect',
+    meta: { title: '权限管理', noCache: true, icon: 'guide' },
     children: [
+      {
+        path: 'index',
+        component: () => import('@/views/permission/index'),
+        name: '权限管理',
+        meta: { title: '权限管理', icon: 'guide', noCache: true }
+      },
       {
         path: 'roles',
         component: () => import('@/views/permission/roles'),
