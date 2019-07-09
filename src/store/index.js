@@ -7,6 +7,8 @@ import user from './modules/user'
 import users from './modules/users'
 import config from './modules/config'
 import permission from './modules/permission'
+import projectConfig from './modules/projectConfig'
+import project from './modules/project'
 
 Vue.use(Vuex)
 
@@ -23,7 +25,9 @@ const store = new Vuex.Store({
     user,
     users,
     config,
-    permission
+    permission,
+    projectConfig,
+    project
   },
   getters
 })

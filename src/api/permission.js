@@ -8,6 +8,13 @@ export function getRoles(params = {}) {
   })
 }
 
+export function getAllRoles() {
+  return request({
+    url: '/roles/normal_all',
+    method: 'get'
+  })
+}
+
 export function createRole(data) {
   return request({
     url: '/roles',
@@ -16,9 +23,25 @@ export function createRole(data) {
   })
 }
 
+export function updatePermission(data, roleId) {
+  return request({
+    url: `/roles/${roleId}/update_permission`,
+    method: 'put',
+    data
+  })
+}
+
 export function getPermissions(params = {}) {
   return request({
     url: '/permissions',
+    method: 'get',
+    params
+  })
+}
+
+export function getAllPermissions(params = {}) {
+  return request({
+    url: '/permissions/normal_all',
     method: 'get',
     params
   })

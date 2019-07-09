@@ -1,4 +1,4 @@
-import { getAllUser, createUser, resetPwd, deleteUser, recoverUser } from '@/api/users'
+import { getAllUser, getRoleByUser, updateRole, createUser, resetPwd, deleteUser, recoverUser } from '@/api/users'
 
 const state = {
   users: [],
@@ -19,7 +19,26 @@ const actions = {
     return new Promise((resolve, reject) => {
       getAllUser({ page, page_size: pageSize }).then(res => {
         commit('SET_USERS', res.data)
+        commit('SET_TOTAL', res.data.total, { root: true })
         resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  getRoleByUser({ commit }, userId) {
+    return new Promise((resolve, reject) => {
+      getRoleByUser(userId).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  updateRole({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      updateRole(data.role, data.id).then(res => {
+        resolve(res)
       }).catch(err => {
         reject(err)
       })

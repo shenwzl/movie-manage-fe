@@ -11,7 +11,7 @@
       </el-table-column>
       <el-table-column prop="parent" label="父费用项">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.parentCategoryId | getParent(fees) }}</span>
+          <span style="margin-left: 10px">{{ scope.row.parentCategoryId | getParent(feeCategories) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="stage" label="费用阶段">
@@ -113,17 +113,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['fees', 'total'])
+    ...mapGetters(['fees', 'total', 'feeCategories'])
   },
   beforeMount() {
-    this.getFees({ page: this.page, pageSize: this.pageSize })
+    this.getFeeCategories({ state: 2, category_type: 1 }).then(res => {
+      this.getFees({ page: this.page, pageSize: this.pageSize })
+    })
   },
   methods: {
     ...mapActions([
       'getFees',
       'addFee',
       'deleteFee',
-      'recoverFee'
+      'recoverFee',
+      'getFeeCategories'
     ]),
     handleChange(row) {
       this.newFee = row

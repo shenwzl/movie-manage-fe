@@ -13,6 +13,7 @@
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
           <el-button type="text" size="small" @click="resetPwdDialog(scope.row)">重置密码</el-button>
+          <el-button type="text" size="small" @click="handleRoleChange(scope.row)">修改角色</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -49,9 +50,22 @@
         <el-button type="primary" :loading="resetLoading" @click="setPassword">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="绑定角色" :visible.sync="bindRoleDialog">
+      <el-form>
+        <el-form-item label="新角色" label-width="120px">
+          <el-select multiple v-model="newRole" autocomplete="off">
+            <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="bindRoleDialog = false">取 消</el-button>
+        <el-button type="primary" :loading="bindRoleLoading" @click="bindRole">确 定</el-button>
+      </div>
+    </el-dialog>
     <el-pagination
       layout="prev, pager, next"
-      :total="userTotal"
+      :total="total"
       @current-change="handlePageChange"
     />
   </div>
@@ -76,15 +90,20 @@ export default {
       page: 1,
       pageSize: 10,
       createLoading: false,
-      resetLoading: false
+      resetLoading: false,
+      userRole: '',
+      bindRoleDialog: false,
+      newRole: [],
+      bindRoleLoading: false,
+      choosenUser: 0
     }
   },
   computed: {
-    ...mapGetters(['users', 'userTotal'])
+    ...mapGetters(['users', 'total', 'allRoles'])
   },
   beforeMount() {
-    console.log(this.userTotal, this.users)
     this.getAllUser({ page: this.page, pageSize: this.pageSize })
+    this.getAllRoles().then(res => this.allRoles)
   },
   methods: {
     ...mapActions([
@@ -92,7 +111,10 @@ export default {
       'addUser',
       'resetPwd',
       'deleteUser',
-      'recoverUser'
+      'recoverUser',
+      'getAllRoles',
+      'getRoleByUser',
+      'updateRole'
     ]),
     handleDelete(row) {
       console.log(row)
@@ -112,14 +134,13 @@ export default {
       this.getAllUser({ page: this.page, pageSize: this.pageSize })
     },
     resetPwdDialog(row) {
-      console.log(row)
       this.resetDialog = true
       this.resetPwdModel = { userId: row.id, password: '' }
     },
     setPassword() {
       this.resetLoading = true
       this.resetPwd(this.resetPwdModel).then(res => {
-        this.$message.success('密码更新成功')
+        this.$message.success('更新成功')
         this.resetDialog = false
       }).finally(() => this.resetLoading = false)
     },
@@ -135,6 +156,24 @@ export default {
           this.getAllUser({ page: this.page, pageSize: this.pageSize })
         })
       }
+    },
+    handleRoleChange(row) {
+      this.choosenUser = row.id
+      this.getRoleByUser(row.id).then(res => {
+        this.newRole = res.data
+        this.bindRoleDialog = true
+      })
+    },
+    bindRole() {
+      this.bindRoleLoading = true
+      this.updateRole({ role: this.newRole, id: this.choosenUser }).then(
+        res => {
+          this.bindRoleLoading = false
+          this.bindRoleDialog = false
+          this.getAllUser({ page: this.page, pageSize: this.pageSize })
+          this.newRole = []
+        }
+      )
     }
   }
 }

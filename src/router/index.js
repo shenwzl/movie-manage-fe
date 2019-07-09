@@ -46,19 +46,25 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/',
-    name: '项目管理',
+    // redirect: '/',
     meta: {
       title: '项目管理',
       icon: 'chart'
     },
     children: [
       {
-        path: '',
+        path: '/',
         component: () => import('@/views/projects/index'),
-        meta: { title: '', icon: 'dashboard' },
-        hidden: true
+        meta: { title: '项目基本信息', icon: 'dashboard' },
       },
+      {
+        path: '/search',
+        component: () => import('@/views/projects/search'),
+        meta: { title: '项目信息', icon: 'dashboard' }
+      },
+      // {
+      //   path: ''
+      // },
       {
         path: 'add',
         component: () => import('@/views/projects/add'),
@@ -143,12 +149,6 @@ export const constantRoutes = [
         component: () => import('@/views/permission/roles'),
         name: '角色管理',
         meta: { title: '角色管理', icon: 'guide', noCache: true }
-      },
-      {
-        path: 'user',
-        component: () => import('@/views/permission/user'),
-        name: '用户角色赋予',
-        meta: { title: '用户角色赋予', icon: 'guide', noCache: true }
       }
     ]
   },

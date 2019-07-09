@@ -31,6 +31,21 @@ export function deleteUser(userId) {
   })
 }
 
+export function getRoleByUser(userId) {
+  return request({
+    url: `/users/${userId}/roles`,
+    method: 'get'
+  })
+}
+
+export function updateRole(data, userId) {
+  return request({
+    url: `/users/${userId}/update_role`,
+    method: 'put',
+    data
+  })
+}
+
 export function recoverUser(userId) {
   return request({
     url: `/users/${userId}/recover`,

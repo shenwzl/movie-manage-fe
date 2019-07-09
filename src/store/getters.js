@@ -11,7 +11,16 @@ const getters = {
   fees: state => state.config.fees,
   contracts: state => state.config.contracts,
   roles: state => state.permission.roles,
+  allRoles: state => state.permission.allRoles,
   permissions: state => state.permission.permissions,
-  total: state => state.total
+  allPermissions: state => state.permission.allPermissions,
+  total: state => state.total,
+  feeCategories: state => state.projectConfig.feeCategories,
+  allProviders: state => state.projectConfig.allProviders,
+  allStaffs: state => state.projectConfig.allStaffs,
+  contractSubjects: state => state.projectConfig.contractSubjects,
+  memberTypes: state => state.projectConfig.memberTypes,
+  projectState: state => state.projectConfig.projectState,
+  projects: state => state.project.projects
 }
 export default getters

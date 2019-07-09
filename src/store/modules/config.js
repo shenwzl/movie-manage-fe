@@ -138,6 +138,7 @@ const actions = {
       })
     })
   },
+  getFeeCategories({ commit }, data) {},
   deleteFee({ commit }, feeId) {
     return new Promise((resolve, reject) => {
       deleteFee(feeId).then(res => {

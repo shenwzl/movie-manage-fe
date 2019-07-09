@@ -119,7 +119,7 @@ export default {
       if (!row.state) {
         this.deleteStaff(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getStaff({ page: this.page, pageSize: this.pageSize })
+          this.getStaffs({ page: this.page, pageSize: this.pageSize })
         })
       } else {
         this.recoverStaff(row.id).then(res => {

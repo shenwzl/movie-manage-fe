@@ -16,10 +16,27 @@
       :visible.sync="createRoleDialog"
     >
       <el-form :model="newRole">
-        <el-form-item label="名称" label-width="200px">
+        <el-form-item label="名称" label-width="150px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newRole.name" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="权限" label-width="150px">
+          <el-row>
+            <el-col :span="24">
+              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+              <div style="margin: 15px 0;"></div>
+              <el-checkbox-group v-model="checkedPermissions">
+                <el-checkbox 
+                  v-for="permission in allPermissions"
+                  :label="permission.id"
+                  :key="permission.id"
+                >
+                  {{ permission.desc }}
+                </el-checkbox>
+              </el-checkbox-group>
             </el-col>
           </el-row>
         </el-form-item>
@@ -31,7 +48,7 @@
     </el-dialog>
     <el-pagination
       layout="prev, pager, next"
-      :total="userTotal"
+      :total="total"
       @current-change="handlePageChange"
     />
   </div>
@@ -59,19 +76,25 @@ export default {
       page: 1,
       pageSize: 10,
       isEdit: false,
-      createLoading: false
+      createLoading: false,
+      isIndeterminate: true,
+      checkedPermissions: [],
+      checkAll: true
     }
   },
   computed: {
-    ...mapGetters(['roles', 'userTotal'])
+    ...mapGetters(['roles', 'total', 'allPermissions'])
   },
   beforeMount() {
     this.getRoles({ page: this.page, pageSize: this.pageSize })
+    this.getAllPermissions().then(res => console.log(this.allPermissions))
   },
   methods: {
     ...mapActions([
       'getRoles',
-      'addRole'
+      'addRole',
+      'getAllPermissions',
+      'updatePermission'
     ]),
     handleChange(row) {
       this.newRole = row
@@ -82,21 +105,44 @@ export default {
     },
     createRole() {
       this.createLoading = true
-      this.addRole(this.newRole).then(
-        res => {
+      if (this.isEdit) {
+        this.updatePermission({ checkedPermissions: this.checkedPermissions, id: this.newRole.id }).then(res => {
           this.createRoleDialog = false
           this.getRoles({ page: this.page, pageSize: this.pageSize })
           this.createLoading = false
           this.isEdit = false
           this.newRole = {}
-        }
-      )
+        })
+      } else {
+        this.addRole(this.newRole).then(
+          res => {
+            console.log(res)
+            this.updatePermission({ checkedPermissions: this.checkedPermissions, id: res.data }).then(res => {
+              this.createRoleDialog = false
+              this.getRoles({ page: this.page, pageSize: this.pageSize })
+              this.createLoading = false
+              this.isEdit = false
+              this.newRole = {}
+            })
+          }
+        )
+      }
+      
     },
     handlePageChange(page) {
       this.page = page
       this.getRoles({ page: this.page, pageSize: this.pageSize })
     },
-    handleStateChange(row) {}
+    handleStateChange(row) {},
+    handleCheckAllChange(val) {
+      this.checkedPermissions = val ? this.allPermissions.map(permission => permission.id) : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedCitiesChange(value) {
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.allPermissions.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.allPermissions.length;
+    }
   }
 }
 </script>
@@ -105,5 +151,8 @@ export default {
 .el-pagination {
   text-align: right;
   margin-top: 20px;
+}
+.el-checkbox {
+  width: 200px;
 }
 </style>
