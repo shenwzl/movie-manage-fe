@@ -6,7 +6,9 @@ import {
   getShootingInfo,
   saveShootingInfo,
   getLastStateInfo,
-  saveLastStateInfo
+  saveLastStateInfo,
+  deleteProject,
+  recoverProject
 } from '@/api/project'
 
 const state = {
@@ -20,6 +22,15 @@ const mutations = {
 }
 
 const actions = {
+  getAllProjects({ commit }, pageConfig) {
+    return new Promise((resolve, reject) => {
+      getProjects(pageConfig).then(res => {
+        resolve(res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   getProjects({ commit }, pageConfig) {
     return new Promise((resolve, reject) => {
       getProjects(pageConfig).then(res => {
@@ -32,9 +43,26 @@ const actions = {
     })
   },
   saveProjects({ commit }, data) {
-    console.log(data)
     return new Promise((resolve, reject) => {
       saveProjects(data).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  deleteProject({ commit }, pId) {
+    return new Promise((resolve, reject) => {
+      deleteProject(pId).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  recoverProject({ commit }, pId) {
+    return new Promise((resolve, reject) => {
+      recoverProject(pId).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

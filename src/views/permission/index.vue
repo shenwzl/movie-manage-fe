@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-table :data="permissions">
-      <el-table-column prop="id" label="角色id" />
+      <el-table-column prop="id" label="权限id" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="desc" label="描述" />
     </el-table>

@@ -16,6 +16,20 @@ export function saveProjects(data) {
   })
 }
 
+export function deleteProject(pId) {
+  return request({
+    url: `/projects/${pId}`,
+    method: 'delete'
+  })
+}
+
+export function recoverProject(pId) {
+  return request({
+    url: `/projects/${pId}/recover`,
+    method: 'put'
+  })
+}
+
 export function getBaseInfo(pId) {
   return request({
     url: `/projects/${pId}/base_info`,

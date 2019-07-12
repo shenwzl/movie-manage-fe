@@ -18,7 +18,15 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/logout',
-    method: 'post'
+    url: '/session/logout',
+    method: 'delete'
+  })
+}
+
+export function resetPwd(data) {
+  return request({
+    url: '/session/reset_pwd',
+    method: 'put',
+    data
   })
 }

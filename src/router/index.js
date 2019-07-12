@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { hasPermission } from '@/utils/auth'
 
 Vue.use(Router)
 
@@ -46,7 +47,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    // redirect: '/',
+    redirect: '/',
     meta: {
       title: '项目管理',
       icon: 'chart'
@@ -54,23 +55,19 @@ export const constantRoutes = [
     children: [
       {
         path: '/',
+        hidden: !hasPermission('project', 'view'),
         component: () => import('@/views/projects/index'),
-        meta: { title: '项目基本信息', icon: 'dashboard' },
+        meta: { title: '项目基本信息', icon: 'dashboard', name: 'project' }
       },
       {
         path: '/search',
+        hidden: !hasPermission('project_search', 'view'),
         component: () => import('@/views/projects/search'),
-        meta: { title: '项目信息', icon: 'dashboard' }
+        meta: { title: '项目信息', icon: 'dashboard', name: 'project_search' }
       },
       // {
       //   path: ''
       // },
-      {
-        path: 'add',
-        component: () => import('@/views/projects/add'),
-        meta: { title: '新建', icon: 'dashboard' },
-        hidden: true
-      },
       {
         path: 'edit/:projectId',
         component: () => import('@/views/projects/edit'),
@@ -82,6 +79,12 @@ export const constantRoutes = [
         component: () => import('@/views/projects/detail'),
         meta: { title: '查看', icon: 'dashboard' },
         hidden: true
+      },
+      {
+        path: 'log/:projectId',
+        component: () => import('@/views/log/index'),
+        meta: { title: '日志查看', icon: 'dashboard' },
+        hidden: true
       }
     ]
   },
@@ -90,30 +93,35 @@ export const constantRoutes = [
     path: '/config',
     component: Layout,
     meta: { title: '项目配置管理', icon: 'guide' },
+    hidden: !hasPermission('staff', 'view') && !hasPermission('contract_subject', 'view') && !hasPermission('provider', 'view') && !hasPermission('fee_category', 'view'),
     children: [
       {
         path: 'staff',
         component: () => import('@/views/config/staff'),
         name: '员工管理',
-        meta: { title: '员工管理', icon: 'guide', noCache: true }
+        hidden: !hasPermission('staff', 'view'),
+        meta: { title: '员工管理', icon: 'guide', noCache: true, name: 'staff' }
       },
       {
         path: 'contract',
         component: () => import('@/views/config/contract'),
         name: '合同主体管理',
-        meta: { title: '合同主体管理', icon: 'guide', noCache: true }
+        hidden: !hasPermission('contract_subject', 'view'),
+        meta: { title: '合同主体管理', icon: 'guide', noCache: true, name: 'contract_subject' }
       },
       {
         path: 'provider',
         component: () => import('@/views/config/provider'),
         name: '供应商管理',
-        meta: { title: '供应商管理', icon: 'guide', noCache: true }
+        hidden: !hasPermission('provider', 'view'),
+        meta: { title: '供应商管理', icon: 'guide', noCache: true, name: 'provider' }
       },
       {
         path: 'fee',
         component: () => import('@/views/config/fee'),
         name: '费用项管理',
-        meta: { title: '费用项管理', icon: 'guide', noCache: true }
+        hidden: !hasPermission('fee_category', 'view'),
+        meta: { title: '费用项管理', icon: 'guide', noCache: true, name: 'fee_category' }
       }
     ]
   },
@@ -122,12 +130,29 @@ export const constantRoutes = [
     path: '/user',
     component: Layout,
     redirect: '/user/index',
+    // hidden: !getAuth('user', 'view'),
     children: [
       {
         path: 'index',
+        hidden: !hasPermission('user', 'view'),
         component: () => import('@/views/user/index'),
         name: '用户管理',
-        meta: { title: '用户管理', icon: 'guide', noCache: true }
+        meta: { title: '用户管理', icon: 'guide', noCache: true, name: 'user' }
+      }
+    ]
+  },
+
+  {
+    path: '/log',
+    component: Layout,
+    redirect: '/log/index',
+    children: [
+      {
+        path: 'index',
+        hidden: !hasPermission('log', 'view'),
+        component: () => import('@/views/log/index'),
+        name: '日志管理',
+        meta: { title: '日志管理', icon: 'guide', noCache: true, name: 'log' }
       }
     ]
   },
@@ -148,7 +173,8 @@ export const constantRoutes = [
         path: 'roles',
         component: () => import('@/views/permission/roles'),
         name: '角色管理',
-        meta: { title: '角色管理', icon: 'guide', noCache: true }
+        hidden: !hasPermission('role', 'view'),
+        meta: { title: '角色管理', icon: 'guide', noCache: true, name: 'role' }
       }
     ]
   },

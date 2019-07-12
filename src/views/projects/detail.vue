@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-container">
+    <div class="base-info" v-if="canViewBaseInfo">
       <h3>基本信息</h3>
       <el-row>
         <el-col :span="8">
@@ -22,129 +23,54 @@
           <span>拍摄周期：</span>
           <span>{{ baseInfo.shootingDuration }}天</span>
         </el-col>
-        
+        <el-col :span="16">
+          <span>项目角色：</span>
+          <div v-for="mType in memberTypes" :key="mType.type">
+            <el-row class="role">
+              <el-col :span="6">{{ mType.name }}</el-col>
+              <el-col :span="18">
+                <div v-for="(pMember) in baseInfo.projectMembers" v-if="pMember.memberType === mType.type" :key="pMember.id">{{ pMember.staffId | getStaff(allStaffs) }}</div>
+              </el-col>
+            </el-row>
+          </div>
+        </el-col>
       </el-row>
-      <el-form-item label="项目角色" label-width="120px">
-        <div v-for="mType in memberTypes" :key="mType.type">
-          <el-row>
-            <el-col :span="20">{{ mType.name }}</el-col>
-            <el-col :span="20" style="margin-bottom: 10px;" v-for="(pMember, i) in baseInfo.projectMembers" v-if="pMember.memberType === mType.type" :key="pMember.id">
-              <el-select v-model="pMember.ascriptionType">
-                <el-option :value="1" label="内部员工" />
-                <el-option :value="2" label="外部员工" />
-              </el-select>
-              <el-select v-if="pMember.ascriptionType === 1" v-model="pMember.staffId">
-                <el-option v-for="staff in insideStaffs" :key="staff.id" :value="staff.id" :label="staff.name" />
-              </el-select>
-              <el-select v-if="pMember.ascriptionType === 2" v-model="pMember.staffId">
-                <el-option v-for="staff in externalStaffs" :key="staff.id" :value="staff.id" :label="staff.name" />
-              </el-select>
-              <el-button type="danger" size="small" style="margin-left: 20px;" @click="handleBaseDelete(i)">删除</el-button>
-            </el-col>
-            <el-col :span="10">
-              <el-button type="text" @click="addMemberType(mType.type)">添加{{ mType.name }}</el-button>
-            </el-col>
-          </el-row>
-        </div>
-      </el-form-item>
-    </el-form>
-    <el-form v-if="step === 2" :model="shootingInfo">
-      <div v-for="(sInfo, i) in shootingInfo" :key="sInfo.key">
-        <el-row style="margin-top: 20px;">
-          <el-col :span="10">
-            <el-form-item label="一级费用" label-width="120px">
-              <el-select v-model="sInfo.feeCategoryId" style="width: 180px;" autocomplete="off">
-                <el-option v-for="fee in firstShootingFee" :key="fee.id" :value="fee.id" :label="fee.name" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="二级费用" label-width="120px">
-              <el-select v-model="sInfo.feeChildCategoryId" style="width: 180px;" @blur="onBlur(sInfo.feeCategoryId)" width="200" autocomplete="off">
-                <el-option v-for="fee in secondFees" :key="fee.id" :value="fee.id" :label="fee.name" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="danger" size="small" style="margin-left: 20px;" @click="handleShootingDelete(i)">删除</el-button>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="预算金额" label-width="120px">
-              <el-input-number v-model="sInfo.budgetAmount" controls-position="right" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-             <el-form-item label="实际金额" label-width="120px">
-              <el-input-number v-model="sInfo.realAmount" controls-position="right" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-             <el-form-item label="评分" label-width="120px">
-              <el-input-number v-model="sInfo.rankScore" controls-position="right"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="备注" label-width="120px">
-              <el-input type="textarea" v-model="sInfo.remark"></el-input>
-            </el-form-item>
-          </el-col>
+      <div class="divider"></div>
+    </div>
+    <div class="shooting-info" v-if="canViewShootingInfo">
+      <h3>拍摄费用</h3>
+      <div v-for="sInfo in shootingInfo" :key="sInfo.key">
+        <el-row >
+          <el-col :span="8">一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col :span="8">二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col :span="8">预算金额: {{ sInfo.budgetAmount }}</el-col>
+          <el-col :span="8">实际金额: {{ sInfo.realAmount }}</el-col>
+          <el-col :span="8">评分: {{ sInfo.rankScore }}</el-col>
+          <el-col :span="8">备注: {{ sInfo.remark }}</el-col>
         </el-row>
         <div class="divider"></div>
       </div>
-    </el-form>
-    <el-form v-if="step === 3" :model="lastStateInfo">
-      <div v-for="(sInfo, i) in lastStateInfo" :key="sInfo.key">
-        <el-row style="margin-top: 20px;">
-          <el-col :span="10">
-            <el-form-item label="一级费用" label-width="120px">
-              <el-select v-model="sInfo.feeCategoryId" style="width: 180px;" autocomplete="off">
-                <el-option v-for="fee in firstLastFee" :key="fee.id" :value="fee.id" :label="fee.name" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="二级费用" label-width="120px">
-              <el-select v-model="sInfo.feeChildCategoryId" @focus="onBlur(sInfo.feeCategoryId)" style="width: 180px;" autocomplete="off">
-                <el-option v-for="fee in secondFees" :key="fee.id" :value="fee.id" :label="fee.name" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="danger" size="small" style="margin-left: 20px;" @click="handleLastDelete(i)">删除</el-button>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="预算金额" label-width="120px">
-              <el-input-number v-model="sInfo.budgetAmount" controls-position="right" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-             <el-form-item label="实际金额" label-width="120px">
-              <el-input-number v-model="sInfo.realAmount" controls-position="right" autocomplete="off" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-             <el-form-item label="评分" label-width="120px">
-              <el-input-number v-model="sInfo.rankScore" controls-position="right"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="备注" label-width="120px">
-              <el-input type="textarea" v-model="sInfo.remark"></el-input>
-            </el-form-item>
-          </el-col>
+    </div>
+    <div class="last-info" v-if="canViewLastInfo">
+      <h3>后期费用</h3>
+      <div v-for="sInfo in lastStateInfo" :key="sInfo.key">
+        <el-row >
+          <el-col :span="8">一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col :span="8">二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col :span="8">预算金额: {{ sInfo.budgetAmount }}</el-col>
+          <el-col :span="8">实际金额: {{ sInfo.realAmount }}</el-col>
+          <el-col :span="8">评分: {{ sInfo.rankScore }}</el-col>
+          <el-col :span="8">备注: {{ sInfo.remark }}</el-col>
         </el-row>
         <div class="divider"></div>
       </div>
-    </el-form>
-    <el-button class="save-button" v-if="step === 1" type="primary" :loading="editLoading" @click="editProject">保存并下一步</el-button>
-    <el-button class="save-button" v-if="step === 2" type="primary" :loading="editLoading" @click="editShootingInfo">保存并下一步</el-button>
-    <el-button class="save-button" v-if="step === 3" type="primary" :loading="editLoading" @click="editLastStateInfo">保存</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-
+import { hasPermission } from '@/utils/auth'
 export default {
   name: 'Dashboard',
   data: function() {
@@ -192,6 +118,15 @@ export default {
     },
     pId() {
       return this.$route.params.projectId
+    },
+    canViewBaseInfo() {
+      return hasPermission('project_base_info', 'view')
+    },
+    canViewShootingInfo() {
+      return hasPermission('project_shooting_info', 'view')
+    },
+    canViewLastInfo() {
+      return hasPermission('project_last_state_info', 'view')
     }
   },
   beforeMount() {
@@ -217,6 +152,14 @@ export default {
         return contract[0].name
       }
       return ''
+    },
+    getStaff(id, staffs) {
+      const staff = staffs.filter(stf => stf.id === id)
+      return staff[0].name
+    },
+    getFeeName(id, fees) {
+      const fee = fees.filter(f => f.id === id)
+      return fee[0].name
     }
   },
   methods: {
@@ -321,5 +264,21 @@ export default {
   margin-bottom: 20px;
   margin-right: 20px;
   margin-top: 20px;
+}
+.el-col {
+  line-height: 30px;
+  font-size: 14px;
+  color: #606266;
+}
+.role {
+  margin-left: 80px;
+  color: rgb(45, 39, 39);
+  font-size: 14px;
+}
+.divider {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 24px 0;
 }
 </style>

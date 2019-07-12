@@ -21,6 +21,8 @@ const getters = {
   contractSubjects: state => state.projectConfig.contractSubjects,
   memberTypes: state => state.projectConfig.memberTypes,
   projectState: state => state.projectConfig.projectState,
-  projects: state => state.project.projects
+  projects: state => state.project.projects,
+  logs: state => state.log.logs,
+  rolePermissions: state => state.rolePermissions
 }
 export default getters

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="createProviderDialog = true">创建新供应商</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createProviderDialog = true">创建新供应商</el-button>
     <el-table :data="providers">
       <el-table-column prop="id" label="供应商id" />
       <el-table-column prop="name" label="姓名" />
@@ -12,7 +12,7 @@
           <span style="margin-left: 10px">{{ scope.row.state === 0 ? '正常' : '禁用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column v-if="canEdit" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
           <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
@@ -23,29 +23,29 @@
       :title="isEdit ? '修改供应商信息' : '新增供应商'"
       :visible.sync="createProviderDialog"
     >
-      <el-form :model="newProvider">
-        <el-form-item label="姓名" label-width="200px">
+      <el-form ref="createForm" :model="newProvider" :rules="providerRules">
+        <el-form-item prop="name" label="姓名" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newProvider.name" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="电话" label-width="200px">
+        <el-form-item prop="cellphone" label="电话" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newProvider.cellphone" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="银行名称" label-width="200px">
+        <el-form-item prop="bankName" label="银行名称" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newProvider.bankName" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="银行账号" label-width="200px">
+        <el-form-item prop="bankAccount" label="银行账号" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newProvider.bankAccount" autocomplete="off" />
@@ -67,6 +67,8 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
+
 export default {
   data: function() {
     return {
@@ -92,14 +94,22 @@ export default {
       page: 1,
       pageSize: 10,
       isEdit: false,
-      createLoading: false
+      createLoading: false,
+      providerRules: {
+        name: [{ required: true, message: '名称不能为空' }],
+        cellphone: [{ required: true, message: '电话不能为空' }],
+        bankName: [{ required: true, message: '银行名称不能为空' }],
+        bankAccount: [{ required: true, message: '银行账号不能为空' }]
+      }
     }
   },
   computed: {
-    ...mapGetters(['providers', 'userTotal'])
+    ...mapGetters(['providers', 'userTotal']),
+    canEdit() {
+      return hasPermission('provider', 'manage')
+    }
   },
   beforeMount() {
-    console.log(this.userTotal, this.users)
     this.getProviders({ page: this.page, pageSize: this.pageSize })
   },
   methods: {
@@ -117,16 +127,21 @@ export default {
     setPermission() {
     },
     createProvider() {
-      this.createLoading = true
-      this.addProvider(this.newProvider).then(
-        res => {
-          this.createLoading = false
-          this.createProviderDialog = false
-          this.getProviders({ page: this.page, pageSize: this.pageSize })
-          this.newProvider = {}
-          this.isEdit = false
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.createLoading = true
+          this.addProvider(this.newProvider).then(
+            res => {
+              this.createLoading = false
+              this.createProviderDialog = false
+              this.getProviders({ page: this.page, pageSize: this.pageSize })
+              this.$message.success(this.isEdit ? '更新成功' : '添加成功')
+              this.newProvider = {}
+              this.isEdit = false
+            }
+          )
         }
-      )
+      })
     },
     handlePageChange(page) {
       this.page = page

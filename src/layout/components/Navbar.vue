@@ -7,27 +7,34 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <span>{{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
-            <el-dropdown-item>
-              Home
-            </el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
+          <el-dropdown-item>
+            <div @click="resetPwdDialog = true">重置密码</div>
+          </el-dropdown-item>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Log Out</span>
+            <div @click="logout">退出</div>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog title="重置密码" :visible.sync="resetPwdDialog">
+      <el-form ref="passwordForm" :model="newPassword" :rules="passwordRules">
+        <el-row>
+          <el-col :span="10">
+            <el-form-item prop="newPwd" label="新密码" label-width="120px">
+              <el-input ref="newPwd" tabindex="1" name="newPwd" v-model="newPassword.newPwd" show-password autocomplete="off" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="resetPwdDialog = false">取 消</el-button>
+        <el-button type="primary" :loading="editLoading" @click="resetPwd">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -35,17 +42,40 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { getName } from '@/utils/auth'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+  data: function() {
+    const validatePassword = (rule, value, callback) => {
+      console.log(value)
+      if (value.length < 6) {
+        callback(new Error('密码长度不能小于6'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      resetPwdDialog: false,
+      newPassword: {
+        newPwd: ''
+      },
+      editLoading: false,
+      passwordRules: {
+        newPwd: [{ required: true, trigger: 'blur', validator: validatePassword }]
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
-    ])
+    ]),
+    name() {
+      return getName('name')
+    }
   },
   methods: {
     toggleSideBar() {
@@ -54,6 +84,18 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    resetPwd() {
+      this.$refs.passwordForm.validate(async valid => {
+        if (valid) {
+          this.editLoading = true
+          await this.$store.dispatch('user/resetPwd', { password: this.newPassword.newPwd })
+          this.editLoading = false
+          this.resetPwdDialog = false
+          this.newPwd = ''
+          this.$message.success('更新成功')
+        }
+      })
     }
   }
 }
@@ -129,7 +171,7 @@ export default {
           cursor: pointer;
           position: absolute;
           right: -20px;
-          top: 25px;
+          top: 20px;
           font-size: 12px;
         }
       }

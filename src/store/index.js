@@ -9,6 +9,7 @@ import config from './modules/config'
 import permission from './modules/permission'
 import projectConfig from './modules/projectConfig'
 import project from './modules/project'
+import log from './modules/log'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,12 @@ const store = new Vuex.Store({
     total: 0
   },
   mutations: {
-    SET_TOTAL: (state, total) => { state.total = total }
+    SET_TOTAL: (state, total) => {
+      state.total = total
+    },
+    SET_PERMISSION: (state, permission) => {
+      state.rolePermissions = permission
+    }
   },
   modules: {
     app,
@@ -27,7 +33,8 @@ const store = new Vuex.Store({
     config,
     permission,
     projectConfig,
-    project
+    project,
+    log
   },
   getters
 })

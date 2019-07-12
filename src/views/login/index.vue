@@ -53,17 +53,9 @@
 export default {
   name: 'Login',
   data() {
-    const validateemail = (rule, value, callback) => {
-      // if (!validemail(value)) {
-      //   callback(new Error('Please enter the correct user name'))
-      // } else {
-      //   callback()
-      // }
-      callback()
-    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码长度不能小于6'))
       } else {
         callback()
       }
@@ -74,7 +66,7 @@ export default {
         password: ''
       },
       loginRules: {
-        email: [{ required: true, trigger: 'blur', validator: validateemail }],
+        email: [{ required: true, trigger: 'blur', type: 'email', message: '邮箱格式错误' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,

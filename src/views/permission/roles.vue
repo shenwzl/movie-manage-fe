@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="createRoleDialog = true">创建新角色</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createRoleDialog = true">创建新角色</el-button>
     <el-table :data="roles">
       <el-table-column prop="id" label="角色id" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="createdAt" label="创建时间" />
-      <el-table-column label="操作">
+      <el-table-column v-if="canEdit" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
         </template>
@@ -15,8 +15,8 @@
       :title="isEdit ? '修改角色' : '新增角色'"
       :visible.sync="createRoleDialog"
     >
-      <el-form :model="newRole">
-        <el-form-item label="名称" label-width="150px">
+      <el-form ref="createForm" :model="newRole" :rules="roleRules">
+        <el-form-item prop="name" label="名称" label-width="150px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newRole.name" autocomplete="off" />
@@ -55,6 +55,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
 export default {
   data: function() {
     return {
@@ -79,11 +80,17 @@ export default {
       createLoading: false,
       isIndeterminate: true,
       checkedPermissions: [],
-      checkAll: true
+      checkAll: true,
+      roleRules: {
+        name: [{ required: true, message: '名称不能为空' }]
+      }
     }
   },
   computed: {
-    ...mapGetters(['roles', 'total', 'allPermissions'])
+    ...mapGetters(['roles', 'total', 'allPermissions']),
+    canEdit() {
+      return hasPermission('role', 'manage')
+    }
   },
   beforeMount() {
     this.getRoles({ page: this.page, pageSize: this.pageSize })
@@ -104,30 +111,34 @@ export default {
     setPermission() {
     },
     createRole() {
-      this.createLoading = true
-      if (this.isEdit) {
-        this.updatePermission({ checkedPermissions: this.checkedPermissions, id: this.newRole.id }).then(res => {
-          this.createRoleDialog = false
-          this.getRoles({ page: this.page, pageSize: this.pageSize })
-          this.createLoading = false
-          this.isEdit = false
-          this.newRole = {}
-        })
-      } else {
-        this.addRole(this.newRole).then(
-          res => {
-            console.log(res)
-            this.updatePermission({ checkedPermissions: this.checkedPermissions, id: res.data }).then(res => {
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.createLoading = true
+          if (this.isEdit) {
+            this.updatePermission({ checkedPermissions: this.checkedPermissions, id: this.newRole.id }).then(res => {
               this.createRoleDialog = false
               this.getRoles({ page: this.page, pageSize: this.pageSize })
               this.createLoading = false
               this.isEdit = false
               this.newRole = {}
+              this.$message.success('更新成功')
             })
+          } else {
+            this.addRole(this.newRole).then(
+              res => {
+                this.updatePermission({ checkedPermissions: this.checkedPermissions, id: res.data }).then(res => {
+                  this.createRoleDialog = false
+                  this.getRoles({ page: this.page, pageSize: this.pageSize })
+                  this.createLoading = false
+                  this.isEdit = false
+                  this.$message.success('添加成功')
+                  this.newRole = {}
+                })
+              }
+            )
           }
-        )
-      }
-      
+        }
+      })
     },
     handlePageChange(page) {
       this.page = page

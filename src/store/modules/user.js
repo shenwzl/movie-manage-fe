@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, resetPwd } from '@/api/user'
+import { getToken, setToken, removeToken, setPermission, removePermission, setName } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const state = {
@@ -29,29 +29,12 @@ const actions = {
         const { data } = response
         console.log(response)
         commit('SET_TOKEN', data.authCode)
+        commit('SET_PERMISSION', data.permissions, { root: true })
         setToken(data.authCode)
+        setPermission(data.permissions.join(','))
+        setName(data.name)
+        location.reload()
         resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
       }).catch(error => {
         reject(error)
       })
@@ -65,9 +48,20 @@ const actions = {
         commit('SET_TOKEN', '')
         removeToken()
         resetRouter()
+        removePermission()
         resolve()
       }).catch(error => {
         reject(error)
+      })
+    })
+  },
+
+  resetPwd({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      resetPwd(data).then(() => {
+        resolve()
+      }).catch(err => {
+        reject(err)
       })
     })
   },

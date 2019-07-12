@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="createStaffDialog = true">创建新员工</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createStaffDialog = true">创建新员工</el-button>
     <el-table :data="staffs">
       <el-table-column prop="id" label="员工id" />
       <el-table-column prop="name" label="姓名" />
@@ -15,7 +15,7 @@
           <span style="margin-left: 10px">{{ scope.row.state === 0 ? '正常' : '禁用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column v-if="canEdit" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
           <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
@@ -26,22 +26,22 @@
       :title="isEdit ? '修改员工信息' : '新增员工'"
       :visible.sync="createStaffDialog"
     >
-      <el-form :model="newStaff">
-        <el-form-item label="姓名" label-width="200px">
+      <el-form ref="createForm" :model="newStaff" :rules="staffRules">
+        <el-form-item prop="name" label="姓名" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newStaff.name" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="电话" label-width="200px">
+        <el-form-item prop="cellphone" label="电话" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newStaff.cellphone" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="员工类型" label-width="200px">
+        <el-form-item prop="ascription" label="员工类型" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-select v-model="newStaff.ascription" autocomplete="off">
@@ -66,6 +66,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
 export default {
   data: function() {
     return {
@@ -80,11 +81,19 @@ export default {
       page: 1,
       pageSize: 10,
       isEdit: false,
-      createLoading: false
+      createLoading: false,
+      staffRules: {
+        name: [{ required: true, message: '名称不能为空' }],
+        cellphone: [{ required: true, message: '电话不能为空' }],
+        ascription: [{ required: true, message: '员工类型不能为空' }],
+      }
     }
   },
   computed: {
-    ...mapGetters(['staffs', 'userTotal'])
+    ...mapGetters(['staffs', 'userTotal']),
+    canEdit() {
+      return hasPermission('staff', 'manage')
+    }
   },
   beforeMount() {
     this.getStaffs({ page: this.page, pageSize: this.pageSize })
@@ -104,11 +113,18 @@ export default {
     setPermission() {
     },
     createStaff() {
-      this.addStaff(this.newStaff).then(res => {
-        this.createStaffDialog = false
-        this.newStaff = {}
-        this.isEdit = false
-        this.getStaffs({ page: this.page, pageSize: this.pageSize })
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.createLoading = true
+          this.addStaff(this.newStaff).then(res => {
+            this.createStaffDialog = false
+            this.createLoading = false
+            this.$message.success(this.isEdit ? '更新成功' : '添加成功')
+            this.newStaff = {}
+            this.isEdit = false
+            this.getStaffs({ page: this.page, pageSize: this.pageSize })
+          })
+        }
       })
     },
     handlePageChange(page) {

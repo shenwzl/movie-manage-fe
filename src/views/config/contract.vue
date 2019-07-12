@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="createContractDialog = true">创建新合同主体</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createContractDialog = true">创建新合同主体</el-button>
     <el-table :data="contracts">
       <el-table-column prop="id" label="合同id" />
       <el-table-column prop="name" label="名称" />
@@ -9,7 +9,7 @@
           <span style="margin-left: 10px">{{ scope.row.state === 0 ? '正常' : '禁用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column v-if="canEdit" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
           <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
@@ -20,8 +20,8 @@
       :title="isEdit ? '修改合同主体' : '新增合同主体'"
       :visible.sync="createContractDialog"
     >
-      <el-form :model="newContract">
-        <el-form-item label="名称" label-width="200px">
+      <el-form ref="creteForm" :model="newContract" :rules="contractRules">
+        <el-form-item prop="name" label="名称" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newContract.name" autocomplete="off" />
@@ -43,6 +43,8 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
+
 export default {
   data: function() {
     return {
@@ -64,11 +66,17 @@ export default {
       page: 1,
       pageSize: 10,
       isEdit: false,
-      createLoading: false
+      createLoading: false,
+      contractRules: {
+        name: [{ required: true, message: '名称不能为空' }]
+      }
     }
   },
   computed: {
-    ...mapGetters(['contracts', 'userTotal'])
+    ...mapGetters(['contracts', 'userTotal']),
+    canEdit() {
+      return hasPermission('contract_subject', 'manage')
+    }
   },
   beforeMount() {
     this.getContracts({ page: this.page, pageSize: this.pageSize })
@@ -88,16 +96,21 @@ export default {
     setPermission() {
     },
     createContract() {
-      this.createLoading = true
-      this.addContracts(this.newContract).then(
-        res => {
-          this.createContractDialog = false
-          this.getContracts({ page: this.page, pageSize: this.pageSize })
-          this.createLoading = false
-          this.isEdit = false
-          this.newContract = {}
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.createLoading = true
+          this.addContracts(this.newContract).then(
+            res => {
+              this.createContractDialog = false
+              this.getContracts({ page: this.page, pageSize: this.pageSize })
+              this.createLoading = false
+              this.$message.success(this.isEdit ? '更新成功' : '添加成功')
+              this.isEdit = false
+              this.newContract = {}
+            }
+          )
         }
-      )
+      })
     },
     handlePageChange(page) {
       this.page = page
