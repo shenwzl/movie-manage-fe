@@ -210,8 +210,8 @@ export default {
     handleChangeShooting(row) {
       window.location.href = `/#/edit/${row.id}/2`
     },
-    handleChangeShooting(row) {
-      window.location.href = `/#/edit/${row.id}/2`
+    handleChangeLast(row) {
+      window.location.href = `/#/edit/${row.id}/3`
     },
     handleViewLog(row) {
       window.location.href = `/#/log/${row.id}`

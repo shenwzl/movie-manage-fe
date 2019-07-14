@@ -230,7 +230,7 @@ export default {
           this.spanArr.push(1)
           this.pos = 0
         } else {
-          if (item.name !== this.searchInfo[i - 1].name && item.categoryId && item.categoryId === this.searchList[i - 1].categoryId) {
+          if (item.name === this.searchList[i - 1].name && item.categoryId && item.categoryId === this.searchList[i - 1].categoryId) {
             this.spanArr[this.pos] += 1
             this.spanArr.push(0)
           } else {
@@ -239,6 +239,7 @@ export default {
           }
         }
       })
+      console.log(this.spanArr)
     },
     formatFee() {
       const feeList = this.selectedFee

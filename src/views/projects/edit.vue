@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <el-form v-if="step === 1" ref="baseInfoForm" :model="baseInfo" :rules="baseInfoRules">
+    <el-form v-if="step === '1'" ref="baseInfoForm" :model="baseInfo" :rules="baseInfoRules">
       <h3>基本信息</h3>
       <el-row>
         <el-col :span="10">
@@ -67,7 +67,7 @@
         </div>
       </el-form-item>
     </el-form>
-    <el-form v-if="step === 2" ref="shootingInfoForm" :model="feeInfo">
+    <el-form v-if="step === '2'" ref="shootingInfoForm" :model="feeInfo">
       <h3>拍摄费用</h3>
       <div v-for="(sInfo, i) in feeInfo.shootingInfo" :key="sInfo.key">
         <el-row style="margin-top: 20px;">
@@ -112,7 +112,7 @@
         <div class="divider"></div>
       </div>
     </el-form>
-    <el-form v-if="step === 3" ref="lastInfoForm" :model="feeInfo">
+    <el-form v-if="step === '3'" ref="lastInfoForm" :model="feeInfo">
       <h3>后期费用</h3>
       <div v-for="(sInfo, i) in feeInfo.lastStateInfo" :key="sInfo.key">
         <el-row style="margin-top: 20px;">
@@ -157,11 +157,11 @@
         <div class="divider"></div>
       </div>
     </el-form>
-    <el-button class="save-button" v-if="step === 1" type="primary" :loading="editLoading" @click="editProject">保存</el-button>
-    <el-button class="add-button" v-if="step === 2" @click="addShootingInfo">添加费用</el-button>
-    <el-button class="save-button" v-if="step === 2" type="primary" :loading="editLoading" @click="editShootingInfo">保存</el-button>
-    <el-button class="add-button" v-if="step === 3" @click="addLastInfo">添加费用</el-button>
-    <el-button class="save-button" v-if="step === 3" type="primary" :loading="editLoading" @click="editLastStateInfo">保存</el-button>
+    <el-button class="save-button" v-if="step === '1'" type="primary" :loading="editLoading" @click="editProject">保存</el-button>
+    <el-button class="add-button" v-if="step === '2'" @click="addShootingInfo">添加费用</el-button>
+    <el-button class="save-button" v-if="step === '2'" type="primary" :loading="editLoading" @click="editShootingInfo">保存</el-button>
+    <el-button class="add-button" v-if="step === '3'" @click="addLastInfo">添加费用</el-button>
+    <el-button class="save-button" v-if="step === '3'" type="primary" :loading="editLoading" @click="editLastStateInfo">保存</el-button>
   </div>
 </template>
 
@@ -191,7 +191,6 @@ export default {
         shootingInfo: [],
         lastStateInfo: []
       },
-      step: 1,
       secondFees: [],
       baseInfoRules: {
         name: [{ required: true, message: '名称不能为空' }],
@@ -243,6 +242,7 @@ export default {
     }
   },
   beforeMount() {
+    console.log(this.$route)
     this.getAllProviders()
     this.getFeeCategories()
     this.getContractSubjects()
