@@ -16,11 +16,11 @@ export function saveProjects(data) {
   })
 }
 
-export function updateState(state, id) {
+export function updateState(data, id) {
   return request({
-    url: '/projects/update_state',
+    url: `/projects/${id}/update_state`,
     method: 'put',
-    state
+    data
   })
 }
 

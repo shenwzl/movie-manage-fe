@@ -236,7 +236,7 @@ export default {
     },
     handleChangeState() {
       this.stateLoading = true
-      this.updateState(this.newState.newState, this.newState.id).then(
+      this.updateState(this.newState).then(
         res => {
           this.$message.success('更新成功')
           this.stateLoading = false

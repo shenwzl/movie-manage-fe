@@ -136,9 +136,10 @@ const actions = {
       })
     })
   },
-  updateState({ commit }, state, id) {
+  updateState({ commit }, stateInfo) {
+    console.log(stateInfo)
     return new Promise((resolve, reject) => {
-      updateState(state, id).then(res => {
+      updateState({ state: stateInfo.newState }, stateInfo.id).then(res => {
         resolve()
       }).catch(err => {
         reject(err)
