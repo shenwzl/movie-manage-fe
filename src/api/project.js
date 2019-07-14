@@ -16,6 +16,14 @@ export function saveProjects(data) {
   })
 }
 
+export function updateState(state, id) {
+  return request({
+    url: '/projects/update_state',
+    method: 'put',
+    state
+  })
+}
+
 export function deleteProject(pId) {
   return request({
     url: `/projects/${pId}`,

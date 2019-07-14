@@ -69,7 +69,7 @@ export const constantRoutes = [
       //   path: ''
       // },
       {
-        path: 'edit/:projectId',
+        path: 'edit/:projectId/:step',
         component: () => import('@/views/projects/edit'),
         meta: { title: '编辑', icon: 'dashboard' },
         hidden: true

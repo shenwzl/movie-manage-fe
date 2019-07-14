@@ -99,7 +99,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-             <el-form-item :prop="'shootingInfo.' + i + '.rankScore'" :rules="{ required: true, type: 'number', message: '评分必须为数字' }" label="评分" label-width="120px">
+             <el-form-item :prop="'shootingInfo.' + i + '.rankScore'" label="评分" label-width="120px">
               <el-input-number v-model="sInfo.rankScore" controls-position="right"></el-input-number>
             </el-form-item>
           </el-col>
@@ -144,7 +144,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-             <el-form-item :prop="'lastStateInfo.' + i + '.rankScore'" :rules="{ required: true, type: 'number', message: '评分必须为数字' }" label="评分" label-width="120px">
+             <el-form-item :prop="'lastStateInfo.' + i + '.rankScore'" label="评分" label-width="120px">
               <el-input-number v-model="sInfo.rankScore" controls-position="right"></el-input-number>
             </el-form-item>
           </el-col>
@@ -238,14 +238,8 @@ export default {
     pId() {
       return this.$route.params.projectId
     },
-    canEditBaseInfo() {
-      return hasPermission('project_base_info', 'manage')
-    },
-    canEditShootingInfo() {
-      return hasPermission('project_shooting_info', 'manage')
-    },
-    canEditLastInfo() {
-      return hasPermission('project_last_state_info', 'manage')
+    step() {
+      return this.$route.params.step
     }
   },
   beforeMount() {
@@ -255,6 +249,11 @@ export default {
     this.getAllStaffs()
     this.getMemberTypes()
     this.getBaseInfo(this.pId).then(res => {
+      res.data.projectMembers.forEach(pMember => {
+        const { staffId } = pMember
+        const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId)
+        pMember.ascriptionType = staff[0].ascription
+      })
       this.baseInfo = res.data
     })
     this.getShootingInfo(this.pId).then(res => {
@@ -289,12 +288,7 @@ export default {
           }).then(res => {
             this.editLoading = false
             this.$message.success('更新成功')
-            if (this.canEditShootingInfo) {
-              this.step = 2
-            }
-            if (this.canEditLastInfo) {
-              this.step = 3
-            }
+            window.location.href = '/#/'
           })
         }
       })
@@ -317,7 +311,7 @@ export default {
           }).then(res => {
             this.editLoading = false
             this.$message.success('更新成功')
-            if (this.canEditLastInfo) step++
+            window.location.href = '/#/'
           })
         }
       })
@@ -332,6 +326,7 @@ export default {
           }).then(res => {
             this.$message.success('更新成功')
             this.editLoading = false
+            window.location.href = '/#/'
           })
         }
       })
@@ -369,7 +364,6 @@ export default {
   },
   mounted() {
     this.secondFees = this.feeCategories
-    this.step = this.canEditBaseInfo ? 1 : this.canEditShootingInfo ? 2 : 3
   }
 }
 </script>

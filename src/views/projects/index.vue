@@ -11,7 +11,7 @@
       <el-table-column prop="name" label="项目名称" />
       <el-table-column prop="state" label="项目执行状态" width="150">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.state === 0 ? '正常' : '禁用' }}</span>
+          <span style="margin-left: 10px">{{ scope.row.state | getStateName(projectState) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="contractSubjectId" label="项目合同主体">
@@ -21,9 +21,11 @@
       </el-table-column>
       <el-table-column v-if="canChangeState || canViewLog || canEdit" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" v-if="canEdit" @click="handleChangeProject(scope.row)">修改</el-button>
-          <el-button type="text" v-if="canChangeState" @click="handleStateChange(scope.row)">{{ scope.row.state === 0 ? '禁用' : '恢复' }}</el-button>
+          <el-button type="text" v-if="canChangeState" @click="handleStateChange(scope.row)">修改状态</el-button>
           <el-button type="text" v-if="canViewLog" @click="handleViewLog(scope.row)">查看日志</el-button>        
+          <el-button type="text" v-if="canEditBaseInfo" @click="handleChangeBase(scope.row)">编辑基本信息</el-button>        
+          <el-button type="text" v-if="canEditShootingInfo" @click="handleChangeShooting(scope.row)">编辑拍摄费用</el-button>        
+          <el-button type="text" v-if="canEditLastInfo" @click="handleChangeLast(scope.row)">编辑后期费用</el-button>        
         </template>
       </el-table-column>
     </el-table>
@@ -40,6 +42,28 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="createDialog = false">取 消</el-button>
         <el-button type="primary" :loading="createLoading" @click="createProject">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改状态" :visible.sync="changeStateDialog">
+      <el-form ref="stateForm" :model="newState" :rules="projectRules">
+        <el-row>
+          <el-col :span="10">
+            <el-form-item prop="state" label="状态" label-width="120px">
+              <el-select v-model="newState.newState">
+                <el-option
+                  v-for="item in projectState"
+                  :key="item.state"
+                  :value="item.state"
+                  :label="item.name"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changeStateDialog = false">取 消</el-button>
+        <el-button type="primary" :loading="stateLoading" @click="handleChangeState">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -62,9 +86,10 @@ export default {
       pageSize: 10,
       createDialog: false,
       newProject: { name: '' },
+      newState: { newState: '' },
       createLoading: false,
-      editDialog: false,
-      editLoading: false,
+      stateLoading: false,
+      changeStateDialog: false,
       baseInfo: {
         name: '',
         contractSubjectId: 0,
@@ -79,7 +104,8 @@ export default {
         }]
       },
       projectRules: {
-        name: [{ required: true, message: '名称不能为空' }]
+        name: [{ required: true, message: '名称不能为空' }],
+        state: [{ required: true, message: '状态不能为空' }]
       }
     }
   },
@@ -89,7 +115,8 @@ export default {
       'projects',
       'contractSubjects',
       'memberTypes',
-      'allStaffs'
+      'allStaffs',
+      'projectState'
     ]),
     // 内部员工
     insideStaffs() {
@@ -113,6 +140,15 @@ export default {
     },
     canViewLog() {
       return hasPermission('project_base_info_history', 'view') || hasPermission('project_shooting_info_history', 'view') || hasPermission('project_last_state_info_history', 'view')
+    },
+    canEditBaseInfo() {
+      return hasPermission('project_base_info', 'manage')
+    },
+    canEditShootingInfo() {
+      return hasPermission('project_shooting_info', 'manage')
+    },
+    canEditLastInfo() {
+      return hasPermission('project_last_state_info', 'manage')
     }
   },
   filters: {
@@ -122,9 +158,17 @@ export default {
         return contract[0].name
       }
       return ''
+    },
+    getStateName(state, states) {
+      if (state && states.length) {
+        const cur = states.filter(ctr => ctr.state === state)
+        return cur[0].name
+      }
+      return ''
     }
   },
   beforeMount() {
+    this.getProjectState()
     this.getAllStaffs()
     this.getMemberTypes()
     this.getContractSubjects().then(res => {
@@ -139,7 +183,9 @@ export default {
       'getMemberTypes',
       'getAllStaffs',
       'deleteProject',
-      'recoverProject'
+      'recoverProject',
+      'getProjectState',
+      'updateState'
     ]),
     handlePageChange(page) {
       this.page = page
@@ -158,8 +204,14 @@ export default {
         }
       })
     },
-    handleChangeProject(row) {
-      window.location.href = `/#/edit/${row.id}`
+    handleChangeBase(row) {
+      window.location.href = `/#/edit/${row.id}/1`
+    },
+    handleChangeShooting(row) {
+      window.location.href = `/#/edit/${row.id}/2`
+    },
+    handleChangeShooting(row) {
+      window.location.href = `/#/edit/${row.id}/2`
     },
     handleViewLog(row) {
       window.location.href = `/#/log/${row.id}`
@@ -176,17 +228,22 @@ export default {
       })
     },
     handleStateChange(row) {
-      if (!row.state) {
-        this.deleteProject(row.id).then(res => {
-          this.$message.success('更新成功')
-          this.getProjects({ page: this.page, page_size: this.pageSize })
-        })
-      } else {
-        this.recoverProject(row.id).then(res => {
-          this.$message.success('更新成功')
-          this.getProjects({ page: this.page, page_size: this.pageSize })
-        })
+      this.changeStateDialog = true
+      this.newState = {
+        id: row.id,
+        state: row.state
       }
+    },
+    handleChangeState() {
+      this.stateLoading = true
+      this.updateState(this.newState.newState, this.newState.id).then(
+        res => {
+          this.$message.success('更新成功')
+          this.stateLoading = false
+          this.changeStateDialog = false
+          this.getProjects({ page: this.page, page_size: this.pageSize })
+        }
+      )
     }
   }
 }

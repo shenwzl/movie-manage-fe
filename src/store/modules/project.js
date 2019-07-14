@@ -10,7 +10,8 @@ import {
   deleteProject,
   recoverProject,
   searchProject,
-  exportProject
+  exportProject,
+  updateState
 } from '@/api/project'
 
 const state = {
@@ -130,6 +131,15 @@ const actions = {
       searchProject(data).then(res => {
         commit('SET_TOTAL', res.data.total)
         resolve(res.data.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  updateState({ commit }, state, id) {
+    return new Promise((resolve, reject) => {
+      updateState(state, id).then(res => {
+        resolve()
       }).catch(err => {
         reject(err)
       })
