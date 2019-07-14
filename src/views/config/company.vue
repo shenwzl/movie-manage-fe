@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createFeeDialog = true">创建费用项</el-button>
-    <el-table :data="fees">
+    <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建费用项</el-button>
+    <el-table :data="companys">
       <el-table-column prop="id" label="费用项id" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="type" label="类别">
@@ -33,32 +33,32 @@
     </el-table>
     <el-dialog
       :title="isEdit ? '编辑费用项' : '新增费用项'"
-      :visible.sync="createFeeDialog"
+      :visible.sync="createCompanyDialog"
     >
-      <el-form ref="createForm" :model="newFee" :rules="feeRules">
+      <el-form ref="createForm" :model="newCompany" :rules="feeRules">
         <el-form-item prop="name" label="名称" label-width="200px">
           <el-row>
             <el-col :span="10">
-              <el-input v-model="newFee.name" autocomplete="off" />
+              <el-input v-model="newCompany.name" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item prop="categoryType" label="类别" label-width="200px">
           <el-row>
             <el-col :span="10">
-              <el-select v-model="newFee.categoryType" autocomplete="off">
+              <el-select v-model="newCompany.categoryType" autocomplete="off">
                 <el-option label="一级" :value="1" />
                 <el-option label="二级" :value="2" />
               </el-select>
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item prop="parentCategoryId" v-if="newFee.categoryType === 2" label="父费用项" label-width="200px">
+        <el-form-item prop="parentCategoryId" v-if="newCompany.categoryType === 2" label="父费用项" label-width="200px">
           <el-row>
             <el-col :span="10">
-              <el-select v-model="newFee.parentCategoryId" autocomplete="off">
+              <el-select v-model="newCompany.parentCategoryId" autocomplete="off">
                 <el-option 
-                  v-for="fee in parentFees"
+                  v-for="fee in parentCompanys"
                   :key="fee.id"
                   :label="fee.name"
                   :value="fee.id"
@@ -70,7 +70,7 @@
         <el-form-item prop="stage" label="阶段" label-width="200px">
           <el-row>
             <el-col :span="10">
-              <el-select v-model="newFee.stage" autocomplete="off">
+              <el-select v-model="newCompany.stage" autocomplete="off">
                 <el-option label="拍摄" :value="1" />
                 <el-option label="后期" :value="2" />
               </el-select>
@@ -79,8 +79,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="createFeeDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="createLoading" @click="createFee">确 定</el-button>
+        <el-button @click="createCompanyDialog = false">取 消</el-button>
+        <el-button type="primary" :loading="createLoading" @click="createCompany">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -97,13 +97,13 @@ import { hasPermission } from '@/utils/auth'
 export default {
   data: function() {
     return {
-      newFee: {
+      newCompany: {
         name: '',
         stage: '',
         categoryType: '',
         parentCategoryId: ''
       },
-      createFeeDialog: false,
+      createCompanyDialog: false,
       permissionDialog: false,
       permissionInfo: 0,
       page: 1,
@@ -119,17 +119,17 @@ export default {
     }
   },
   filters: {
-    getParent(parentId, fees) {
+    getParent(parentId, companys) {
       if (parentId) {
-        const parentFee = fees.filter(fee => fee.id === parentId)
-        return parentFee[0].name
+        const parentCompany = companys.filter(fee => fee.id === parentId)
+        return parentCompany[0].name
       }
       return ''
     }
   },
   computed: {
-    ...mapGetters(['fees', 'total', 'feeCategories']),
-    parentFees() {
+    ...mapGetters(['companys', 'total', 'feeCategories']),
+    parentCompanys() {
       return this.feeCategories.filter(fee => fee.categoryType === 1)
     },
     canEdit() {
@@ -137,34 +137,34 @@ export default {
     }
   },
   beforeMount() {
-    this.getFeeCategories({ state: 2, category_type: 1 }).then(res => {
-      this.getFees({ page: this.page, pageSize: this.pageSize })
+    this.getCompanyCategories({ state: 2, category_type: 1 }).then(res => {
+      this.getCompanys({ page: this.page, pageSize: this.pageSize })
     })
   },
   methods: {
     ...mapActions([
-      'getFees',
-      'addFee',
-      'deleteFee',
-      'recoverFee',
-      'getFeeCategories'
+      'getCompanys',
+      'addCompany',
+      'deleteCompany',
+      'recoverCompany',
+      'getCompanyCategories'
     ]),
     handleChange(row) {
-      this.newFee = row
+      this.newCompany = row
       this.isEdit = true
-      this.createFeeDialog = true
+      this.createCompanyDialog = true
     },
     setPermission() {
     },
-    createFee() {
+    createCompany() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addFee(this.newFee).then(res => {
-            this.getFees({ page: this.page, pageSize: this.pageSize })
-            this.createFeeDialog = false
+          this.addCompany(this.newCompany).then(res => {
+            this.getCompanys({ page: this.page, pageSize: this.pageSize })
+            this.createCompanyDialog = false
             this.createLoading = false
-            this.newFee = {}
+            this.newCompany = {}
             this.$message.success(this.isEdit ? '更新成功' : '添加成功')
             this.isEdit = false
           })
@@ -173,18 +173,18 @@ export default {
     },
     handlePageChange(page) {
       this.page = page
-      this.getFees({ page: this.page, pageSize: this.pageSize })
+      this.getCompanys({ page: this.page, pageSize: this.pageSize })
     },
     handleStateChange(row) {
       if (!row.state) {
-        this.deleteFee(row.id).then(res => {
+        this.deleteCompany(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getFees({ page: this.page, pageSize: this.pageSize })
+          this.getCompanys({ page: this.page, pageSize: this.pageSize })
         })
       } else {
-        this.recoverFee(row.id).then(res => {
+        this.recoverCompany(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getFees({ page: this.page, pageSize: this.pageSize })
+          this.getCompanys({ page: this.page, pageSize: this.pageSize })
         })
       }
     }

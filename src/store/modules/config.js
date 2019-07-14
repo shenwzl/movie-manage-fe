@@ -14,7 +14,11 @@ import {
   recoverStaff,
   recoverFee,
   recoverProvider,
-  recoverContract
+  recoverContract,
+  getCompanys,
+  addCompany,
+  deleteCompany,
+  recoverCpmpany
 } from '@/api/config'
 
 const state = {
@@ -22,10 +26,7 @@ const state = {
   providers: [],
   fees: [],
   contracts: [],
-  staffTotal: 0,
-  providerTotal: 0,
-  feeTotal: 0,
-  contractTotal: 0
+  companys: []
 }
 
 const mutations = {
@@ -41,6 +42,9 @@ const mutations = {
   },
   SET_CONTRACTS: (state, contracts) => {
     state.contracts = contracts
+  },
+  SET_COMPANYS: (state, companys) => {
+    state.companys = companys
   }
 }
 
@@ -80,6 +84,45 @@ const actions = {
   recoverStaff({ commit }, staffId) {
     return new Promise((resolve, reject) => {
       recoverStaff(staffId).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  getCompanys({ commit }, pageConfig) {
+    const { page, pageSize } = pageConfig
+    return new Promise((resolve, reject) => {
+      getCompanys({ page, page_size: pageSize }).then(res => {
+        commit('SET_COMPANYS', res.data.data)
+        commit('SET_TOTAL', res.data.total, { root: true })
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  deleteCompany({ commit }, cId) {
+    return new Promise((resolve, reject) => {
+      deleteCompany(cId).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  addCompany({ commit }, company) {
+    return new Promise((resolve, reject) => {
+      addCompany(company).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  recoverContract({ commit }, cId) {
+    return new Promise((resolve, reject) => {
+      recoverCpmpany(cId).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

@@ -74,3 +74,19 @@ export function saveLastStateInfo(data, pId) {
     data
   })
 }
+
+export function searchProject(data) {
+  return request({
+    url: '/project_search',
+    method: 'post',
+    data
+  })
+}
+
+export function exportProject(params) {
+  return request({
+    url: '/project_search/export',
+    method: 'get',
+    params
+  })
+}

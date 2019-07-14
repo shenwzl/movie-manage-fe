@@ -122,6 +122,13 @@ export const constantRoutes = [
         name: '费用项管理',
         hidden: !hasPermission('fee_category', 'view'),
         meta: { title: '费用项管理', icon: 'guide', noCache: true, name: 'fee_category' }
+      },
+      {
+        path: 'company',
+        component: () => import('@/views/config/company'),
+        name: '所属公司管理',
+        hidden: !hasPermission('company', 'view'),
+        meta: { title: '所属公司管理', icon: 'guide', noCache: true, name: 'staff' }
       }
     ]
   },

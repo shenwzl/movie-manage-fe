@@ -27,7 +27,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ email: email.trim(), password: password }).then(response => {
         const { data } = response
-        console.log(response)
         commit('SET_TOKEN', data.authCode)
         commit('SET_PERMISSION', data.permissions, { root: true })
         setToken(data.authCode)

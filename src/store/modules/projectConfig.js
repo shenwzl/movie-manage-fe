@@ -27,7 +27,6 @@ const mutations = {
     state.allProviders = providers
   },
   SET_STAFFS: (state, staffs) => {
-    console.log(staffs, '123')
     state.allStaffs = staffs
   },
   SET_MEMBERTYPES: (state, memberTypes) => {
@@ -43,7 +42,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getFeeCategories(data).then(res => {
         commit('SET_FEECATEGORIES', res.data)
-        resolve()
+        resolve(res.data)
       }).catch(err => {
         reject(err)
       })

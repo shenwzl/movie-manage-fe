@@ -19,7 +19,7 @@
           <span style="margin-left: 10px">{{ scope.row.contractSubjectId | getContractsName(contractSubjects) }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="canChangeState || canView || canEdit" label="操作">
+      <el-table-column v-if="canChangeState || canViewLog || canEdit" label="操作">
         <template slot-scope="scope">
           <el-button type="text" v-if="canEdit" @click="handleChangeProject(scope.row)">修改</el-button>
           <el-button type="text" v-if="canChangeState" @click="handleStateChange(scope.row)">{{ scope.row.state === 0 ? '禁用' : '恢复' }}</el-button>
@@ -78,7 +78,7 @@ export default {
           staffId: 0
         }]
       },
-      projectName: {
+      projectRules: {
         name: [{ required: true, message: '名称不能为空' }]
       }
     }
@@ -93,7 +93,6 @@ export default {
     ]),
     // 内部员工
     insideStaffs() {
-      console.log(this.allStaffs.filter(staff => staff.ascription === 1))
       return this.allStaffs.filter(staff => staff.ascription === 1)
     },
     // 外部员工

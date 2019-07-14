@@ -8,10 +8,6 @@ import {
   updatePermission
 } from '@/api/permission'
 
-import { constantRoutes } from '@/router'
-
-function hasPermission() {}
-
 const state = {
   roles: [],
   permissions: [],

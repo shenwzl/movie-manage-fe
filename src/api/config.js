@@ -30,6 +30,36 @@ export function recoverStaff(staffId) {
   })
 }
 
+export function getCompanys(params = {}) {
+  return request({
+    url: '/customer_company',
+    method: 'get',
+    params
+  })
+}
+
+export function deleteCompany(cId) {
+  return request({
+    url: `/customer_company/${cId}`,
+    method: 'delete'
+  })
+}
+
+export function addSCompany(data) {
+  return request({
+    url: '/customer_company',
+    method: 'post',
+    data
+  })
+}
+
+export function recoverCompany(cId) {
+  return request({
+    url: `/customer_company/${cId}/recover`,
+    method: 'put'
+  })
+}
+
 export function getFees(params = {}) {
   return request({
     url: '/fee_categories',

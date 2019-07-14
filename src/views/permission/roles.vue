@@ -94,7 +94,7 @@ export default {
   },
   beforeMount() {
     this.getRoles({ page: this.page, pageSize: this.pageSize })
-    this.getAllPermissions().then(res => console.log(this.allPermissions))
+    this.getAllPermissions()
   },
   methods: {
     ...mapActions([

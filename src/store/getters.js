@@ -10,6 +10,7 @@ const getters = {
   staffs: state => state.config.staffs,
   fees: state => state.config.fees,
   contracts: state => state.config.contracts,
+  companys: state => state.config.companys,
   roles: state => state.permission.roles,
   allRoles: state => state.permission.allRoles,
   permissions: state => state.permission.permissions,

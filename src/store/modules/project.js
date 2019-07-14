@@ -8,7 +8,9 @@ import {
   getLastStateInfo,
   saveLastStateInfo,
   deleteProject,
-  recoverProject
+  recoverProject,
+  searchProject,
+  exportProject
 } from '@/api/project'
 
 const state = {
@@ -117,6 +119,25 @@ const actions = {
   saveLastStateInfo({ commit }, data) {
     return new Promise((resolve, reject) => {
       saveLastStateInfo(data.lastStateInfo, data.pId).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  searchProject({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      searchProject(data).then(res => {
+        commit('SET_TOTAL', res.data.total)
+        resolve(res.data.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  exportProject({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      exportProject(data).then(res => {
         resolve()
       }).catch(err => {
         reject(err)
