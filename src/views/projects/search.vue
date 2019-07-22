@@ -22,6 +22,30 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+          <el-form-item label="所属公司" label-width="120px">
+            <el-select filterable v-model="searchInfo.companyId" style="width: 216px;">
+              <el-option 
+                v-for="company in parentCompanys"
+                :key="company.id"
+                :value="company.id"
+                :label="company.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="所属子公司" label-width="120px">
+            <el-select filterable v-model="searchInfo.companyChildId" style="width: 216px;">
+              <el-option 
+                v-for="company in childCompanys"
+                :key="company.id"
+                :value="company.id"
+                :label="company.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="项目合同金额" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.contractAmountStart"></el-input-number>
             ~
@@ -65,7 +89,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="导演" label-width="120px">
-            <el-select style="width: 216px;" v-model="searchInfo.directorList" collapse-tags @change="onDirectorChange" multiple>
+            <el-select filterable style="width: 216px;" v-model="searchInfo.directorList" collapse-tags @change="onDirectorChange" multiple>
               <el-option :value="0" label="全部"></el-option>
               <el-option v-for="staff in allStaffs" :key="staff.id" :value="staff.id" :label="staff.name" />
             </el-select>
@@ -73,7 +97,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="制作人" label-width="120px">
-            <el-select style="width: 216px;" v-model="searchInfo.producerList" collapse-tags @change="onProducerChange" multiple>
+            <el-select filterable style="width: 216px;" v-model="searchInfo.producerList" collapse-tags @change="onProducerChange" multiple>
               <el-option :value="0" label="全部"></el-option>
               <el-option v-for="staff in allStaffs" :key="staff.id" :value="staff.id" :label="staff.name" />
             </el-select>
@@ -81,7 +105,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="费用" label-width="120px">
-            <el-select style="width: 216px;" v-model="selectedFee" collapse-tags @change="onFeeChange" multiple>
+            <el-select filterable style="width: 216px;" v-model="selectedFee" collapse-tags @change="onFeeChange" multiple>
               <el-option :value="0" label="全部"></el-option>
               <el-option v-for="item in feeCategories" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
@@ -113,6 +137,11 @@
         </el-table-column>
         <el-table-column prop="childBudgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="childRealAmount" label="实际金额"></el-table-column>
+      </el-table-column>
+      <el-table-column label="供应商" prop="provider">
+        <template scope="scope">
+          {{ scope.row.providerId | getProviderName(allProviders) }}
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -146,11 +175,19 @@ export default {
   computed: {
     ...mapGetters([
       'allStaffs',
+      'allProviders',
       'feeCategories',
+      'allCompanys',
       'total'
     ]),
     firstFees() {
       return this.feeCategories.filter(fee => fee.categoryType === 1)
+    },
+    parentCompanys() {
+      return this.allCompanys.filter(company => company.companyType === 1)
+    },
+    childCompanys() {
+      return this.allCompanys.filter(company => company.companyType === 2)
     }
   },
   filters: {
@@ -160,10 +197,19 @@ export default {
         return fee[0].name
       }
       return ''
+    },
+    getProviderName(id, allProviders) {
+      if (id) {
+        let provider = allProviders.filter(provider => provider.id === id)
+        return provider[0].name
+      }
+      return ''
     }
   },
   beforeMount() {
     this.getAllStaffs()
+    this.getAllProviders()
+    this.getAllCompanys()
     this.getFeeCategories().then(res => {
       const firstFees = res[1].filter(fee => fee.categoryType === 1)
       this.feeGroups = firstFees.map(firstFee => {
@@ -185,6 +231,8 @@ export default {
   methods: {
     ...mapActions([
       'getAllStaffs',
+      'getAllProviders',
+      'getAllCompanys',
       'getFeeCategories',
       'searchProject',
       'exportProject'

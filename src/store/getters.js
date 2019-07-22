@@ -19,6 +19,7 @@ const getters = {
   feeCategories: state => state.projectConfig.feeCategories,
   allProviders: state => state.projectConfig.allProviders,
   allStaffs: state => state.projectConfig.allStaffs,
+  allCompanys: state => state.projectConfig.allCompanys,
   contractSubjects: state => state.projectConfig.contractSubjects,
   memberTypes: state => state.projectConfig.memberTypes,
   projectState: state => state.projectConfig.projectState,

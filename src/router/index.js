@@ -50,7 +50,7 @@ export const constantRoutes = [
     redirect: '/',
     meta: {
       title: '项目管理',
-      icon: 'chart'
+      icon: 'el-icon-setting'
     },
     children: [
       {
@@ -75,7 +75,7 @@ export const constantRoutes = [
         hidden: true
       },
       {
-        path: 'detail/:projectId',
+        path: 'detail/:projectId/:step',
         component: () => import('@/views/projects/detail'),
         meta: { title: '查看', icon: 'dashboard' },
         hidden: true

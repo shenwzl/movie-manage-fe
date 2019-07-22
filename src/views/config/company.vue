@@ -2,21 +2,16 @@
   <div class="app-container">
     <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建费用项</el-button>
     <el-table :data="companys">
-      <el-table-column prop="id" label="费用项id" />
+      <el-table-column prop="id" label="公司id" />
       <el-table-column prop="name" label="名称" />
-      <el-table-column prop="type" label="类别">
+      <el-table-column prop="companyType" label="类别">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.categoryType === 1 ? '一级' : '二级' }}</span>
+          <span style="margin-left: 10px">{{ scope.row.companyType === 1 ? '一级' : '二级' }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="parent" label="父费用项">
+      <el-table-column prop="parent" label="父公司">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.parentCategoryId | getParent(feeCategories) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="stage" label="费用阶段">
-        <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.stage === 1 ? '拍摄' : '后期' }}</span>
+          <span style="margin-left: 10px">{{ scope.row.parentCompanyId | getParent(allCompanys) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="state" label="状态">
@@ -32,10 +27,10 @@
       </el-table-column>
     </el-table>
     <el-dialog
-      :title="isEdit ? '编辑费用项' : '新增费用项'"
+      :title="isEdit ? '编辑公司' : '新增公司'"
       :visible.sync="createCompanyDialog"
     >
-      <el-form ref="createForm" :model="newCompany" :rules="feeRules">
+      <el-form ref="createForm" :model="newCompany" :rules="companyRules">
         <el-form-item prop="name" label="名称" label-width="200px">
           <el-row>
             <el-col :span="10">
@@ -43,36 +38,26 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item prop="categoryType" label="类别" label-width="200px">
+        <el-form-item prop="companyType" label="类别" label-width="200px">
           <el-row>
             <el-col :span="10">
-              <el-select v-model="newCompany.categoryType" autocomplete="off">
+              <el-select v-model="newCompany.companyType" autocomplete="off">
                 <el-option label="一级" :value="1" />
                 <el-option label="二级" :value="2" />
               </el-select>
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item prop="parentCategoryId" v-if="newCompany.categoryType === 2" label="父费用项" label-width="200px">
+        <el-form-item prop="parentCompanyId" v-if="newCompany.parentCompanyId === 2" label="父公司" label-width="200px">
           <el-row>
             <el-col :span="10">
-              <el-select v-model="newCompany.parentCategoryId" autocomplete="off">
+              <el-select v-model="newCompany.parentCompanyId" autocomplete="off">
                 <el-option 
-                  v-for="fee in parentCompanys"
-                  :key="fee.id"
-                  :label="fee.name"
-                  :value="fee.id"
+                  v-for="company in parentCompanys"
+                  :key="company.id"
+                  :label="company.name"
+                  :value="company.id"
                 />
-              </el-select>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item prop="stage" label="阶段" label-width="200px">
-          <el-row>
-            <el-col :span="10">
-              <el-select v-model="newCompany.stage" autocomplete="off">
-                <el-option label="拍摄" :value="1" />
-                <el-option label="后期" :value="2" />
               </el-select>
             </el-col>
           </el-row>
@@ -110,11 +95,10 @@ export default {
       pageSize: 10,
       isEdit: false,
       createLoading: false,
-      feeRules: {
+      company: {
         name: [{ required: true, message: '名称不能为空' }],
-        categoryType: [{ required: true, message: '类别不能为空' }],
-        parentCategoryId: [{ required: true, message: '父费用项不能为空' }],
-        stage: [{ required: true, message: '阶段不能为空' }]
+        companyType: [{ required: true, message: '类别不能为空' }],
+        parentCampanyId: [{ required: true, message: '父公司不能为空' }],
       }
     }
   },
@@ -128,18 +112,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['companys', 'total', 'feeCategories']),
+    ...mapGetters(['companys', 'total', 'allCompanys']),
     parentCompanys() {
-      return this.feeCategories.filter(fee => fee.categoryType === 1)
+      return this.allCompanys.filter(company => fee.companyType === 1)
     },
     canEdit() {
-      return hasPermission('fee_category', 'manage')
+      return hasPermission('company', 'manage')
     }
   },
   beforeMount() {
-    this.getCompanyCategories({ state: 2, category_type: 1 }).then(res => {
-      this.getCompanys({ page: this.page, pageSize: this.pageSize })
-    })
+    this.getAllCompanys()
+    this.getCompanys({ page: this.page, pageSize: this.pageSize })
   },
   methods: {
     ...mapActions([
@@ -147,7 +130,7 @@ export default {
       'addCompany',
       'deleteCompany',
       'recoverCompany',
-      'getCompanyCategories'
+      'getAllCompanys'
     ]),
     handleChange(row) {
       this.newCompany = row

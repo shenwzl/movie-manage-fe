@@ -3,10 +3,6 @@
     <el-button v-if="canCreate" type="primary" @click="createDialog = true">创建新项目</el-button>
     <el-table :data="projects">
       <el-table-column prop="id" label="项目编号">
-        <template slot-scope="scope">
-          <a v-if="canView" style="color: #409EFF;" :href="'/#/detail/' + scope.row.id">{{ scope.row.id }}</a>
-          <span v-else>{{ scope.row.id }}</span>
-        </template>
       </el-table-column>
       <el-table-column prop="name" label="项目名称" />
       <el-table-column prop="state" label="项目执行状态" width="150">
@@ -23,6 +19,9 @@
         <template slot-scope="scope">
           <el-button type="text" v-if="canChangeState" @click="handleStateChange(scope.row)">修改状态</el-button>
           <el-button type="text" v-if="canViewLog" @click="handleViewLog(scope.row)">查看日志</el-button>        
+          <el-button type="text" v-if="canViewBaseInfo" @click="handleViewBase(scope.row)">查看基本信息</el-button>        
+          <el-button type="text" v-if="canViewShootingInfo" @click="handleViewShooting(scope.row)">查看拍摄费用</el-button>        
+          <el-button type="text" v-if="canViewLastInfo" @click="handleViewLast(scope.row)">查看后期费用</el-button>        
           <el-button type="text" v-if="canEditBaseInfo" @click="handleChangeBase(scope.row)">编辑基本信息</el-button>        
           <el-button type="text" v-if="canEditShootingInfo" @click="handleChangeShooting(scope.row)">编辑拍摄费用</el-button>        
           <el-button type="text" v-if="canEditLastInfo" @click="handleChangeLast(scope.row)">编辑后期费用</el-button>        
@@ -149,6 +148,15 @@ export default {
     },
     canEditLastInfo() {
       return hasPermission('project_last_state_info', 'manage')
+    },
+    canViewBaseInfo() {
+      return hasPermission('project_base_info', 'view')
+    },
+    canViewShootingInfo() {
+      return hasPermission('project_shooting_info', 'view')
+    },
+    canViewLastInfo() {
+      return hasPermission('project_last_state_info', 'view')
     }
   },
   filters: {
@@ -207,11 +215,20 @@ export default {
     handleChangeBase(row) {
       window.location.href = `/#/edit/${row.id}/1`
     },
+    handleViewBase(row) {
+      window.location.href = `/#/detail/${row.id}/1`
+    },
     handleChangeShooting(row) {
       window.location.href = `/#/edit/${row.id}/2`
     },
+    handleViewShooting(row) {
+      window.location.href = `/#/detail/${row.id}/2`
+    },
     handleChangeLast(row) {
       window.location.href = `/#/edit/${row.id}/3`
+    },
+    handleViewLast(row) {
+      window.location.href = `/#/detail/${row.id}/3`
     },
     handleViewLog(row) {
       window.location.href = `/#/log/${row.id}`

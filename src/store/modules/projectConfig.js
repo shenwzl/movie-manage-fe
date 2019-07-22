@@ -4,7 +4,8 @@ import {
   getProviders,
   getStaffs,
   getMemberTypes,
-  getProjectState
+  getProjectState,
+  getCompanys
 } from '@/api/projectConfig'
 
 const state = {
@@ -12,6 +13,7 @@ const state = {
   contractSubjects: [],
   allProviders: [],
   allStaffs: [],
+  allCompanys: [],
   memberTypes: [],
   projectState: []
 }
@@ -34,6 +36,9 @@ const mutations = {
   },
   SET_PROJECTSTATE: (state, projectState) => {
     state.projectState = projectState
+  },
+  SET_COMPANYS: (state, companys) => {
+    state.allCompanys = companys
   }
 }
 
@@ -42,6 +47,16 @@ const actions = {
     return new Promise((resolve, reject) => {
       getFeeCategories(data).then(res => {
         commit('SET_FEECATEGORIES', res.data)
+        resolve(res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  getAllCompanys({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      getCompanys(data).then(res => {
+        commit('SET_COMPANYS', res.data)
         resolve(res.data)
       }).catch(err => {
         reject(err)

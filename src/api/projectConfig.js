@@ -16,6 +16,14 @@ export function getContracts(params) {
   })
 }
 
+export function getCompanys(params) {
+  return request({
+    url: '/configs/companys',
+    method: 'get',
+    params
+  })
+}
+
 export function getProviders(params) {
   return request({
     url: '/configs/providers',

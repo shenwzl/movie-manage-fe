@@ -162,6 +162,42 @@
     <el-button class="save-button" v-if="step === '2'" type="primary" :loading="editLoading" @click="editShootingInfo">保存</el-button>
     <el-button class="add-button" v-if="step === '3'" @click="addLastInfo">添加费用</el-button>
     <el-button class="save-button" v-if="step === '3'" type="primary" :loading="editLoading" @click="editLastStateInfo">保存</el-button>
+    <el-button v-if="canAddStaff && step === '1'" class="add-new" @click="createStaffDialog = true" type="primary">新增员工</el-button>
+    <el-dialog
+      title="新增员工"
+      :visible.sync="createStaffDialog"
+    >
+      <el-form ref="createForm" :model="newStaff" :rules="staffRules">
+        <el-form-item prop="name" label="姓名" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="newStaff.name" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item prop="cellphone" label="电话" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="newStaff.cellphone" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item prop="ascription" label="员工类型" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-select v-model="newStaff.ascription" autocomplete="off">
+                <el-option label="内部员工" :value="1" />
+                <el-option label="外部员工" :value="2" />
+              </el-select>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="createStaffDialog = false">取 消</el-button>
+        <el-button type="primary" :loading="createLoading" @click="createStaff">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -173,6 +209,7 @@ export default {
   name: 'Dashboard',
   data: function() {
     return {
+      createLoading: false,
       editLoading: false,
       baseInfo: {
         name: '',
@@ -207,7 +244,18 @@ export default {
         budgetAmount: [{ required: true, message: '预算金额不能为空' }],
         realAmount: [{ required: true, message: '实际金额为空' }],
         rankScore: [{ required: true, message: '评分不能为空' }]
-      }
+      },
+      newStaff: {
+        name: '',
+        cellphone: '',
+        ascription: ''
+      },
+      staffRules: {
+        name: [{ required: true, message: '名称不能为空' }],
+        cellphone: [{ required: true, message: '电话不能为空' }],
+        ascription: [{ required: true, message: '员工类型不能为空' }],
+      },
+      createStaffDialog: false,
     }
   },
   computed: {
@@ -239,6 +287,9 @@ export default {
     },
     step() {
       return this.$route.params.step
+    },
+    canAddStaff() {
+      return hasPermission('staff', 'manage')
     }
   },
   beforeMount() {
@@ -276,7 +327,8 @@ export default {
       'getShootingInfo',
       'saveShootingInfo',
       'getLastStateInfo',
-      'saveLastStateInfo'
+      'saveLastStateInfo',
+      'addStaff'
     ]),
     editProject() {
       this.$refs.baseInfoForm.validate(valid => {
@@ -327,6 +379,20 @@ export default {
             this.$message.success('更新成功')
             this.editLoading = false
             window.location.href = '/#/'
+          })
+        }
+      })
+    },
+    createStaff() {
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.createLoading = true
+          this.addStaff(this.newStaff).then(res => {
+            this.createStaffDialog = false
+            this.createLoading = false
+            this.$message.success('添加成功')
+            this.newStaff = {}
+            this.getAllStaffs()
           })
         }
       })
@@ -390,5 +456,10 @@ export default {
 .add-button {
   margin-top: 20px;
   margin-left: 20px;
+}
+.add-new {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
 }
 </style>

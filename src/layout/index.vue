@@ -13,6 +13,8 @@
 
 <script>
 import { Navbar, Sidebar, AppMain } from './components'
+import { mapActions } from 'vuex'
+import {hasPermission}    from '@/utils/auth'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -40,9 +42,13 @@ export default {
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
       }
+    },
+    canAdd() {
+      return hasPermission('staff', 'manage')
     }
   },
   methods: {
+    ...mapActions(['addStaff']),
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     }
@@ -89,5 +95,10 @@ export default {
 
   .mobile .fixed-header {
     width: 100%;
+  }
+  .add-new {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
   }
 </style>

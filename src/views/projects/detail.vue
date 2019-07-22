@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="base-info" v-if="canViewBaseInfo">
+    <div class="base-info" v-if="step === '1'">
       <h3>基本信息</h3>
       <el-row>
         <el-col :span="8">
@@ -37,7 +37,7 @@
       </el-row>
       <div class="divider"></div>
     </div>
-    <div class="shooting-info" v-if="canViewShootingInfo">
+    <div class="shooting-info" v-if="step === '2'">
       <h3>拍摄费用</h3>
       <div v-for="sInfo in shootingInfo" :key="sInfo.key">
         <el-row >
@@ -51,7 +51,7 @@
         <div class="divider"></div>
       </div>
     </div>
-    <div class="last-info" v-if="canViewLastInfo">
+    <div class="last-info" v-if="step === '3'">
       <h3>后期费用</h3>
       <div v-for="sInfo in lastStateInfo" :key="sInfo.key">
         <el-row >
@@ -118,6 +118,9 @@ export default {
     },
     pId() {
       return this.$route.params.projectId
+    },
+    step() {
+      return this.$route.params.step
     },
     canViewBaseInfo() {
       return hasPermission('project_base_info', 'view')
