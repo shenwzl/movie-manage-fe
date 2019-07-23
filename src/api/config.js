@@ -45,7 +45,7 @@ export function deleteCompany(cId) {
   })
 }
 
-export function addSCompany(data) {
+export function addCompany(data) {
   return request({
     url: '/customer_company',
     method: 'post',

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建费用项</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建公司</el-button>
     <el-table :data="companys">
       <el-table-column prop="id" label="公司id" />
       <el-table-column prop="name" label="名称" />
@@ -48,7 +48,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item prop="parentCompanyId" v-if="newCompany.parentCompanyId === 2" label="父公司" label-width="200px">
+        <el-form-item prop="parentCompanyId" v-if="newCompany.companyType === 2" label="父公司" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-select v-model="newCompany.parentCompanyId" autocomplete="off">
@@ -95,7 +95,7 @@ export default {
       pageSize: 10,
       isEdit: false,
       createLoading: false,
-      company: {
+      companyRules: {
         name: [{ required: true, message: '名称不能为空' }],
         companyType: [{ required: true, message: '类别不能为空' }],
         parentCampanyId: [{ required: true, message: '父公司不能为空' }],
@@ -114,10 +114,10 @@ export default {
   computed: {
     ...mapGetters(['companys', 'total', 'allCompanys']),
     parentCompanys() {
-      return this.allCompanys.filter(company => fee.companyType === 1)
+      return this.allCompanys.filter(company => company.companyType === 1)
     },
     canEdit() {
-      return hasPermission('company', 'manage')
+      return hasPermission('customer_company', 'manage')
     }
   },
   beforeMount() {

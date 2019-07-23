@@ -18,7 +18,7 @@ import {
   getCompanys,
   addCompany,
   deleteCompany,
-  recoverCpmpany
+  recoverCompany
 } from '@/api/config'
 
 const state = {
@@ -112,6 +112,7 @@ const actions = {
     })
   },
   addCompany({ commit }, company) {
+    console.log(company)
     return new Promise((resolve, reject) => {
       addCompany(company).then(res => {
         resolve()
@@ -120,9 +121,9 @@ const actions = {
       })
     })
   },
-  recoverContract({ commit }, cId) {
+  recoverCompany({ commit }, cId) {
     return new Promise((resolve, reject) => {
-      recoverCpmpany(cId).then(res => {
+      recoverCompany(cId).then(res => {
         resolve()
       }).catch(err => {
         reject(err)
