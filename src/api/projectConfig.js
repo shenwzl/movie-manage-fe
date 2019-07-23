@@ -18,7 +18,7 @@ export function getContracts(params) {
 
 export function getCompanys(params) {
   return request({
-    url: '/configs/companys',
+    url: '/configs/customer_companies',
     method: 'get',
     params
   })
