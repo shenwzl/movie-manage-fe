@@ -46,9 +46,9 @@ const actions = {
   },
   // 创建新用户
   addUser({ commit }, userInfo) {
-    const { email, password } = userInfo
+    const { email, password, cellphone, name } = userInfo
     return new Promise((resolve, reject) => {
-      createUser({ email, password }).then(res => {
+      createUser({ email, password, cellphone, name }).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

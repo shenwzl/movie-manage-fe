@@ -26,6 +26,20 @@
             </el-col>
           </el-row>
         </el-form-item>
+        <el-form-item prop="name" label="用户名" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="newUser.name" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item prop="cellphone" label="电话" label-width="200px">
+          <el-row>
+            <el-col :span="10">
+              <el-input v-model="newUser.cellphone" autocomplete="off" />
+            </el-col>
+          </el-row>
+        </el-form-item>
         <el-form-item prop="password" label="密码" label-width="200px">
           <el-row>
             <el-col :span="10">
@@ -106,7 +120,9 @@ export default {
       choosenUser: 0,
       newUserRules: {
         email: [{ required: true, trigger: 'blur', type: 'email', message: '邮箱格式错误' }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        name: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
+        cellphone: [{ required: true, trigger: 'blur', message: '电话不能为空' }]
       },
       resetRules: {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]

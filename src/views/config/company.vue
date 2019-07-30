@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建公司</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建客户公司</el-button>
     <el-table :data="companys">
-      <el-table-column prop="id" label="公司id" />
+      <el-table-column prop="id" label="客户公司id" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="companyType" label="类别">
         <template slot-scope="scope">
@@ -27,7 +27,7 @@
       </el-table-column>
     </el-table>
     <el-dialog
-      :title="isEdit ? '编辑公司' : '新增公司'"
+      :title="isEdit ? '编辑客户公司' : '新增客户公司'"
       :visible.sync="createCompanyDialog"
     >
       <el-form ref="createForm" :model="newCompany" :rules="companyRules">

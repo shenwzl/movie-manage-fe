@@ -23,6 +23,13 @@ export function createRole(data) {
   })
 }
 
+export function getRolePermission(id) {
+  return request({
+    url: `/roles/${id}/permissions`,
+    method: 'get'
+  })
+}
+
 export function updatePermission(data, roleId) {
   return request({
     url: `/roles/${roleId}/update_permission`,

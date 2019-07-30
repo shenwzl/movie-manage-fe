@@ -101,12 +101,16 @@ export default {
       'getRoles',
       'addRole',
       'getAllPermissions',
+      'getRolePermission',
       'updatePermission'
     ]),
     handleChange(row) {
-      this.newRole = row
-      this.isEdit = true
-      this.createRoleDialog = true
+      this.getRolePermission(row.id).then(res => {
+        this.newRole = row
+        this.isEdit = true
+        this.createRoleDialog = true
+        this.checkedPermissions = res.data.map(item => item.id)
+      })
     },
     setPermission() {
     },

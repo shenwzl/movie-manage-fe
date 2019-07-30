@@ -126,9 +126,9 @@ export const constantRoutes = [
       {
         path: 'company',
         component: () => import('@/views/config/company'),
-        name: '所属公司管理',
+        name: '客户公司',
         hidden: !hasPermission('customer_company', 'view'),
-        meta: { title: '所属公司管理', icon: 'guide', noCache: true, name: 'staff' }
+        meta: { title: '客户公司', icon: 'guide', noCache: true, name: 'staff' }
       }
     ]
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createStaffDialog = true">创建新员工</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createStaffDialog = true; newStaff = {}">创建新员工</el-button>
     <el-table :data="staffs">
       <el-table-column prop="id" label="员工id" />
       <el-table-column prop="name" label="姓名" />

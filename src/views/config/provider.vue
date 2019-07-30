@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createProviderDialog = true">创建新供应商</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createProviderDialog = true; newProvider={};">创建新供应商</el-button>
     <el-table :data="providers">
       <el-table-column prop="id" label="供应商id" />
       <el-table-column prop="name" label="姓名" />

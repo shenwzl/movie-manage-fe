@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createContractDialog = true">创建新合同主体</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createContractDialog = true;newContract= {}">创建新合同主体</el-button>
     <el-table :data="contracts">
       <el-table-column prop="id" label="合同id" />
       <el-table-column prop="name" label="名称" />

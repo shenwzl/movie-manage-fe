@@ -5,7 +5,8 @@ import {
   getPermissions,
   getAllPermissions,
   createPermission,
-  updatePermission
+  updatePermission,
+  getRolePermission
 } from '@/api/permission'
 
 const state = {
@@ -68,6 +69,13 @@ const actions = {
         resolve()
       }).catch(err => {
         reject(err)
+      })
+    })
+  },
+  getRolePermission({ commit }, id) {
+    return new Promise((resolve, reject) => {
+      getRolePermission(id).then(res => {
+        resolve(res)
       })
     })
   },

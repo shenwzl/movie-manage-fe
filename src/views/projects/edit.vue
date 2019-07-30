@@ -99,6 +99,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
+             <el-form-item :prop="'shootingInfo.' + i + '.providerId'" :rules="{ required: true, message: '供应商不能为空' }" label="供应商" label-width="120px">
+             <el-select v-model="sInfo.providerId" style="width: 180px;" width="200" autocomplete="off">
+                <el-option v-for="provider in allProviders" :key="provider.id" :value="provider.id" :label="provider.name" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
              <el-form-item :prop="'shootingInfo.' + i + '.rankScore'" label="评分" label-width="120px">
               <el-input-number v-model="sInfo.rankScore" controls-position="right"></el-input-number>
             </el-form-item>
@@ -141,6 +148,13 @@
           <el-col :span="10">
              <el-form-item :prop="'lastStateInfo.' + i + '.realAmount'" :rules="{ required: true, type: 'number', message: '实际金额必须为数字' }" label="实际金额" label-width="120px">
               <el-input-number v-model="sInfo.realAmount" controls-position="right" autocomplete="off" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+             <el-form-item :prop="'lastStateInfo.' + i + '.providerId'" :rules="{ required: true, message: '供应商不能为空' }" label="供应商" label-width="120px">
+             <el-select v-model="sInfo.providerId" style="width: 180px;" width="200" autocomplete="off">
+                <el-option v-for="provider in allProviders" :key="provider.id" :value="provider.id" :label="provider.name" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="10">
@@ -264,7 +278,7 @@ export default {
       'memberTypes',
       'allStaffs',
       'feeCategories',
-      'allProviders'
+      'allProviders',
     ]),
     // 内部员工
     insideStaffs() {
@@ -295,7 +309,7 @@ export default {
   beforeMount() {
     console.log(this.$route)
     this.getAllProviders()
-    this.getFeeCategories()
+    this.getFeeCategories().then(() => this.secondFees = this.feeCategories)
     this.getContractSubjects()
     this.getAllStaffs()
     this.getMemberTypes()
@@ -428,9 +442,6 @@ export default {
       this.lastStateInfo.push({})
     }
   },
-  mounted() {
-    this.secondFees = this.feeCategories
-  }
 }
 </script>
 
@@ -460,6 +471,6 @@ export default {
 .add-new {
   position: fixed;
   bottom: 40px;
-  right: 40px;
+  left: 230px;
 }
 </style>

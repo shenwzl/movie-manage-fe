@@ -91,10 +91,10 @@ export function searchProject(data) {
   })
 }
 
-export function exportProject(params) {
+export function exportProject(data) {
   return request({
     url: '/project_search/export',
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 }

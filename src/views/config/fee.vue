@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createFeeDialog = true">创建费用项</el-button>
+    <el-button type="primary" v-if="canEdit" @click="createFeeDialog = true; newFee = {};">创建费用项</el-button>
     <el-table :data="fees">
       <el-table-column prop="id" label="费用项id" />
       <el-table-column prop="name" label="名称" />
