@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-07 17:15:15
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-07-07 17:15:15
+ * @LastEditTime: 2019-08-10 20:54:54
  -->
 <template>
   <div class="app-container">
@@ -136,7 +136,11 @@
     </el-form>
     <el-table style="margin-top: 20px;" :data="searchList" :span-method="arraySpanMethod">
       <el-table-column prop="id" label="项目id" />
-      <el-table-column prop="name" label="项目名称" />
+      <el-table-column prop="name" label="项目名称">
+        <template scope="scope">
+          <a style="color: blue;" :href="'#/detail/' + scope.row.id">{{ scope.row.name }}</a>
+        </template>
+      </el-table-column>
       <el-table-column label="一级费用">
         <el-table-column prop="categoryId" label="费用名称">
         <template scope="scope">

@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:18
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 20:29:32
+ * @LastEditTime: 2019-08-11 00:17:51
  -->
 <template>
   <div class="dashboard-container">
@@ -20,7 +20,11 @@
       <h3>拍摄费用</h3>
       <el-table :data="shootingInfo" border :span-method="arraySpanMethod">
         <el-table-column prop="feeCategoryId" label="一级费用">
-          <template scope="scope">{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</template>
+          <template scope="scope">
+            <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
+            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(shootingInfo) }}</div>
+            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(shootingInfo) }}</div>
+          </template>
         </el-table-column>
         <el-table-column prop="feeChildCategoryId" label="二级费用">
           <template scope="scope">{{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}</template>
@@ -49,7 +53,11 @@
       <h3>后期费用</h3>
       <el-table :data="lastStateInfo" border :span-method="arraySpanMethod">
         <el-table-column prop="feeCategoryId" label="一级费用">
-          <template scope="scope">{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</template>
+          <template scope="scope">
+            <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
+            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(lastStateInfo) }}</div>
+            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(lastStateInfo) }}</div>
+          </template>
         </el-table-column>
         <el-table-column prop="feeChildCategoryId" label="二级费用">
           <template scope="scope">{{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}</template>
@@ -68,6 +76,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { hasPermission } from "@/utils/auth";
+import { reduce } from 'lodash'
 export default {
   name: "Dashboard",
   data: function() {
@@ -181,14 +190,36 @@ export default {
     });
     this.getShootingInfo(this.pId).then(res => {
       this.shootingInfo = res.data.projectFees;
+      this.shootingInfo.sort(
+        (a, b) => a.feeCategoryId - b.feeCategoryId
+      );
       this.getSpanArr();
     });
     this.getLastStateInfo(this.pId).then(res => {
       this.lastStateInfo = res.data.projectFees;
+      this.lastStateInfo.sort(
+        (a, b) => a.feeCategoryId - b.feeCategoryId
+      );
       this.getLastArr();
     });
   },
   filters: {
+    getBudget(id, lists) {
+      return reduce(lists, (sum, item) => {
+        if (item.feeCategoryId === id) {
+          return sum + item.budgetAmount
+        }
+        return sum
+      }, 0)
+    },
+    getRealAmount(id, lists) {
+      return reduce(lists, (sum, item) => {
+        if (item.feeCategoryId === id) {
+          return sum + item.realAmount
+        }
+        return sum
+      }, 0)
+    },
     getStaff(id, staffs) {
       const staff = staffs.filter(stf => stf.id === id);
       return staff[0].name;

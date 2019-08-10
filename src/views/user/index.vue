@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-02 20:00:40
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 14:39:34
+ * @LastEditTime: 2019-08-10 23:51:13
  -->
 <template>
   <div class="app-container">
@@ -74,9 +74,9 @@
       </div>
     </el-dialog>
     <el-dialog title="绑定角色" :visible.sync="bindRoleDialog">
-      <el-form ref="bindForm" :rules="bindRules">
-        <el-form-item prop="role" label="新角色" label-width="120px">
-          <el-select multiple v-model="newRole" autocomplete="off">
+      <el-form ref="bindForm" :model="newRoles" :rules="bindRules">
+        <el-form-item prop="newRoles" label="新角色" label-width="120px">
+          <el-select multiple v-model="newRoles.roles" autocomplete="off">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
         </el-form-item>
@@ -124,7 +124,7 @@ export default {
       resetLoading: false,
       userRole: '',
       bindRoleDialog: false,
-      newRole: [],
+      newRoles: {roles: []},
       bindRoleLoading: false,
       choosenUser: 0,
       newUserRules: {
@@ -137,7 +137,7 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       bindRules: {
-        role: [{ required: true, message: '绑定角色不能为空' }]
+        newRoles: [{ required: true, trigger: 'blur', message: '绑定角色不能为空' }]
       }
     }
   },
@@ -192,7 +192,7 @@ export default {
       this.resetPwdModel = { userId: row.id, password: '' }
     },
     setPassword() {
-      this.$ref.resetForm.validate(valid => {
+      this.$refs.resetForm.validate(valid => {
         if (valid) {
           this.resetLoading = true
           this.resetPwd(this.resetPwdModel).then(res => {
@@ -218,8 +218,8 @@ export default {
     handleRoleChange(row) {
       this.choosenUser = row.id
       this.getRoleByUser(row.id).then(res => {
-        this.newRole = res.data.map(item => item.roleId)
-        console.log(this.newRole)
+        this.newRoles.roles = res.data.map(item => item.roleId)
+        console.log(this.newRoles.roles)
         this.bindRoleDialog = true
       })
     },
@@ -227,13 +227,13 @@ export default {
       this.$refs.bindForm.validate(valid => {
         if (valid) {
           this.bindRoleLoading = true
-          this.updateRole({ role: this.newRole, id: this.choosenUser }).then(
+          this.updateRole({ role: this.newRoles.roles, id: this.choosenUser }).then(
             res => {
               this.bindRoleLoading = false
               this.bindRoleDialog = false
               this.$message.success('绑定成功')
               this.getAllUser({ page: this.page, pageSize: this.pageSize })
-              this.newRole = []
+              this.newRoles.roles = []
             }
           )
         }

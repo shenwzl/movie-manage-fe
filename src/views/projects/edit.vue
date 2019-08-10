@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:11
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 20:25:20
+ * @LastEditTime: 2019-08-11 00:16:54
  -->
 <template>
   <div class="dashboard-container">
@@ -35,15 +35,22 @@
           <span class="label-info">成片时长</span>
           <el-form-item prop="filmDuration" class="item-info">
             <el-input-number
-              v-model="baseInfo.filmDuration"
+              v-model="baseInfo.minute"
               controls-position="right"
               autocomplete="off"
             />
-          </el-form-item>
+          </el-form-item>分
+          <el-form-item prop="filmDuration">
+            <el-input-number
+              v-model="baseInfo.second"
+              controls-position="right"
+              autocomplete="off"
+            />
+          </el-form-item>秒
         </el-col>
         <el-col :span="24">
           <span class="label-info">拍摄开始日期</span>
-          <el-form-item style="margin-left: 70px;" prop="shootingStartAt" class="item-info">
+          <el-form-item style="margin-left: 152px;" prop="shootingStartAt" class="item-info">
             <el-date-picker v-model="baseInfo.shootingStartAt" autocomplete="off" />
           </el-form-item>
         </el-col>
@@ -64,13 +71,12 @@
             type="text"
             @click="addMemberType(mType.type)"
           >{{`添加${mType.name}`}}</el-button>
-          <el-col :span="18">
-            <el-col :span="6">
+          <el-col :span="18" :offset="4">
+            <el-col :span="6" style="margin-right: 20px;">
               <el-form-item
                 v-for="(pMember, i) in baseInfo.projectMembers"
                 v-if="pMember.memberType === mType.type"
                 :key="pMember.id"
-                class="item-info"
                 style="margin-left: 84px;"
                 :prop="'projectMembers.' + i + '.ascriptionType'"
                 :rules="{ required: true, message: '员工类型不能为空' }"
@@ -102,7 +108,9 @@
             <el-col :span="3">
               <el-button
                 v-for="(pMember, i) in baseInfo.projectMembers"
+                v-if="pMember.memberType === mType.type"
                 :key="pMember.id"
+                class="delete-button"
                 type="danger"
                 size="small"
                 style="margin-left: 20px;"
@@ -112,71 +120,6 @@
           </el-col>
         </el-col>
       </el-row>
-      <el-form-item prop="projectMembers" label="项目角色" label-width="100px">
-        <div v-for="mType in memberTypes" :key="mType.type">
-          <el-row>
-            <el-col :span="20">{{ mType.name }}</el-col>
-            <el-col
-              :span="20"
-              style="margin-bottom: 10px;"
-              v-for="(pMember, i) in baseInfo.projectMembers"
-              v-if="pMember.memberType === mType.type"
-              :key="pMember.id"
-            >
-              <el-col :span="6">
-                <el-form-item
-                  :prop="'projectMembers.' + i + '.ascriptionType'"
-                  :rules="{ required: true, message: '员工类型不能为空' }"
-                >
-                  <el-select v-model="pMember.ascriptionType">
-                    <el-option :value="1" label="内部员工" />
-                    <el-option :value="2" label="外部员工" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col v-if="pMember.ascriptionType === 1" :span="6">
-                <el-form-item
-                  :prop="'projectMembers.' + i + '.staffId'"
-                  :rules="{ required: true, message: '员工不能为空' }"
-                >
-                  <el-select v-model="pMember.staffId">
-                    <el-option
-                      v-for="staff in insideStaffs"
-                      :key="staff.id"
-                      :value="staff.id"
-                      :label="staff.name"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col v-if="pMember.ascriptionType === 2" :span="6">
-                <el-form-item
-                  :prop="'projectMembers.' + i + '.staffId'"
-                  :rules="{ required: true, message: '员工不能为空' }"
-                >
-                  <el-select v-model="pMember.staffId">
-                    <el-option
-                      v-for="staff in externalStaffs"
-                      :key="staff.id"
-                      :value="staff.id"
-                      :label="staff.name"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-button
-                type="danger"
-                size="small"
-                style="margin-left: 20px;"
-                @click="handleBaseDelete(i)"
-              >删除</el-button>
-            </el-col>
-            <el-col :span="10">
-              <el-button type="text" @click="addMemberType(mType.type)">添加{{ mType.name }}</el-button>
-            </el-col>
-          </el-row>
-        </div>
-      </el-form-item>
     </el-form>
     <el-form v-if="step === '2'" ref="shootingInfoForm" :model="feeInfo">
       <h3>拍摄费用</h3>
@@ -184,20 +127,29 @@
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
+            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(feeInfo.shootingInfo) }}</div>
+            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(feeInfo.shootingInfo) }}</div>
             <el-button type="text" @click="handleAddShooting(scope.row)">添加二级费用</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="feeChildCategoryId" label="二级费用">
           <template scope="scope">
-            <el-select
-              v-model="scope.row.feeChildCategoryId"
-              style="width: 100px;"
-              @focus="onBlur(scope.row.feeCategoryId)"
-              width="200"
-              autocomplete="off"
-            >
-              <el-option v-for="fee in secondFees" :key="fee.id" :value="fee.id" :label="fee.name" />
-            </el-select>
+            <!-- <el-form-item :prop="'feeInfo.shootingInfo.' + scope.row.index + '.feeChildCategoryId'" :rules="{ required: true, message: '二级费用不能为空' }"> -->
+              <el-select
+                v-model="scope.row.feeChildCategoryId"
+                style="width: 100px;"
+                @focus="onBlur(scope.row.feeCategoryId)"
+                width="200"
+                autocomplete="off"
+              >
+                <el-option
+                  v-for="fee in secondFees"
+                  :key="fee.id"
+                  :value="fee.id"
+                  :label="fee.name"
+                />
+              </el-select>
+            <!-- </el-form-item> -->
           </template>
         </el-table-column>
         <el-table-column prop="providerId" label="供应商">
@@ -264,7 +216,9 @@
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
-            <el-button type="text" @click="handleAddLast(scope.row)">添加二级费用</el-button>
+            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(feeInfo.lastStateInfo) }}</div>
+            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(feeInfo.lastStateInfo) }}</div>
+             <el-button type="text" @click="handleAddLast(scope.row)">添加二级费用</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="feeChildCategoryId" label="二级费用">
@@ -345,7 +299,7 @@
       :loading="editLoading"
       @click="editProject"
     >保存</el-button>
-    <el-button class="add-button" v-if="step === '2'" @click="addShootingInfo">添加一级费用</el-button>
+    <el-button class="add-button-info" v-if="step === '2'" @click="addShootingInfo">添加一级费用</el-button>
     <el-button
       class="save-button"
       v-if="step === '2'"
@@ -353,7 +307,7 @@
       :loading="editLoading"
       @click="editShootingInfo"
     >保存</el-button>
-    <el-button class="add-button" v-if="step === '3'" @click="addLastInfo">添加一级费用</el-button>
+    <el-button class="add-button-info" v-if="step === '3'" @click="addLastInfo">添加一级费用</el-button>
     <el-button
       class="save-button"
       v-if="step === '3'"
@@ -435,7 +389,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { hasPermission } from "@/utils/auth";
-import { find } from "lodash";
+import { find, reduce } from "lodash";
 
 export default {
   name: "Dashboard",
@@ -548,15 +502,23 @@ export default {
         const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
         pMember.ascriptionType = staff[0].ascription;
       });
+      res.data.minute = Math.floor(res.data.filmDuration / 60);
+      res.data.second = res.data.filmDuration % 60;
       this.baseInfo = res.data;
     });
     this.getShootingInfo(this.pId).then(res => {
       console.log(res);
       this.feeInfo.shootingInfo = res.data.projectFees;
+      this.feeInfo.shootingInfo.sort(
+        (a, b) => a.feeCategoryId - b.feeCategoryId
+      );
       this.getSpanArr();
     });
     this.getLastStateInfo(this.pId).then(res => {
       this.feeInfo.lastStateInfo = res.data.projectFees;
+      this.feeInfo.lastStateInfo.sort(
+        (a, b) => a.feeCategoryId - b.feeCategoryId
+      );
       this.getLastArr();
     });
   },
@@ -564,6 +526,22 @@ export default {
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
       return fee[0].name;
+    },
+    getBudget(id, lists) {
+      return reduce(lists, (sum, item) => {
+        if (item.feeCategoryId === id) {
+          return sum + item.budgetAmount
+        }
+        return sum
+      }, 0)
+    },
+    getRealAmount(id, lists) {
+      return reduce(lists, (sum, item) => {
+        if (item.feeCategoryId === id) {
+          return sum + item.realAmount
+        }
+        return sum
+      }, 0)
     }
   },
   methods: {
@@ -603,6 +581,7 @@ export default {
       this.feeInfo.shootingInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
       );
+      this.feeInfo.shootingInfo.forEach((sInfo, i) => sInfo.index = i)
       this.getSpanArr();
     },
     addFirstShootingFee() {
@@ -657,6 +636,9 @@ export default {
       this.$refs.baseInfoForm.validate(valid => {
         if (valid) {
           this.editLoading = true;
+          this.baseInfo.filmDuration =
+            parseInt(this.baseInfo.minute * 60) +
+            parseInt(this.baseInfo.second);
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId
@@ -838,7 +820,7 @@ export default {
   margin-right: 20px;
   margin-top: 20px;
 }
-.add-button {
+.add-button-info {
   margin-top: 20px;
   margin-left: 20px;
 }
@@ -862,15 +844,22 @@ export default {
 }
 .item-info {
   display: inline-block;
-  margin-left: 100px;
+  margin-left: 183px;
 }
 .label-info {
   margin-right: 20px;
-  margin-left: 10px;
+  margin-left: 20px;
 }
 .add-button {
   position: absolute;
   top: 8px;
-  left: -11px;
+  left: 0px;
+  margin-bottom: 5px;
+}
+.delete-button {
+  margin-top: 32px;
+}
+.delete-button:first-child {
+  margin-top: 0;
 }
 </style>
