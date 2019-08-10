@@ -147,7 +147,7 @@ export function updateProvider(data) {
 
 export function recoverProvider(providerId) {
   return request({
-    url: `/provider/${providerId}/recover`,
+    url: `/providers/${providerId}/recover`,
     method: 'put'
   })
 }
@@ -185,7 +185,7 @@ export function updateContract(data) {
 
 export function recoverContract(contractId) {
   return request({
-    url: `/contract_sunjects/${contractId}/recover`,
+    url: `/contract_subjects/${contractId}/recover`,
     method: 'put'
   })
 }
