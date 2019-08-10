@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-02 20:00:40
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 12:24:53
+ * @LastEditTime: 2019-08-10 14:39:34
  -->
 <template>
   <div class="app-container">
@@ -76,7 +76,7 @@
     <el-dialog title="绑定角色" :visible.sync="bindRoleDialog">
       <el-form ref="bindForm" :rules="bindRules">
         <el-form-item prop="role" label="新角色" label-width="120px">
-          <el-select v-model="newRole" autocomplete="off">
+          <el-select multiple v-model="newRole" autocomplete="off">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
         </el-form-item>
@@ -218,7 +218,8 @@ export default {
     handleRoleChange(row) {
       this.choosenUser = row.id
       this.getRoleByUser(row.id).then(res => {
-        this.newRole = res.data
+        this.newRole = res.data.map(item => item.roleId)
+        console.log(this.newRole)
         this.bindRoleDialog = true
       })
     },

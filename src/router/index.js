@@ -1,3 +1,12 @@
+/*
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-06-29 11:21:26
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-06-29 11:21:26
+ */
 import Vue from 'vue'
 import Router from 'vue-router'
 import { hasPermission } from '@/utils/auth'
@@ -77,6 +86,12 @@ export const constantRoutes = [
       {
         path: 'detail/:projectId/:step',
         component: () => import('@/views/projects/detail'),
+        meta: { title: '查看', icon: 'dashboard' },
+        hidden: true
+      },
+      {
+        path: 'detail/:projectId',
+        component: () => import('@/views/projects/all'),
         meta: { title: '查看', icon: 'dashboard' },
         hidden: true
       },

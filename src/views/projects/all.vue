@@ -5,18 +5,18 @@
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:18
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 20:29:32
+ * @LastEditTime: 2019-08-10 20:29:58
  -->
 <template>
   <div class="dashboard-container">
-    <div class="base-info" v-if="step === '1'">
+    <div class="base-info">
       <h3>基本信息</h3>
       <el-table border :data="baseInfo">
         <el-table-column prop="label"></el-table-column>
         <el-table-column prop="value"></el-table-column>
       </el-table>
     </div>
-    <div class="shooting-info" v-if="step === '2'">
+    <div class="shooting-info">
       <h3>拍摄费用</h3>
       <el-table :data="shootingInfo" border :span-method="arraySpanMethod">
         <el-table-column prop="feeCategoryId" label="一级费用">
@@ -45,7 +45,7 @@
         <div class="divider"></div>
       </div>-->
     </div>
-    <div class="last-info" v-if="step === '3'">
+    <div class="last-info">
       <h3>后期费用</h3>
       <el-table :data="lastStateInfo" border :span-method="arraySpanMethod">
         <el-table-column prop="feeCategoryId" label="一级费用">
