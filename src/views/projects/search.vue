@@ -113,10 +113,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="费用" label-width="120px">
-            <el-select filterable style="width: 216px;" v-model="selectedFee" collapse-tags @change="onFeeChange" multiple>
+          <el-form-item label="一级费用" label-width="120px">
+            <el-select filterable style="width: 216px;" v-model="selectedFirstLevelFee" collapse-tags @change="onFeeChange" multiple>
               <el-option :value="0" label="全部"></el-option>
-              <el-option v-for="item in feeCategories" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              <el-option v-for="item in firstFees" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="二级费用" label-width="120px">
+            <el-select filterable style="width: 216px;" v-model="selectedSecondLevelFee" collapse-tags @change="onFeeChange" multiple>
+              <el-option :value="0" label="全部"></el-option>
+              <el-option v-for="item in secondFees" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -178,7 +186,8 @@ export default {
       searchList: [],
       spanArr: [],
       pos: 0,
-      selectedFee: []
+      selectedFirstLevelFee: [],
+      selectedSecondLevelFee: []
     }
   },
   computed: {
@@ -191,6 +200,9 @@ export default {
     ]),
     firstFees() {
       return this.feeCategories.filter(fee => fee.categoryType === 1)
+    },
+    secondFees() {
+      return this.feeCategories.filter(fee => fee.categoryType === 2)
     },
     parentCompanys() {
       return this.allCompanys.filter(company => company.companyType === 1)
@@ -299,32 +311,33 @@ export default {
       console.log(this.spanArr)
     },
     formatFee() {
-      const feeList = this.selectedFee
       const newFeeList = []
-      feeList.forEach(fee => {
-        if (this.firstFees.some(category => category.id === fee)) {
+
+      this.selectedFirstLevelFee.forEach(fee => {
+        newFeeList.push({
+          categoryType: 1,
+          categoryId: fee
+        })
+      })
+
+      this.selectedSecondLevelFee.forEach(fee => {
+        const parentFee = this.feeCategories.filter(category => category.id === fee)
+        const parentFeeId = parentFee[0].parentCategoryId
+        const index = findIndex(newFeeList, fee => fee.categoryId === parentFeeId)
+        if (index === -1) {
           newFeeList.push({
-            categoryType: 1,
-            categoryId: fee
+            categoryType: 2,
+            categoryId: parentFeeId,
+            childFeeCategoryList: [fee]
           })
         } else {
-          const parentFee = this.feeCategories.filter(category => category.id === fee)
-          const parentFeeId = parentFee[0].parentCategoryId
-          const index = findIndex(newFeeList, fee => fee.categoryId === parentFeeId)
-          if (index === -1) {
-            newFeeList.push({
-              categoryType: 2,
-              categoryId: parentFeeId,
-              childFeeCategoryList: [fee]
-            })
-          } else {
-            if (!newFeeList[index].childFeeCategoryList) {
-              newFeeList[index].childFeeCategoryList = []
-            }
-            newFeeList[index].childFeeCategoryList.push(fee)
+          if (!newFeeList[index].childFeeCategoryList) {
+            newFeeList[index].childFeeCategoryList = []
           }
+          newFeeList[index].childFeeCategoryList.push(fee)
         }
       })
+
       this.searchInfo.feeList = newFeeList
     },
     onSearch() {
