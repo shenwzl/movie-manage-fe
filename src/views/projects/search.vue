@@ -55,31 +55,31 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="项目合同金额" label-width="120px">
+          <el-form-item label="项目合同金额(元)" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.contractAmountStart"></el-input-number>
             ~
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.contractAmountEnd"></el-input-number>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="项目成本金额" label-width="120px">
+          <el-form-item label="项目成本金额(元)" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.realCostStart"></el-input-number>
             ~
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.realCostEnd"></el-input-number>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="项目预算金额" label-width="120px">
+          <el-form-item label="项目预算金额(元)" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.budgetCostStart"></el-input-number>
             ~
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.budgetCostEnd"></el-input-number>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="成片时长" label-width="120px">
-            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationStart" controls-position="right" autocomplete="off" />
+          <el-form-item label="成片时长(分)" label-width="120px">
+            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationMinuteStart" controls-position="right" autocomplete="off" />
             ~
-            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationEnd" controls-position="right" autocomplete="off" />
+            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationMinuteEnd" controls-position="right" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -90,7 +90,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="拍摄周期" label-width="120px">
+          <el-form-item label="拍摄周期(天)" label-width="120px">
             <el-input-number style="width: 100px;" v-model="searchInfo.shootingDurationStart" controls-position="right" autocomplete="off" />
             ~
             <el-input-number style="width: 100px;" v-model="searchInfo.shootingDurationEnd" controls-position="right" autocomplete="off" />
@@ -340,8 +340,20 @@ export default {
 
       this.searchInfo.feeList = newFeeList
     },
+    /**
+     * 将搜索的成片时长由分钟转换成秒
+     */
+    formatFilmDurationStart() {
+      if (this.searchInfo.filmDurationMinuteStart !== undefined){
+        this.searchInfo.filmDurationStart = this.searchInfo.filmDurationMinuteStart * 60
+      }
+      if (this.searchInfo.filmDurationMinuteEnd !== undefined){
+        this.searchInfo.filmDurationEnd = this.searchInfo.filmDurationMinuteEnd * 60
+      }
+    },
     onSearch() {
       this.formatFee()
+      this.formatFilmDurationStart()
       this.searchProject(this.searchInfo).then((lists = []) => {
         const newList = lists.map(list => {
           if (list.projectDetailList) {
