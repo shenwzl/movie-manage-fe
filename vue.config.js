@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-06-29 11:21:26
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 12:05:28
+ * @LastEditTime: 2019-08-10 13:32:29
  */
 'use strict'
 const path = require('path')
@@ -46,7 +46,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:8840/api/v1`,
+        target: `http://localhost:8840/api/v1`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

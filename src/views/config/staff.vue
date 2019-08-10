@@ -54,7 +54,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createStaffDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="createLoading" @click="createStaff">确 定</el-button>
+        <el-button type="primary" :loading="createLoading" @click="saveStaff">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -102,6 +102,7 @@ export default {
     ...mapActions([
       'getStaffs',
       'addStaff',
+      'updateStaff',
       'deleteStaff',
       'recoverStaff'
     ]),
@@ -112,20 +113,36 @@ export default {
     },
     setPermission() {
     },
-    createStaff() {
+    saveStaff(){
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addStaff(this.newStaff).then(res => {
-            this.createStaffDialog = false
-            this.createLoading = false
-            this.$message.success(this.isEdit ? '更新成功' : '添加成功')
-            this.newStaff = {}
-            this.isEdit = false
-            this.getStaffs({ page: this.page, pageSize: this.pageSize })
-          })
+          if (this.isEdit){
+            this.editStaff()
+          }else{
+            this.createStaff()
+          }
         }
       })
+    },
+    createStaff() {
+      this.addStaff(this.newStaff).then(res => {
+        this.$message.success('添加成功')
+        this.resetPage()
+      })
+    },
+    editStaff() {
+      this.updateStaff(this.newStaff).then(res => {
+        this.$message.success('更新成功')
+        this.resetPage()
+      })
+    },
+    resetPage() {
+      this.createStaffDialog = false
+      this.createLoading = false
+      this.isEdit = false
+      this.newStaff = {}
+      this.getStaffs({ page: this.page, pageSize: this.pageSize })
     },
     handlePageChange(page) {
       this.page = page

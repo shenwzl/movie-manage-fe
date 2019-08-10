@@ -65,7 +65,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createCompanyDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="createLoading" @click="createCompany">确 定</el-button>
+        <el-button type="primary" :loading="createLoading" @click="saveCompany">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -128,6 +128,7 @@ export default {
     ...mapActions([
       'getCompanys',
       'addCompany',
+      'updateCompany',
       'deleteCompany',
       'recoverCompany',
       'getAllCompanys'
@@ -139,20 +140,37 @@ export default {
     },
     setPermission() {
     },
-    createCompany() {
+    saveCompany() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addCompany(this.newCompany).then(res => {
-            this.getCompanys({ page: this.page, pageSize: this.pageSize })
-            this.createCompanyDialog = false
-            this.createLoading = false
-            this.newCompany = {}
-            this.$message.success(this.isEdit ? '更新成功' : '添加成功')
-            this.isEdit = false
-          })
+          if (this.isEdit){
+            console.log("edit")
+            this.editCompany()
+          }else {
+            this.createCompany()
+          }
         }
       })
+    },
+    createCompany() {
+      this.addCompany(this.newCompany).then(res => {
+        this.$message.success('添加成功')
+        this.resetPage()
+      })
+    },
+    editCompany() {
+      this.updateCompany(this.newCompany).then(res => {
+        this.$message.success('更新成功')
+        this.resetPage()
+      })
+    },
+    resetPage() {
+      this.createCompanyDialog = false
+      this.createLoading = false
+      this.newCompany = {}
+      this.isEdit = false
+      this.getCompanys({ page: this.page, pageSize: this.pageSize })
     },
     handlePageChange(page) {
       this.page = page

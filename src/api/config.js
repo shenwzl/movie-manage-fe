@@ -23,6 +23,14 @@ export function addStaff(data) {
   })
 }
 
+export function updateStaff(data) {
+  return request({
+    url: `/staffs/${data.id}`,
+    method: 'put',
+    data
+  })
+}
+
 export function recoverStaff(staffId) {
   return request({
     url: `/staffs/${staffId}/recover`,
@@ -49,6 +57,14 @@ export function addCompany(data) {
   return request({
     url: '/customer_company',
     method: 'post',
+    data
+  })
+}
+
+export function updateCompany(data) {
+  return request({
+    url: `/customer_company/${data.id}`,
+    method: 'put',
     data
   })
 }
@@ -83,6 +99,14 @@ export function addFee(data) {
   })
 }
 
+export function updateFee(data) {
+  return request({
+    url: `/fee_categories/${data.id}`,
+    method: 'put',
+    data
+  })
+}
+
 export function recoverFee(feeId) {
   return request({
     url: `/fee_categories/${feeId}/recover`,
@@ -113,6 +137,14 @@ export function addProvider(data) {
   })
 }
 
+export function updateProvider(data) {
+  return request({
+    url: `/providers/${data.id}`,
+    method: 'put',
+    data
+  })
+}
+
 export function recoverProvider(providerId) {
   return request({
     url: `/provider/${providerId}/recover`,
@@ -139,6 +171,14 @@ export function addContracts(data) {
   return request({
     url: '/contract_subjects',
     method: 'post',
+    data
+  })
+}
+
+export function updateContract(data) {
+  return request({
+    url: `/contract_subjects/${data.id}`,
+    method: 'put',
     data
   })
 }
