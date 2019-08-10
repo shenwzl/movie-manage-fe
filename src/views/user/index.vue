@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-02 20:00:40
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-10 23:51:13
+ * @LastEditTime: 2019-08-11 00:32:41
  -->
 <template>
   <div class="app-container">
@@ -75,7 +75,7 @@
     </el-dialog>
     <el-dialog title="绑定角色" :visible.sync="bindRoleDialog">
       <el-form ref="bindForm" :model="newRoles" :rules="bindRules">
-        <el-form-item prop="newRoles" label="新角色" label-width="120px">
+        <el-form-item prop="roles" label="新角色" label-width="120px">
           <el-select multiple v-model="newRoles.roles" autocomplete="off">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
@@ -137,7 +137,7 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       bindRules: {
-        newRoles: [{ required: true, trigger: 'blur', message: '绑定角色不能为空' }]
+        roles: [{ required: true, trigger: 'blur', message: '绑定角色不能为空' }]
       }
     }
   },

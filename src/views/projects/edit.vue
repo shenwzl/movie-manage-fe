@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:11
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-11 00:16:54
+ * @LastEditTime: 2019-08-11 00:41:18
  -->
 <template>
   <div class="dashboard-container">
@@ -14,6 +14,7 @@
       <el-row style="border: 1px solid #EBEEF5;">
         <el-col :span="24">
           <span class="label-info">项目名称</span>
+          <el-divider direction="vertical"></el-divider>
           <el-form-item class="item-info" prop="name">
             <el-input v-model="baseInfo.name" style="width: 180px;" autocomplete="off" />
           </el-form-item>
@@ -65,7 +66,7 @@
           </el-form-item>
         </el-col>
         <el-col v-for="mType in memberTypes" :key="mType.type" :span="24">
-          <span class="label-info">{{ mType.name }}</span>
+          <span class="label-info" style="width: 500px;display: inline-block;">{{ mType.name }}</span>
           <el-button
             class="add-button"
             type="text"
@@ -826,7 +827,7 @@ export default {
 }
 .add-new {
   position: fixed;
-  bottom: 40px;
+  bottom: 20px;
   left: 230px;
 }
 .el-col-24 {
@@ -852,8 +853,8 @@ export default {
 }
 .add-button {
   position: absolute;
-  top: 8px;
-  left: 0px;
+  top: 20px;
+  left: 20px;
   margin-bottom: 5px;
 }
 .delete-button {
