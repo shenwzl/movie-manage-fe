@@ -86,7 +86,6 @@ export default {
       'getContracts',
       'addContracts',
       'updateContract',
-      'editContract',
       'deleteContract',
       'recoverContract'
     ]),

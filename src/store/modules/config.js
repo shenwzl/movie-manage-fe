@@ -175,7 +175,6 @@ const actions = {
     })
   },
   addProvider({ commit }, provider) {
-    console.log(provider)
     return new Promise((resolve, reject) => {
       addProvider(provider).then(res => {
         resolve()
