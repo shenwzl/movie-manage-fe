@@ -20,7 +20,7 @@
       :title="isEdit ? '修改合同主体' : '新增合同主体'"
       :visible.sync="createContractDialog"
     >
-      <el-form ref="creteForm" :model="newContract" :rules="contractRules">
+      <el-form ref="createForm" :model="newContract" :rules="contractRules">
         <el-form-item prop="name" label="名称" label-width="200px">
           <el-row>
             <el-col :span="10">
@@ -31,7 +31,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createContractDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="createLoading" @click="createContract">确 定</el-button>
+        <el-button type="primary" :loading="createLoading" @click="saveContract">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -85,6 +85,7 @@ export default {
     ...mapActions([
       'getContracts',
       'addContracts',
+      'updateContract',
       'deleteContract',
       'recoverContract'
     ]),
@@ -95,22 +96,40 @@ export default {
     },
     setPermission() {
     },
-    createContract() {
+    saveContract() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addContracts(this.newContract).then(
-            res => {
-              this.createContractDialog = false
-              this.getContracts({ page: this.page, pageSize: this.pageSize })
-              this.createLoading = false
-              this.$message.success(this.isEdit ? '更新成功' : '添加成功')
-              this.isEdit = false
-              this.newContract = {}
-            }
-          )
+          if (this.isEdit){
+            this.editContract()
+          }else{
+            this.createContract()
+          }
         }
       })
+    },
+    createContract() {
+      this.addContracts(this.newContract).then(
+        res => {
+          this.$message.success('添加成功')
+          this.resetPage()
+        }
+      )
+    },
+    editContract() {
+      this.updateContract(this.newContract).then(
+        res => {
+          this.$message.success('更新成功')
+          this.resetPage()
+        }
+      )
+    },
+    resetPage() {
+      this.createContractDialog = false
+      this.createLoading = false
+      this.isEdit = false
+      this.newContract = {}
+      this.getContracts({ page: this.page, pageSize: this.pageSize })
     },
     handlePageChange(page) {
       this.page = page

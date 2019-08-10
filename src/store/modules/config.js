@@ -3,9 +3,13 @@ import {
   getProviders,
   getFees,
   addFee,
+  updateFee,
   addProvider,
+  updateProvider,
   addStaff,
+  updateStaff,
   addContracts,
+  updateContract,
   getContracts,
   deleteStaff,
   deleteProvider,
@@ -17,6 +21,7 @@ import {
   recoverContract,
   getCompanys,
   addCompany,
+  updateCompany,
   deleteCompany,
   recoverCompany
 } from '@/api/config'
@@ -81,6 +86,15 @@ const actions = {
       })
     })
   },
+  updateStaff({ commit }, staff) {
+    return new Promise((resolve, reject) => {
+      updateStaff(staff).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   recoverStaff({ commit }, staffId) {
     return new Promise((resolve, reject) => {
       recoverStaff(staffId).then(res => {
@@ -112,9 +126,17 @@ const actions = {
     })
   },
   addCompany({ commit }, company) {
-    console.log(company)
     return new Promise((resolve, reject) => {
       addCompany(company).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  updateCompany({ commit }, company) {
+    return new Promise((resolve, reject) => {
+      updateCompany(company).then(res => {
         resolve()
       }).catch(err => {
         reject(err)
@@ -161,6 +183,15 @@ const actions = {
       })
     })
   },
+  updateProvider({ commit }, provider) {
+    return new Promise((resolve, reject) => {
+      updateProvider(provider).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   recoverProvider({ commit }, providerId) {
     return new Promise((resolve, reject) => {
       recoverProvider(providerId).then(res => {
@@ -201,6 +232,15 @@ const actions = {
       })
     })
   },
+  updateFee({ commit }, fee) {
+    return new Promise((resolve, reject) => {
+      updateFee(fee).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   recoverFee({ commit }, feeId) {
     return new Promise((resolve, reject) => {
       recoverFee(feeId).then(res => {
@@ -232,9 +272,18 @@ const actions = {
       })
     })
   },
-  addContracts({ commit }, fee) {
+  addContracts({ commit }, contract) {
     return new Promise((resolve, reject) => {
-      addContracts(fee).then(res => {
+      addContracts(contract).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  updateContract({ commit }, contract) {
+    return new Promise((resolve, reject) => {
+      updateContract(contract).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

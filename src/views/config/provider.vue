@@ -55,7 +55,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createProviderDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="createLoading" @click="createProvider">确 定</el-button>
+        <el-button type="primary" :loading="createLoading" @click="saveProvider">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -116,6 +116,7 @@ export default {
     ...mapActions([
       'getProviders',
       'addProvider',
+      'updateProvider',
       'deleteProvider',
       'recoverProvider'
     ]),
@@ -126,22 +127,41 @@ export default {
     },
     setPermission() {
     },
-    createProvider() {
+    saveProvider(){
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addProvider(this.newProvider).then(
-            res => {
-              this.createLoading = false
-              this.createProviderDialog = false
-              this.getProviders({ page: this.page, pageSize: this.pageSize })
-              this.$message.success(this.isEdit ? '更新成功' : '添加成功')
-              this.newProvider = {}
-              this.isEdit = false
-            }
-          )
+          if(this.isEdit){
+            console.log(this.newProvider)
+            this.editProvider()
+          }else{
+            this.createProvider()
+          }
         }
       })
+    },
+    createProvider() {
+      this.addProvider(this.newProvider).then(
+        res => {
+          this.$message.success('添加成功')
+          this.resetPage()
+        }
+      )
+    },
+    editProvider() {
+      this.updateProvider(this.newProvider).then(
+        res => {
+          this.$message.success('更新成功')
+          this.resetPage()
+        }
+      )
+    },
+    resetPage() {
+      this.createLoading = false
+      this.createProviderDialog = false
+      this.newProvider = {}
+      this.isEdit = false
+      this.getProviders({ page: this.page, pageSize: this.pageSize })
     },
     handlePageChange(page) {
       this.page = page

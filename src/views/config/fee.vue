@@ -80,7 +80,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="createFeeDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="createLoading" @click="createFee">确 定</el-button>
+        <el-button type="primary" :loading="createLoading" @click="saveFee">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -145,6 +145,7 @@ export default {
     ...mapActions([
       'getFees',
       'addFee',
+      'updateFee',
       'deleteFee',
       'recoverFee',
       'getFeeCategories'
@@ -156,20 +157,36 @@ export default {
     },
     setPermission() {
     },
-    createFee() {
+    saveFee() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addFee(this.newFee).then(res => {
-            this.getFees({ page: this.page, pageSize: this.pageSize })
-            this.createFeeDialog = false
-            this.createLoading = false
-            this.newFee = {}
-            this.$message.success(this.isEdit ? '更新成功' : '添加成功')
-            this.isEdit = false
-          })
+          if (this.isEdit){
+            this.editFee()
+          }else {
+            this.createFee()
+          }
         }
       })
+    },
+    createFee() {
+      this.addFee(this.newFee).then(res => {
+        this.$message.success('添加成功')
+        this.resetPage()
+      })
+    },
+    editFee() {
+      this.updateFee(this.newFee).then(res => {
+        this.$message.success('更新成功')
+        this.resetPage()
+      })
+    },
+    resetPage() {
+      this.isEdit = false
+      this.createFeeDialog = false
+      this.createLoading = false
+      this.newFee = {}
+      this.getFees({ page: this.page, pageSize: this.pageSize })
     },
     handlePageChange(page) {
       this.page = page
