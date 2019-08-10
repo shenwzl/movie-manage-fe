@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:11
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-11 00:41:18
+ * @LastEditTime: 2019-08-11 00:53:12
  -->
 <template>
   <div class="dashboard-container">
@@ -135,7 +135,10 @@
         </el-table-column>
         <el-table-column prop="feeChildCategoryId" label="二级费用">
           <template scope="scope">
-            <!-- <el-form-item :prop="'feeInfo.shootingInfo.' + scope.row.index + '.feeChildCategoryId'" :rules="{ required: true, message: '二级费用不能为空' }"> -->
+            <el-form-item
+              :prop="'shootingInfo.' + scope.$index + '.feeChildCategoryId'"
+              :rules="{ required: true, message: '二级费用不能为空' }"
+            >
               <el-select
                 v-model="scope.row.feeChildCategoryId"
                 style="width: 100px;"
@@ -150,44 +153,59 @@
                   :label="fee.name"
                 />
               </el-select>
-            <!-- </el-form-item> -->
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="providerId" label="供应商">
           <template scope="scope">
-            <el-select
-              v-model="scope.row.providerId"
-              style="width: 100px;"
-              width="200"
-              autocomplete="off"
+            <el-form-item
+              :prop="'shootingInfo.' + scope.$index + '.providerId'"
+              :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
             >
-              <el-option
-                v-for="provider in allProviders"
-                :key="provider.id"
-                :value="provider.id"
-                :label="provider.name"
-              />
-            </el-select>
+              <el-select
+                v-model="scope.row.providerId"
+                style="width: 100px;"
+                width="200"
+                autocomplete="off"
+              >
+                <el-option
+                  v-for="provider in allProviders"
+                  :key="provider.id"
+                  :value="provider.id"
+                  :label="provider.name"
+                />
+              </el-select>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="budgetAmount" label="预算金额">
           <template scope="scope">
-            <el-input-number
-              v-model="scope.row.budgetAmount"
-              controls-position="right"
-              autocomplete="off"
-              style="width: 100px;"
-            />
+            <el-form-item
+              :prop="'shootingInfo.' + scope.$index + '.budgetAmount'"
+              :rules="{ required: true, message: '预算金额不能为空' }"
+            >
+              <el-input-number
+                v-model="scope.row.budgetAmount"
+                controls-position="right"
+                autocomplete="off"
+                style="width: 100px;"
+              />
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="realAmount" label="实际金额">
           <template scope="scope">
-            <el-input-number
-              style="width: 100px;"
-              v-model="scope.row.realAmount"
-              controls-position="right"
-              autocomplete="off"
-            />
+            <el-form-item
+              :prop="'shootingInfo.' + scope.$index + '.realAmount'"
+              :rules="{ required: true, message: '实际金额不能为空' }"
+            >
+              <el-input-number
+                style="width: 100px;"
+                v-model="scope.row.realAmount"
+                controls-position="right"
+                autocomplete="off"
+              />
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">
@@ -219,57 +237,82 @@
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
             <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(feeInfo.lastStateInfo) }}</div>
             <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(feeInfo.lastStateInfo) }}</div>
-             <el-button type="text" @click="handleAddLast(scope.row)">添加二级费用</el-button>
+            <el-button type="text" @click="handleAddLast(scope.row)">添加二级费用</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="feeChildCategoryId" label="二级费用">
           <template scope="scope">
-            <el-select
-              v-model="scope.row.feeChildCategoryId"
-              style="width: 100px;"
-              @focus="onBlur(scope.row.feeCategoryId)"
-              width="200"
-              autocomplete="off"
+            <el-form-item
+              :prop="'lastStateInfo.' + scope.$index + '.feeChildCategoryId'"
+              :rules="{ required: true, message: '二级费用不能为空' }"
             >
-              <el-option v-for="fee in secondFees" :key="fee.id" :value="fee.id" :label="fee.name" />
-            </el-select>
+              <el-select
+                v-model="scope.row.feeChildCategoryId"
+                style="width: 100px;"
+                @focus="onBlur(scope.row.feeCategoryId)"
+                width="200"
+                autocomplete="off"
+              >
+                <el-option
+                  v-for="fee in secondFees"
+                  :key="fee.id"
+                  :value="fee.id"
+                  :label="fee.name"
+                />
+              </el-select>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="providerId" label="供应商">
           <template scope="scope">
-            <el-select
-              v-model="scope.row.providerId"
-              style="width: 100px;"
-              width="200"
-              autocomplete="off"
+            <el-form-item
+              :prop="'lastStateInfo.' + scope.$index + '.providerId'"
+              :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
             >
-              <el-option
-                v-for="provider in allProviders"
-                :key="provider.id"
-                :value="provider.id"
-                :label="provider.name"
-              />
-            </el-select>
+              <el-select
+                v-model="scope.row.providerId"
+                style="width: 100px;"
+                width="200"
+                autocomplete="off"
+              >
+                <el-option
+                  v-for="provider in allProviders"
+                  :key="provider.id"
+                  :value="provider.id"
+                  :label="provider.name"
+                />
+              </el-select>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="budgetAmount" label="预算金额">
           <template scope="scope">
-            <el-input-number
-              v-model="scope.row.budgetAmount"
-              controls-position="right"
-              autocomplete="off"
-              style="width: 100px;"
-            />
+            <el-form-item
+              :prop="'lastStateInfo.' + scope.$index + '.budgetAmount'"
+              :rules="{ required: true, message: '预算金额不能为空' }"
+            >
+              <el-input-number
+                v-model="scope.row.budgetAmount"
+                controls-position="right"
+                autocomplete="off"
+                style="width: 100px;"
+              />
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="realAmount" label="实际金额">
           <template scope="scope">
-            <el-input-number
-              style="width: 100px;"
-              v-model="scope.row.realAmount"
-              controls-position="right"
-              autocomplete="off"
-            />
+            <el-form-item
+              :prop="'lastStateInfo.' + scope.$index + '.realAmount'"
+              :rules="{ required: true, message: '实际金额不能为空' }"
+            >
+              <el-input-number
+                style="width: 100px;"
+                v-model="scope.row.realAmount"
+                controls-position="right"
+                autocomplete="off"
+              />
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">
@@ -529,20 +572,28 @@ export default {
       return fee[0].name;
     },
     getBudget(id, lists) {
-      return reduce(lists, (sum, item) => {
-        if (item.feeCategoryId === id) {
-          return sum + item.budgetAmount
-        }
-        return sum
-      }, 0)
+      return reduce(
+        lists,
+        (sum, item) => {
+          if (item.feeCategoryId === id) {
+            return sum + item.budgetAmount;
+          }
+          return sum;
+        },
+        0
+      );
     },
     getRealAmount(id, lists) {
-      return reduce(lists, (sum, item) => {
-        if (item.feeCategoryId === id) {
-          return sum + item.realAmount
-        }
-        return sum
-      }, 0)
+      return reduce(
+        lists,
+        (sum, item) => {
+          if (item.feeCategoryId === id) {
+            return sum + item.realAmount;
+          }
+          return sum;
+        },
+        0
+      );
     }
   },
   methods: {
@@ -582,7 +633,7 @@ export default {
       this.feeInfo.shootingInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
       );
-      this.feeInfo.shootingInfo.forEach((sInfo, i) => sInfo.index = i)
+      this.feeInfo.shootingInfo.forEach((sInfo, i) => (sInfo.index = i));
       this.getSpanArr();
     },
     addFirstShootingFee() {
