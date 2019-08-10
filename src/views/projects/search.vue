@@ -55,31 +55,31 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="项目合同金额" label-width="120px">
+          <el-form-item label="项目合同金额(元)" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.contractAmountStart"></el-input-number>
             ~
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.contractAmountEnd"></el-input-number>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="项目成本金额" label-width="120px">
+          <el-form-item label="项目成本金额(元)" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.realCostStart"></el-input-number>
             ~
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.realCostEnd"></el-input-number>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="项目预算金额" label-width="120px">
+          <el-form-item label="项目预算金额(元)" label-width="120px">
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.budgetCostStart"></el-input-number>
             ~
             <el-input-number style="width: 100px" controls-position="right" v-model="searchInfo.budgetCostEnd"></el-input-number>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="成片时长" label-width="120px">
-            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationStart" controls-position="right" autocomplete="off" />
+          <el-form-item label="成片时长(分)" label-width="120px">
+            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationMinuteStart" controls-position="right" autocomplete="off" />
             ~
-            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationEnd" controls-position="right" autocomplete="off" />
+            <el-input-number style="width: 100px" v-model="searchInfo.filmDurationMinuteEnd" controls-position="right" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -90,7 +90,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="拍摄周期" label-width="120px">
+          <el-form-item label="拍摄周期(天)" label-width="120px">
             <el-input-number style="width: 100px;" v-model="searchInfo.shootingDurationStart" controls-position="right" autocomplete="off" />
             ~
             <el-input-number style="width: 100px;" v-model="searchInfo.shootingDurationEnd" controls-position="right" autocomplete="off" />
@@ -113,10 +113,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="费用" label-width="120px">
-            <el-select filterable style="width: 216px;" v-model="selectedFee" collapse-tags @change="onFeeChange" multiple>
+          <el-form-item label="一级费用" label-width="120px">
+            <el-select filterable style="width: 216px;" v-model="selectedFirstLevelFee" collapse-tags @change="onFeeChange" multiple>
               <el-option :value="0" label="全部"></el-option>
-              <el-option v-for="item in feeCategories" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              <el-option v-for="item in firstFees" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="二级费用" label-width="120px">
+            <el-select filterable style="width: 216px;" v-model="selectedSecondLevelFee" collapse-tags @change="onFeeChange" multiple>
+              <el-option :value="0" label="全部"></el-option>
+              <el-option v-for="item in secondFees" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -178,7 +186,8 @@ export default {
       searchList: [],
       spanArr: [],
       pos: 0,
-      selectedFee: []
+      selectedFirstLevelFee: [],
+      selectedSecondLevelFee: []
     }
   },
   computed: {
@@ -191,6 +200,9 @@ export default {
     ]),
     firstFees() {
       return this.feeCategories.filter(fee => fee.categoryType === 1)
+    },
+    secondFees() {
+      return this.feeCategories.filter(fee => fee.categoryType === 2)
     },
     parentCompanys() {
       return this.allCompanys.filter(company => company.companyType === 1)
@@ -299,36 +311,49 @@ export default {
       console.log(this.spanArr)
     },
     formatFee() {
-      const feeList = this.selectedFee
       const newFeeList = []
-      feeList.forEach(fee => {
-        if (this.firstFees.some(category => category.id === fee)) {
+
+      this.selectedFirstLevelFee.forEach(fee => {
+        newFeeList.push({
+          categoryType: 1,
+          categoryId: fee
+        })
+      })
+
+      this.selectedSecondLevelFee.forEach(fee => {
+        const parentFee = this.feeCategories.filter(category => category.id === fee)
+        const parentFeeId = parentFee[0].parentCategoryId
+        const index = findIndex(newFeeList, fee => fee.categoryId === parentFeeId)
+        if (index === -1) {
           newFeeList.push({
-            categoryType: 1,
-            categoryId: fee
+            categoryType: 2,
+            categoryId: parentFeeId,
+            childFeeCategoryList: [fee]
           })
         } else {
-          const parentFee = this.feeCategories.filter(category => category.id === fee)
-          const parentFeeId = parentFee[0].parentCategoryId
-          const index = findIndex(newFeeList, fee => fee.categoryId === parentFeeId)
-          if (index === -1) {
-            newFeeList.push({
-              categoryType: 2,
-              categoryId: parentFeeId,
-              childFeeCategoryList: [fee]
-            })
-          } else {
-            if (!newFeeList[index].childFeeCategoryList) {
-              newFeeList[index].childFeeCategoryList = []
-            }
-            newFeeList[index].childFeeCategoryList.push(fee)
+          if (!newFeeList[index].childFeeCategoryList) {
+            newFeeList[index].childFeeCategoryList = []
           }
+          newFeeList[index].childFeeCategoryList.push(fee)
         }
       })
+
       this.searchInfo.feeList = newFeeList
+    },
+    /**
+     * 将搜索的成片时长由分钟转换成秒
+     */
+    formatFilmDurationStart() {
+      if (this.searchInfo.filmDurationMinuteStart !== undefined){
+        this.searchInfo.filmDurationStart = this.searchInfo.filmDurationMinuteStart * 60
+      }
+      if (this.searchInfo.filmDurationMinuteEnd !== undefined){
+        this.searchInfo.filmDurationEnd = this.searchInfo.filmDurationMinuteEnd * 60
+      }
     },
     onSearch() {
       this.formatFee()
+      this.formatFilmDurationStart()
       this.searchProject(this.searchInfo).then((lists = []) => {
         const newList = lists.map(list => {
           if (list.projectDetailList) {
