@@ -1,66 +1,87 @@
+<!--
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-07-01 19:00:18
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-08-10 13:21:19
+ -->
 <template>
   <div class="dashboard-container">
     <div class="base-info" v-if="step === '1'">
       <h3>基本信息</h3>
       <el-row>
-        <el-col :span="8">
-          <span>项目名称：</span>
+        <el-col >
+          <span>项目名称</span>
           <span>{{ baseInfo.name }}</span>
         </el-col>
-        <el-col :span="8">
-          <span>合同主体：</span>
+        <el-col >
+          <span>合同主体</span>
           <span>{{ baseInfo.contractSubjectId | getContractName(contractSubjects) }}</span>
         </el-col>
-        <el-col :span="8">
-          <span>成片时长：</span>
+        <el-col >
+          <span>成片时长</span>
           <span>{{ baseInfo.filmDuration }}秒</span>
         </el-col>
-        <el-col :span="8">
-          <span>拍摄开始日期：</span>
+        <el-col >
+          <span>拍摄开始日期</span>
           <span>{{ baseInfo.shootingStartAt }}</span>
         </el-col>
-        <el-col :span="8">
-          <span>拍摄周期：</span>
+        <el-col >
+          <span>拍摄周期</span>
           <span>{{ baseInfo.shootingDuration }}天</span>
         </el-col>
-        <el-col :span="16">
-          <span>项目角色：</span>
-          <div v-for="mType in memberTypes" :key="mType.type">
-            <el-row class="role">
-              <el-col :span="6">{{ mType.name }}</el-col>
-              <el-col :span="18">
-                <div v-for="(pMember) in baseInfo.projectMembers" v-if="pMember.memberType === mType.type" :key="pMember.id">{{ pMember.staffId | getStaff(allStaffs) }}</div>
-              </el-col>
-            </el-row>
-          </div>
+        <el-col  v-for="mType in memberTypes" :key="mType.type">
+          <span>{{ mType.name }}</span>
+          <span v-for="(pMember) in baseInfo.projectMembers"
+            v-if="pMember.memberType === mType.type"
+            :key="pMember.id">
+            {{ pMember.staffId | getStaff(allStaffs) }}
+          </span>
         </el-col>
-      </el-row>
+      </el-row>  
       <div class="divider"></div>
     </div>
     <div class="shooting-info" v-if="step === '2'">
       <h3>拍摄费用</h3>
-      <div v-for="sInfo in shootingInfo" :key="sInfo.key">
-        <el-row >
-          <el-col :span="8">一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
-          <el-col :span="8">二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
-          <el-col :span="8">预算金额: {{ sInfo.budgetAmount }}</el-col>
-          <el-col :span="8">实际金额: {{ sInfo.realAmount }}</el-col>
-          <el-col :span="8">评分: {{ sInfo.rankScore }}</el-col>
-          <el-col :span="8">备注: {{ sInfo.remark }}</el-col>
+      <el-table :data="shootingInfo" border :span-method="arraySpanMethod">
+        <el-table-column prop="feeCategoryId" label="一级费用">
+          <template scope="scope">
+            {{scope.row.feeCategoryId | getFeeName(feeCategories)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="feeChildCategoryId" label="二级费用">
+          <template scope="scope">
+            {{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="备注"></el-table-column>
+        <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
+        <el-table-column prop="realAmount" label="实际金额"></el-table-column>
+      </el-table>
+      <!-- <div v-for="sInfo in shootingInfo" :key="sInfo.key">
+        <el-row>
+          <el-col >一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col >二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col >预算金额: {{ sInfo.budgetAmount }}</el-col>
+          <el-col >实际金额: {{ sInfo.realAmount }}</el-col>
+          <el-col >评分: {{ sInfo.rankScore }}</el-col>
+          <el-col >备注: {{ sInfo.remark }}</el-col>
         </el-row>
         <div class="divider"></div>
-      </div>
+      </div> -->
     </div>
     <div class="last-info" v-if="step === '3'">
       <h3>后期费用</h3>
       <div v-for="sInfo in lastStateInfo" :key="sInfo.key">
-        <el-row >
-          <el-col :span="8">一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
-          <el-col :span="8">二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
-          <el-col :span="8">预算金额: {{ sInfo.budgetAmount }}</el-col>
-          <el-col :span="8">实际金额: {{ sInfo.realAmount }}</el-col>
-          <el-col :span="8">评分: {{ sInfo.rankScore }}</el-col>
-          <el-col :span="8">备注: {{ sInfo.remark }}</el-col>
+        <el-row>
+          <el-col >一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col >二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
+          <el-col >预算金额: {{ sInfo.budgetAmount }}</el-col>
+          <el-col >实际金额: {{ sInfo.realAmount }}</el-col>
+          <el-col >评分: {{ sInfo.rankScore }}</el-col>
+          <el-col >备注: {{ sInfo.remark }}</el-col>
         </el-row>
         <div class="divider"></div>
       </div>
@@ -91,7 +112,8 @@ export default {
       },
       shootingInfo: [],
       lastStateInfo: [],
-      secondFees: []
+      secondFees: [],
+      shootingArr: []
     }
   },
   computed: {
@@ -143,6 +165,7 @@ export default {
     })
     this.getShootingInfo(this.pId).then(res => {
       this.shootingInfo = res.data.projectFees
+      this.getSpanArr()
     })
     this.getLastStateInfo(this.pId).then(res => {
       this.lastStateInfo = res.data.projectFees
@@ -180,6 +203,34 @@ export default {
       'getLastStateInfo',
       'saveLastStateInfo'
     ]),
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        const _row = this.shootingArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+    },
+    getSpanArr() {
+      this.shootingArr = []
+      this.shootingInfo.forEach((item, i) => {
+        if (i === 0) {
+          this.shootingArr.push(1)
+          this.pos = 0
+        } else {
+          if (item.feeCategoryId === this.shootingInfo[i - 1].feeCategoryId) {
+            this.shootingArr[this.pos] += 1
+            this.shootingArr.push(0)
+          } else {
+            this.shootingArr.push(1)
+            this.pos = i
+          }
+        }
+      })
+      console.log(this.shootingArr)
+    },
     editProject() {
       this.editLoading = true
       this.saveBaseInfo({
@@ -284,4 +335,5 @@ export default {
   width: 100%;
   margin: 24px 0;
 }
+
 </style>

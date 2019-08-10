@@ -1,3 +1,12 @@
+/*
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-06-29 11:21:26
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-08-10 12:05:28
+ */
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
@@ -37,7 +46,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8888/`,
+        target: `http://127.0.0.1:8840/api/v1`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

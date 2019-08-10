@@ -1,3 +1,12 @@
+<!--
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-07-03 22:54:30
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-08-10 12:22:53
+ -->
 <template>
   <div class="app-container">
     <el-button type="primary" v-if="canEdit" @click="createContractDialog = true;newContract= {}">创建新合同主体</el-button>
@@ -20,7 +29,7 @@
       :title="isEdit ? '修改合同主体' : '新增合同主体'"
       :visible.sync="createContractDialog"
     >
-      <el-form ref="creteForm" :model="newContract" :rules="contractRules">
+      <el-form ref="createForm" :model="newContract" :rules="contractRules">
         <el-form-item prop="name" label="名称" label-width="200px">
           <el-row>
             <el-col :span="10">

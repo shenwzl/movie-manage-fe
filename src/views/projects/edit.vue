@@ -1,3 +1,12 @@
+<!--
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-07-01 19:00:11
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-08-10 12:14:32
+ -->
 <template>
   <div class="dashboard-container">
     <el-form v-if="step === '1'" ref="baseInfoForm" :model="baseInfo" :rules="baseInfoRules">
@@ -99,7 +108,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-             <el-form-item :prop="'shootingInfo.' + i + '.providerId'" :rules="{ required: true, message: '供应商不能为空' }" label="供应商" label-width="120px">
+             <el-form-item :prop="'shootingInfo.' + i + '.providerId'" :rules="{ required: sInfo.realAmount !== 0, message: '供应商不能为空' }" label="供应商" label-width="120px">
              <el-select v-model="sInfo.providerId" style="width: 180px;" width="200" autocomplete="off">
                 <el-option v-for="provider in allProviders" :key="provider.id" :value="provider.id" :label="provider.name" />
               </el-select>
@@ -151,7 +160,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-             <el-form-item :prop="'lastStateInfo.' + i + '.providerId'" :rules="{ required: true, message: '供应商不能为空' }" label="供应商" label-width="120px">
+             <el-form-item :prop="'lastStateInfo.' + i + '.providerId'" :rules="{ required: sInfo.realAmount !== 0, message: '供应商不能为空' }" label="供应商" label-width="120px">
              <el-select v-model="sInfo.providerId" style="width: 180px;" width="200" autocomplete="off">
                 <el-option v-for="provider in allProviders" :key="provider.id" :value="provider.id" :label="provider.name" />
               </el-select>

@@ -1,3 +1,12 @@
+<!--
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-07-07 17:15:15
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-07-07 17:15:15
+ -->
 <template>
   <div class="app-container">
     <el-form :model="searchInfo">
@@ -122,7 +131,7 @@
       <el-table-column prop="name" label="项目名称" />
       <el-table-column label="一级费用">
         <el-table-column prop="categoryId" label="费用名称">
-          <template scope="scope">
+        <template scope="scope">
             {{ scope.row.categoryId | getFeeName(feeCategories) }}
           </template>
         </el-table-column>

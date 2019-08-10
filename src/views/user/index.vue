@@ -1,3 +1,12 @@
+<!--
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-07-02 20:00:40
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-08-10 12:24:53
+ -->
 <template>
   <div class="app-container">
     <el-button v-if="canEdit" type="primary" @click="createUserDialog = true">创建用户</el-button>
@@ -67,7 +76,7 @@
     <el-dialog title="绑定角色" :visible.sync="bindRoleDialog">
       <el-form ref="bindForm" :rules="bindRules">
         <el-form-item prop="role" label="新角色" label-width="120px">
-          <el-select multiple v-model="newRole" autocomplete="off">
+          <el-select v-model="newRole" autocomplete="off">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
         </el-form-item>
