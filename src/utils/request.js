@@ -1,3 +1,12 @@
+/*
+ * @Description: file content
+ * @version: v1.0.0
+ * @Company: tujia
+ * @Author: SHENZHI
+ * @Date: 2019-06-29 11:21:26
+ * @LastEditors: SHENZHI
+ * @LastEditTime: 2019-08-11 11:39:45
+ */
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
@@ -20,6 +29,8 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
+      config.headers['Cache-Control'] = 'no-cache'
+      config.headers['Pragma'] = 'no-cache'
     }
     return config
   },
