@@ -27,7 +27,7 @@
       <el-table-column v-if="canEdit" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
-          <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{ scope.row.state ? '禁用' : '恢复' }}</el-button>
+          <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
         </template>
       </el-table-column>
     </el-table>
