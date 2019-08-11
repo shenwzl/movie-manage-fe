@@ -5,7 +5,7 @@
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:11
  * @LastEditors: SHENZHI
- * @LastEditTime: 2019-08-11 00:53:12
+ * @LastEditTime: 2019-08-11 12:13:10
  -->
 <template>
   <div class="dashboard-container">
@@ -91,7 +91,7 @@
             <el-col :span="6">
               <el-form-item
                 v-for="(pMember, i) in baseInfo.projectMembers"
-                v-if="pMember.memberType === mType.type"
+                v-if="pMember.memberType === mType.type && pMember.ascriptionType === 1"
                 :key="pMember.id"
                 :prop="'projectMembers.' + i + '.staffId'"
                 :rules="{ required: true, message: '员工不能为空' }"
@@ -99,6 +99,22 @@
                 <el-select v-model="pMember.staffId">
                   <el-option
                     v-for="staff in insideStaffs"
+                    :key="staff.id"
+                    :value="staff.id"
+                    :label="staff.name"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item
+                v-for="(pMember, i) in baseInfo.projectMembers"
+                v-if="pMember.memberType === mType.type && pMember.ascriptionType === 2"
+                :key="pMember.id"
+                :prop="'projectMembers.' + i + '.staffId'"
+                :rules="{ required: true, message: '员工不能为空' }"
+              >
+                <el-select v-model="pMember.staffId">
+                  <el-option
+                    v-for="staff in externalStaffs"
                     :key="staff.id"
                     :value="staff.id"
                     :label="staff.name"
@@ -215,7 +231,12 @@
         </el-table-column>
         <el-table-column prop="score" label="评分">
           <template scope="scope">
-            <el-input type="textarea" v-model="scope.row.score"></el-input>
+            <el-input-number
+              type="textarea"
+              style="width: 100px;"
+              controls-position="right"
+              v-model="scope.row.score"
+            ></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -322,7 +343,12 @@
         </el-table-column>
         <el-table-column prop="score" label="评分">
           <template scope="scope">
-            <el-input type="textarea" v-model="scope.row.score"></el-input>
+            <el-input-number
+              type="textarea"
+              style="width: 100px;"
+              controls-position="right"
+              v-model="scope.row.score"
+            ></el-input-number>
           </template>
         </el-table-column>
         <el-table-column label="操作">
