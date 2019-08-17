@@ -9,16 +9,17 @@
  -->
 <template>
   <div class="dashboard-container">
+    <el-button type="primary" @click="exportProject">导出</el-button>
     <div class="base-info">
       <h3>基本信息</h3>
-      <el-table border :data="baseInfo">
+      <el-table size="mini" border :data="baseInfo">
         <el-table-column prop="label"></el-table-column>
         <el-table-column prop="value"></el-table-column>
       </el-table>
     </div>
     <div class="shooting-info">
       <h3>拍摄费用</h3>
-      <el-table :data="shootingInfo" border :span-method="arraySpanMethod">
+      <el-table size="mini" :data="shootingInfo" border :span-method="arraySpanMethod">
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -40,7 +41,7 @@
     </div>
     <div class="last-info">
       <h3>后期费用</h3>
-      <el-table :data="lastStateInfo" border :span-method="arraySpanMethod">
+      <el-table size="mini" :data="lastStateInfo" border :span-method="arraySpanMethod">
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -238,8 +239,12 @@ export default {
       "getShootingInfo",
       "saveShootingInfo",
       "getLastStateInfo",
-      "saveLastStateInfo"
+      "saveLastStateInfo",
+      'exportDetailProject'
     ]),
+    exportProject() {
+      this.exportDetailProject(this.pId)
+    },
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
       return fee[0].name;
@@ -411,5 +416,9 @@ export default {
   height: 1px;
   width: 100%;
   margin: 24px 0;
+}
+.el-table td {
+  padding: 3px 0 !important;
+  font-size: 12px !important;
 }
 </style>

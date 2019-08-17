@@ -1,6 +1,42 @@
 <template>
   <div class="dashboard-container">
+    <el-form :model="searchInfo">
+      <el-row>
+        <el-col :span="5">
+          <el-form-item label="项目编号">
+            <el-input v-model="searchInfo.sid" style="width: 180px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="项目名称">
+            <el-input v-model="searchInfo.projectName" style="width: 180px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="项目合同主体">
+            <el-select
+              v-model="searchInfo.contractId"
+              style="width: 180px;"
+            >
+              <el-option v-for="item in contractSubjects"  :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="项目执行状态">
+            <el-select
+            style="width: 180px;"
+              v-model="searchInfo.state"
+              @change="onStateChange"
+            >
+            <el-option v-for="item in projectState" :key="item.state" :value="item.state" :label="item.name"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        </el-row>
+    </el-form>
     <el-button v-if="canCreate" type="primary" @click="createDialog = true">创建新项目</el-button>
+    <el-button type="primary" @click="handleSubmit">搜索</el-button>
     <el-table :data="projects">
       <el-table-column prop="id" label="项目编号">
       </el-table-column>
@@ -89,6 +125,12 @@ export default {
       createLoading: false,
       stateLoading: false,
       changeStateDialog: false,
+      searchInfo: {
+        sid: '',
+        projectName: '',
+        contractId: '',
+        state: ''
+      },
       baseInfo: {
         name: '',
         contractSubjectId: 0,
@@ -180,7 +222,7 @@ export default {
     this.getAllStaffs()
     this.getMemberTypes()
     this.getContractSubjects().then(res => {
-      this.getProjects({ page: this.page, page_size: this.pageSize })
+      this.getProjects({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     })
   },
   methods: {
@@ -195,9 +237,12 @@ export default {
       'getProjectState',
       'updateState'
     ]),
+    handleSubmit() {
+      this.getProjects({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
+    },
     handlePageChange(page) {
       this.page = page
-      this.getProjects({ page: this.page, page_size: this.pageSize })
+      this.getProjects({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     },
     createProject() {
       this.$refs.createForm.validate(valid => {
@@ -207,7 +252,7 @@ export default {
             this.createLoading = false
             this.$message.success('添加成功')
             this.createDialog = false
-            this.getProjects({ page: this.page, page_size: this.pageSize })
+            this.getProjects({ page: this.page, pageSize: this.pageSize })
           })
         }
       })
@@ -258,7 +303,7 @@ export default {
           this.$message.success('更新成功')
           this.stateLoading = false
           this.changeStateDialog = false
-          this.getProjects({ page: this.page, page_size: this.pageSize })
+          this.getProjects({ page: this.page, pageSize: this.pageSize })
         }
       )
     }

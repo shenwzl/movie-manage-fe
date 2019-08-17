@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getProjects(params) {
+export function getProjects(data) {
   return request({
     url: '/projects',
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 }
 
@@ -96,5 +96,12 @@ export function exportProject(data) {
     url: '/project_search/export',
     method: 'post',
     data
+  })
+}
+
+export function exportDetailProject(id) {
+  return request({
+    url: `/projects/${id}/export`,
+    method: 'post'
   })
 }
