@@ -66,6 +66,10 @@
 import { mapGetters, mapActions } from "vuex";
 import { hasPermission } from "@/utils/auth";
 import { reduce } from 'lodash'
+import axios from "axios";
+import store from "@/store";
+import { getToken } from "@/utils/auth";
+
 export default {
   name: "Dashboard",
   data: function() {
@@ -260,7 +264,7 @@ export default {
       );
 
       service
-        .post("projects/" + this.pId + "/export", {}, {
+        .post("projects/" + this.pId + "/export_detail", {}, {
           responseType: "blob"
         })
         .then(resp => {

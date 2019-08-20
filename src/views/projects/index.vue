@@ -15,6 +15,7 @@
         <el-col :span="5" :offset="1">
           <el-form-item label="项目合同主体">
             <el-select
+              clearable 
               v-model="searchInfo.contractId"
               style="width: 180px;"
             >
@@ -25,7 +26,8 @@
         <el-col :span="5" :offset="1">
           <el-form-item label="项目执行状态">
             <el-select
-            style="width: 180px;"
+              clearable 
+              style="width: 180px;"
               v-model="searchInfo.state"
             >
             <el-option v-for="item in projectState" :key="item.state" :value="item.state" :label="item.name"></el-option>
