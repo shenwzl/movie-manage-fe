@@ -23,6 +23,7 @@
         <el-col :span="8">
           <el-form-item label="项目执行状态" label-width="120px">
             <el-select
+              clearable 
               v-model="searchInfo.states"
               style="width: 216px;"
               multiple
@@ -38,7 +39,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="所属公司" label-width="120px">
-            <el-select filterable v-model="searchInfo.companyId" style="width: 216px;">
+            <el-select clearable filterable v-model="searchInfo.companyId" style="width: 216px;">
               <el-option
                 v-for="company in parentCompanys"
                 :key="company.id"
@@ -50,7 +51,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="所属子公司" label-width="120px">
-            <el-select filterable v-model="searchInfo.companyChildId" style="width: 216px;">
+            <el-select clearable filterable v-model="searchInfo.companyChildId" style="width: 216px;">
               <el-option
                 v-for="company in childCompanys"
                 :key="company.id"
@@ -155,10 +156,8 @@
               style="width: 216px;"
               v-model="searchInfo.directorList"
               collapse-tags
-              @change="onDirectorChange"
               multiple
             >
-              <el-option :value="0" label="全部"></el-option>
               <el-option
                 v-for="staff in allStaffs"
                 :key="staff.id"
@@ -171,14 +170,13 @@
         <el-col :span="8">
           <el-form-item label="制作人" label-width="120px">
             <el-select
+              clearable 
               filterable
               style="width: 216px;"
               v-model="searchInfo.producerList"
               collapse-tags
-              @change="onProducerChange"
               multiple
             >
-              <el-option :value="0" label="全部"></el-option>
               <el-option
                 v-for="staff in allStaffs"
                 :key="staff.id"
@@ -191,6 +189,7 @@
         <el-col :span="8">
           <el-form-item label="一级费用" label-width="120px">
             <el-select
+              clearable 
               filterable
               style="width: 216px;"
               v-model="selectedFirstLevelFee"
@@ -211,6 +210,7 @@
         <el-col :span="8">
           <el-form-item label="二级费用" label-width="120px">
             <el-select
+              clearable 
               filterable
               style="width: 216px;"
               v-model="selectedSecondLevelFee"
@@ -347,7 +347,6 @@ export default {
       return "";
     },
     getContractsName(cId, contracts) {
-      console.log(cId, contracts);
       if (cId && contracts.length) {
         const contract = contracts.filter(ctr => ctr.id === cId);
         return contract[0].name;
@@ -392,16 +391,6 @@ export default {
       "getProjectState",
       "getContractSubjects"
     ]),
-    onDirectorChange(val) {
-      if (val.includes(0)) {
-        this.searchInfo.directorList = this.allStaffs.map(staff => staff.id);
-      }
-    },
-    onProducerChange(val) {
-      if (val.includes(0)) {
-        this.searchInfo.producerList = this.allStaffs.map(staff => staff.id);
-      }
-    },
     onFeeChange(val) {
       if (val.includes(0)) {
         this.searchInfo.feeList = this.feeCategories.map(fee => fee.id);
