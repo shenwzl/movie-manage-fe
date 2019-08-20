@@ -187,6 +187,7 @@ export default {
       this.createLoading = false
       this.newFee = {}
       this.getFees({ page: this.page, pageSize: this.pageSize })
+      this.getFeeCategories()
     },
     handlePageChange(page) {
       this.page = page

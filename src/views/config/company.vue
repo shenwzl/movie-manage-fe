@@ -114,6 +114,7 @@ export default {
   computed: {
     ...mapGetters(['companys', 'total', 'allCompanys']),
     parentCompanys() {
+      console.log(this.allCompanys)
       return this.allCompanys.filter(company => company.companyType === 1)
     },
     canEdit() {

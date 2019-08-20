@@ -234,18 +234,18 @@
       </el-row>
     </el-form>
     <el-table style="margin-top: 20px;" :data="searchList" :span-method="arraySpanMethod">
-      <el-table-column prop="id" label="项目id" />
+      <el-table-column prop="sid" label="项目编号" />
       <el-table-column prop="name" label="项目名称">
         <template scope="scope">
           <a style="color: blue;" :href="'#/detail/' + scope.row.id">{{ scope.row.name }}</a>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="项目执行状态">
+      <el-table-column prop="state" label="项目执行状态">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.state | getStateName(projectState) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="项目合同主体">
+      <el-table-column prop="contractSubjectId" label="项目合同主体">
         <template slot-scope="scope">
           <span
             style="margin-left: 10px"
@@ -345,19 +345,20 @@ export default {
       return "";
     },
     getContractsName(cId, contracts) {
+      console.log(cId, contracts);
       if (cId && contracts.length) {
-        const contract = contracts.filter(ctr => ctr.id === cId)
-        return contract[0].name
+        const contract = contracts.filter(ctr => ctr.id === cId);
+        return contract[0].name;
       }
-      return ''
-    },
+      return "";
+    }
   },
   beforeMount() {
     this.getProjectState();
     this.getAllStaffs();
     this.getAllProviders();
     this.getAllCompanys();
-    this.getContractSubjects()
+    this.getContractSubjects();
     this.getFeeCategories().then(res => {
       const firstFees = res[1].filter(fee => fee.categoryType === 1);
       this.feeGroups = firstFees.map(firstFee => {
@@ -383,7 +384,9 @@ export default {
       "getAllCompanys",
       "getFeeCategories",
       "searchProject",
-      "exportProject"
+      "exportProject",
+      "getProjectState",
+      "getContractSubjects"
     ]),
     onStateChange(val) {
       if (val.includes(0)) {
@@ -407,7 +410,42 @@ export default {
     },
     handlePageChange(page) {
       this.searchInfo.page = page;
-      this.searchProject(this.searchInfo);
+      this.searchProject(this.searchInfo).then(lists => {
+        const newList = lists.map(list => {
+          if (list.projectDetailList) {
+            let { projectDetailList } = list;
+            return projectDetailList.map(pDetail => {
+              return pDetail.childFeeList.map(childFee => ({
+                id: list.id,
+                name: list.name,
+                contractSubjectId: list.contractSubjectId,
+                state: list.state,
+                categoryId: pDetail.categoryId,
+                budgetAmount: pDetail.budgetAmount,
+                realAmount: pDetail.realAmount,
+                childCategoryId: childFee.categoryId,
+                childBudgetAmount: childFee.budgetAmount,
+                childRealAmount: childFee.realAmount
+              }));
+            });
+          } else {
+            return {
+              id: list.id,
+              name: list.name,
+              contractSubjectId: list.contractSubjectId,
+              state: list.state,
+              categoryId: "",
+              budgetAmount: "",
+              realAmount: "",
+              childCategoryId: "",
+              childBudgetAmount: "",
+              childRealAmount: ""
+            };
+          }
+        });
+        this.searchList = flattenDeep(newList);
+        this.getSpanArr();
+      })
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (
@@ -506,6 +544,8 @@ export default {
               return pDetail.childFeeList.map(childFee => ({
                 id: list.id,
                 name: list.name,
+                contractSubjectId: list.contractSubjectId,
+                state: list.state,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
@@ -518,6 +558,8 @@ export default {
             return {
               id: list.id,
               name: list.name,
+              contractSubjectId: list.contractSubjectId,
+              state: list.state,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",

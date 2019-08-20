@@ -20,6 +20,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
+          <span class="label-info">项目编号</span>
+          <el-divider direction="vertical"></el-divider>
+          <el-form-item class="item-info" prop="sid">
+            <el-input v-model="baseInfo.sid" style="width: 180px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
           <span class="label-info">合同主体</span>
           <el-form-item class="item-info" prop="contractSubjectId">
             <el-select v-model="baseInfo.contractSubjectId" autocomplete="off">
@@ -36,6 +43,7 @@
           <span class="label-info">成片时长</span>
           <el-form-item prop="filmDuration" class="item-info">
             <el-input-number
+              :min="0"
               v-model="baseInfo.minute"
               controls-position="right"
               autocomplete="off"
@@ -43,6 +51,7 @@
           </el-form-item>分
           <el-form-item prop="filmDuration">
             <el-input-number
+              :min="0"
               v-model="baseInfo.second"
               controls-position="right"
               autocomplete="off"
@@ -99,6 +108,7 @@
                 <el-select v-model="pMember.staffId">
                   <el-option
                     v-for="staff in insideStaffs"
+                    v-if="staff.state === 0"                    
                     :key="staff.id"
                     :value="staff.id"
                     :label="staff.name"
@@ -115,6 +125,7 @@
                 <el-select v-model="pMember.staffId">
                   <el-option
                     v-for="staff in externalStaffs"
+                    v-if="staff.state === 0"
                     :key="staff.id"
                     :value="staff.id"
                     :label="staff.name"
@@ -423,7 +434,7 @@
         <el-button type="primary" :loading="createLoading" @click="createStaff">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="新增一级费用" :visible.sync="firstShootingFeeVisible">
+    <el-dialog title="新增一级费用" v-if="step === '2'" :visible.sync="firstShootingFeeVisible">
       <el-select v-model="fisrtShootingFee">
         <el-option
           v-for="fee in firstShootingFee"
@@ -438,7 +449,7 @@
         <el-button type="primary" @click="addFirstShootingFee">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="新增一级费用" :visible.sync="firstLastFeeVisible">
+    <el-dialog title="新增一级费用" v-if="step === '3'" :visible.sync="firstLastFeeVisible">
       <el-select v-model="fisrtLastFee">
         <el-option
           v-for="fee in firstLastFee"
@@ -468,6 +479,7 @@ export default {
       createLoading: false,
       editLoading: false,
       baseInfo: {
+        sid: '',
         name: "",
         contractSubjectId: 0,
         filmDuration: 3, // 单位：秒
@@ -488,6 +500,7 @@ export default {
       },
       secondFees: [],
       baseInfoRules: {
+        sid: [{ required: true, message: "编号不能为空" }],
         name: [{ required: true, message: "名称不能为空" }],
         contractSubjectId: [{ required: true, message: "合同主体不能为空" }],
         filmDuration: [{ required: true, message: "成片时长不能为空" }],
@@ -566,7 +579,7 @@ export default {
     this.getContractSubjects();
     this.getAllStaffs();
     this.getMemberTypes();
-    this.getBaseInfo(this.pId).then(res => {
+    this.step === '1' && this.getBaseInfo(this.pId).then(res => {
       res.data.projectMembers.forEach(pMember => {
         const { staffId } = pMember;
         const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
@@ -576,7 +589,7 @@ export default {
       res.data.second = res.data.filmDuration % 60;
       this.baseInfo = res.data;
     });
-    this.getShootingInfo(this.pId).then(res => {
+    this.step === '2' && this.getShootingInfo(this.pId).then(res => {
       console.log(res);
       this.feeInfo.shootingInfo = res.data.projectFees;
       this.feeInfo.shootingInfo.sort(
@@ -584,7 +597,7 @@ export default {
       );
       this.getSpanArr();
     });
-    this.getLastStateInfo(this.pId).then(res => {
+    this.step === '3' && this.getLastStateInfo(this.pId).then(res => {
       this.feeInfo.lastStateInfo = res.data.projectFees;
       this.feeInfo.lastStateInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
@@ -640,10 +653,19 @@ export default {
     ]),
     feeDisabled(fees, id) {
       const hasFee = find(fees, fee => fee.feeCategoryId === id);
-      return hasFee.length !== 0;
+      if (hasFee) {
+        return hasFee.length !== 0;
+      } else {
+        return false
+      }
     },
     handleDeleteShooting(index) {
       this.feeInfo.shootingInfo.splice(index, 1);
+      this.feeInfo.shootingInfo.sort(
+        (a, b) => a.feeCategoryId - b.feeCategoryId
+      );
+      this.feeInfo.shootingInfo.forEach((sInfo, i) => (sInfo.index = i));
+      this.getSpanArr();
     },
     handleAddShooting(record) {
       console.log(this.feeInfo.shootingInfo);
@@ -694,6 +716,10 @@ export default {
     },
     handleDeleteLast(index) {
       this.feeInfo.lastStateInfo.splice(index, 1);
+      this.feeInfo.lastStateInfo.sort(
+        (a, b) => a.feeCategoryId - b.feeCategoryId
+      );
+      this.getLastArr();
     },
     handleAddLast(record) {
       this.feeInfo.lastStateInfo.push({
@@ -735,6 +761,7 @@ export default {
         staffId: "",
         ascriptionType: 1
       });
+      console.log(this.baseInfo)
     },
     editShootingInfo() {
       console.log(this.feeInfo.shootingInfo);

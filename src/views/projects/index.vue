@@ -38,7 +38,7 @@
     <el-button v-if="canCreate" type="primary" @click="createDialog = true">创建新项目</el-button>
     <el-button type="primary" @click="handleSubmit">搜索</el-button>
     <el-table :data="projects">
-      <el-table-column prop="id" label="项目编号">
+      <el-table-column prop="sid" label="项目编号">
       </el-table-column>
       <el-table-column prop="name" label="项目名称" />
       <el-table-column prop="state" label="项目执行状态" width="150">
