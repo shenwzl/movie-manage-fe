@@ -13,14 +13,12 @@
       <el-row style="border: 1px solid #EBEEF5;">
         <el-col :span="24">
           <span class="label-info">项目名称</span>
-          <el-divider direction="vertical"></el-divider>
           <el-form-item class="item-info" prop="name">
             <el-input v-model="baseInfo.name" style="width: 180px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目编号</span>
-          <el-divider direction="vertical"></el-divider>
           <el-form-item class="item-info" prop="sid">
             <el-input v-model="baseInfo.sid" style="width: 180px;" autocomplete="off" />
           </el-form-item>
@@ -74,16 +72,28 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
+          <span class="label-info">客户公司</span>
+          <el-form-item prop="childCompanyId" class="item-info">
+            <el-select v-model="baseInfo.childCompanyId">
+              <el-option
+                v-for="item in allCompanys"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+                v-if="item.companyType === 2 && item.state === 0"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
           <span class="label-info">项目合同金额</span>
-          <el-divider direction="vertical"></el-divider>
-          <el-form-item class="item-info" prop="contractAmount">
+          <el-form-item style="margin-left: 152px;" class="item-info" prop="contractAmount">
             <el-input v-model="baseInfo.contractAmount" style="width: 180px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目回款金额</span>
-          <el-divider direction="vertical"></el-divider>
-          <el-form-item class="item-info" prop="returnAmount">
+          <el-form-item style="margin-left: 152px;" class="item-info" prop="returnAmount">
             <el-input v-model="baseInfo.returnAmount" style="width: 180px;" autocomplete="off" />
           </el-form-item>
         </el-col>
@@ -94,12 +104,15 @@
             type="text"
             @click="addMemberType(mType.type)"
           >{{`添加${mType.name}`}}</el-button>
-          <el-col :span="18" :offset="4">
+          <el-col
+            :span="18"
+            :offset="4"
+            v-for="(pMember, i) in baseInfo.projectMembers"
+            :key="pMember.id"
+          >
             <el-col :span="6" style="margin-right: 20px;">
               <el-form-item
-                v-for="(pMember, i) in baseInfo.projectMembers"
                 v-if="pMember.memberType === mType.type"
-                :key="pMember.id"
                 style="margin-left: 84px;"
                 :prop="'projectMembers.' + i + '.ascriptionType'"
                 :rules="{ required: true, message: '员工类型不能为空' }"
@@ -112,16 +125,14 @@
             </el-col>
             <el-col :span="6">
               <el-form-item
-                v-for="(pMember, i) in baseInfo.projectMembers"
                 v-if="pMember.memberType === mType.type && pMember.ascriptionType === 1"
-                :key="pMember.id"
                 :prop="'projectMembers.' + i + '.staffId'"
                 :rules="{ required: true, message: '员工不能为空' }"
               >
                 <el-select v-model="pMember.staffId">
                   <el-option
                     v-for="staff in insideStaffs"
-                    v-if="staff.state === 0"                    
+                    v-if="staff.state === 0"
                     :key="staff.id"
                     :value="staff.id"
                     :label="staff.name"
@@ -129,9 +140,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item
-                v-for="(pMember, i) in baseInfo.projectMembers"
                 v-if="pMember.memberType === mType.type && pMember.ascriptionType === 2"
-                :key="pMember.id"
                 :prop="'projectMembers.' + i + '.staffId'"
                 :rules="{ required: true, message: '员工不能为空' }"
               >
@@ -148,7 +157,6 @@
             </el-col>
             <el-col :span="3">
               <el-button
-                v-for="(pMember, i) in baseInfo.projectMembers"
                 v-if="pMember.memberType === mType.type"
                 :key="pMember.id"
                 class="delete-button"
@@ -492,14 +500,15 @@ export default {
       createLoading: false,
       editLoading: false,
       baseInfo: {
-        sid: '',
+        sid: "",
         name: "",
         contractSubjectId: 0,
         filmDuration: 3, // 单位：秒
         shootingStartAt: "",
         shootingDuration: "",
         contractAmount: 0,
-        returnAmount:0,
+        returnAmount: 0,
+        childCompanyId: '',
         projectMembers: [
           {
             id: 0,
@@ -524,7 +533,8 @@ export default {
         contractAmount: [{ required: true, message: "项目合同金额不能为空" }],
         returnAmount: [{ required: true, message: "项目回款金额不能为空" }],
         ascriptionType: [{ required: true, message: "员工类型不能为空" }],
-        staffId: [{ required: true, message: "员工不能为空" }]
+        staffId: [{ required: true, message: "员工不能为空" }],
+        childCompanyId: [{ required: true, message: "客户公司不能为空" }]
       },
       shootingInfoRules: {
         feeCategoryId: [{ required: true, message: "一级费用项不能为空" }],
@@ -558,7 +568,8 @@ export default {
       "memberTypes",
       "allStaffs",
       "feeCategories",
-      "allProviders"
+      "allProviders",
+      "allCompanys"
     ]),
     // 内部员工
     insideStaffs() {
@@ -592,35 +603,38 @@ export default {
   },
   beforeMount() {
     this.getAllProviders();
+    this.getAllCompanys();
     this.getFeeCategories().then(() => (this.secondFees = this.feeCategories));
     this.getContractSubjects();
     this.getAllStaffs();
     this.getMemberTypes();
-    this.step === '1' && this.getBaseInfo(this.pId).then(res => {
-      res.data.projectMembers.forEach(pMember => {
-        const { staffId } = pMember;
-        const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
-        pMember.ascriptionType = staff[0].ascription;
+    this.step === "1" &&
+      this.getBaseInfo(this.pId).then(res => {
+        res.data.projectMembers.forEach(pMember => {
+          const { staffId } = pMember;
+          const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
+          pMember.ascriptionType = staff[0].ascription;
+        });
+        res.data.minute = Math.floor(res.data.filmDuration / 60);
+        res.data.second = res.data.filmDuration % 60;
+        this.baseInfo = res.data;
       });
-      res.data.minute = Math.floor(res.data.filmDuration / 60);
-      res.data.second = res.data.filmDuration % 60;
-      this.baseInfo = res.data;
-    });
-    this.step === '2' && this.getShootingInfo(this.pId).then(res => {
-      console.log(res);
-      this.feeInfo.shootingInfo = res.data.projectFees;
-      this.feeInfo.shootingInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getSpanArr();
-    });
-    this.step === '3' && this.getLastStateInfo(this.pId).then(res => {
-      this.feeInfo.lastStateInfo = res.data.projectFees;
-      this.feeInfo.lastStateInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getLastArr();
-    });
+    this.step === "2" &&
+      this.getShootingInfo(this.pId).then(res => {
+        this.feeInfo.shootingInfo = res.data.projectFees;
+        this.feeInfo.shootingInfo.sort(
+          (a, b) => a.feeCategoryId - b.feeCategoryId
+        );
+        this.getSpanArr();
+      });
+    this.step === "3" &&
+      this.getLastStateInfo(this.pId).then(res => {
+        this.feeInfo.lastStateInfo = res.data.projectFees;
+        this.feeInfo.lastStateInfo.sort(
+          (a, b) => a.feeCategoryId - b.feeCategoryId
+        );
+        this.getLastArr();
+      });
   },
   filters: {
     getFeeName(id, fees) {
@@ -666,14 +680,15 @@ export default {
       "saveShootingInfo",
       "getLastStateInfo",
       "saveLastStateInfo",
-      "addStaff"
+      "addStaff",
+      "getAllCompanys"
     ]),
     feeDisabled(fees, id) {
       const hasFee = find(fees, fee => fee.feeCategoryId === id);
       if (hasFee) {
         return hasFee.length !== 0;
       } else {
-        return false
+        return false;
       }
     },
     handleDeleteShooting(index) {
@@ -685,7 +700,6 @@ export default {
       this.getSpanArr();
     },
     handleAddShooting(record) {
-      console.log(this.feeInfo.shootingInfo);
       this.feeInfo.shootingInfo.push({
         feeCategoryId: record.feeCategoryId,
         feeChildCategoryId: "",
@@ -760,6 +774,9 @@ export default {
           this.baseInfo.filmDuration =
             parseInt(this.baseInfo.minute * 60) +
             parseInt(this.baseInfo.second);
+          const company = find(this.allCompanys, cpy => cpy.id === this.baseInfo.childCompanyId)
+          console.log(company)
+          this.baseInfo.companyId = company.parentCompanyId
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId
@@ -772,13 +789,15 @@ export default {
       });
     },
     addMemberType(id) {
-      this.baseInfo.projectMembers.push({
+      const projectMembers = this.baseInfo.projectMembers;
+      projectMembers.push({
         projectId: this.pId,
         memberType: id,
         staffId: "",
         ascriptionType: 1
       });
-      console.log(this.baseInfo)
+      this.baseInfo.projectMembers = projectMembers;
+      console.log(this.baseInfo.projectMembers);
     },
     editShootingInfo() {
       console.log(this.feeInfo.shootingInfo);

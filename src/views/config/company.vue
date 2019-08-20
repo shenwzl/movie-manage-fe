@@ -114,7 +114,6 @@ export default {
   computed: {
     ...mapGetters(['companys', 'total', 'allCompanys']),
     parentCompanys() {
-      console.log(this.allCompanys)
       return this.allCompanys.filter(company => company.companyType === 1)
     },
     canEdit() {
@@ -139,14 +138,11 @@ export default {
       this.isEdit = true
       this.createCompanyDialog = true
     },
-    setPermission() {
-    },
     saveCompany() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
           if (this.isEdit){
-            console.log("edit")
             this.editCompany()
           }else {
             this.createCompany()

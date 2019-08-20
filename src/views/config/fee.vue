@@ -59,6 +59,7 @@
               <el-select v-model="newFee.parentCategoryId" autocomplete="off">
                 <el-option 
                   v-for="fee in parentFees"
+                  v-if="fee.state === 0"
                   :key="fee.id"
                   :label="fee.name"
                   :value="fee.id"
@@ -205,6 +206,7 @@ export default {
           this.getFees({ page: this.page, pageSize: this.pageSize })
         })
       }
+      this.getFeeCategories()
     }
   }
 }

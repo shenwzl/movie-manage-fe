@@ -49,6 +49,7 @@ const mutations = {
     state.contracts = contracts
   },
   SET_COMPANYS: (state, companys) => {
+    console.log(companys, 123)
     state.companys = companys
   }
 }

@@ -5,7 +5,7 @@ import {
   getStaffs,
   getMemberTypes,
   getProjectState,
-  getCompanys
+  getAllCompanys
 } from '@/api/projectConfig'
 
 const state = {
@@ -37,7 +37,7 @@ const mutations = {
   SET_PROJECTSTATE: (state, projectState) => {
     state.projectState = projectState
   },
-  SET_COMPANYS: (state, companys) => {
+  SET_ALLCOMPANYS: (state, companys) => {
     state.allCompanys = companys
   }
 }
@@ -55,8 +55,8 @@ const actions = {
   },
   getAllCompanys({ commit }, data) {
     return new Promise((resolve, reject) => {
-      getCompanys(data).then(res => {
-        commit('SET_COMPANYS', res.data)
+      getAllCompanys(data).then(res => {
+        commit('SET_ALLCOMPANYS', res.data)
         resolve(res.data)
       }).catch(err => {
         reject(err)

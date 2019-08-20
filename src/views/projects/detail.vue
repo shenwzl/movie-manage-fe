@@ -36,17 +36,6 @@
         <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="realAmount" label="实际金额"></el-table-column>
       </el-table>
-      <!-- <div v-for="sInfo in shootingInfo" :key="sInfo.key">
-        <el-row>
-          <el-col >一级费用: {{ sInfo.feeCategoryId | getFeeName(feeCategories) }}</el-col>
-          <el-col >二级费用: {{ sInfo.feeChildCategoryId | getFeeName(feeCategories) }}</el-col>
-          <el-col >预算金额: {{ sInfo.budgetAmount }}</el-col>
-          <el-col >实际金额: {{ sInfo.realAmount }}</el-col>
-          <el-col >评分: {{ sInfo.rankScore }}</el-col>
-          <el-col >备注: {{ sInfo.remark }}</el-col>
-        </el-row>
-        <div class="divider"></div>
-      </div>-->
     </div>
     <div class="last-info" v-if="step === '3'">
       <h3>后期费用</h3>
@@ -109,7 +98,8 @@ export default {
       "memberTypes",
       "allStaffs",
       "feeCategories",
-      "allProviders"
+      "allProviders",
+      'allCompanys'
     ]),
     // 内部员工
     insideStaffs() {
@@ -146,6 +136,7 @@ export default {
     }
   },
   beforeMount() {
+    this.getAllCompanys();
     this.getAllProviders();
     this.getFeeCategories();
     this.getContractSubjects();
@@ -171,6 +162,10 @@ export default {
         {
           label: "拍摄周期",
           value: data.shootingDuration && `${data.shootingDuration}天`
+        },
+        {
+          label: "客户公司",
+          value: data.childCompanyId && `一级公司: ${this.getCompanyName(data.companyId, this.allCompanys)}   二级公司:${this.getCompanyName(data.childCompanyId, this.allCompanys)}`
         },
         { label: "项目合同金额", value: data.contractAmount },
         { label: "项目回款金额", value: data.returnAmount }
@@ -250,7 +245,8 @@ export default {
       "getShootingInfo",
       "saveShootingInfo",
       "getLastStateInfo",
-      "saveLastStateInfo"
+      "saveLastStateInfo",
+      'getAllCompanys'
     ]),
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
@@ -260,6 +256,13 @@ export default {
       if (id) {
         const contract = contracts.filter(ctr => ctr.id === id);
         return contract[0].name;
+      }
+      return "";
+    },
+    getCompanyName(id, companys) {
+      if (id) {
+        const company = companys.filter(ctr => ctr.id === id);
+        return company[0].name;
       }
       return "";
     },

@@ -99,7 +99,8 @@ export default {
       "memberTypes",
       "allStaffs",
       "feeCategories",
-      "allProviders"
+      "allProviders",
+      'allCompanys'
     ]),
     // 内部员工
     insideStaffs() {
@@ -136,6 +137,7 @@ export default {
     }
   },
   beforeMount() {
+    this.getAllCompanys();
     this.getAllProviders();
     this.getFeeCategories();
     this.getContractSubjects();
@@ -161,6 +163,10 @@ export default {
         {
           label: "拍摄周期",
           value: data.shootingDuration && `${data.shootingDuration}天`
+        },
+        {
+          label: "客户公司",
+          value: data.childCompanyId && `一级公司: ${this.getCompanyName(data.companyId, this.allCompanys)}   二级公司:${this.getCompanyName(data.childCompanyId, this.allCompanys)}`
         },
         { label: "项目合同金额", value: data.contractAmount },
         { label: "项目回款金额", value: data.returnAmount }
@@ -240,7 +246,8 @@ export default {
       "getShootingInfo",
       "saveShootingInfo",
       "getLastStateInfo",
-      "saveLastStateInfo"
+      "saveLastStateInfo",
+      'getAllCompanys'
     ]),
     exportProject() {
       const service = axios.create({
@@ -273,6 +280,13 @@ export default {
           document.body.appendChild(link);
           link.click();
         });
+    },
+    getCompanyName(id, companys) {
+      if (id) {
+        const company = companys.filter(ctr => ctr.id === id);
+        return company[0].name;
+      }
+      return "";
     },
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
