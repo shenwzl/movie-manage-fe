@@ -1,7 +1,6 @@
 <!--
  * @Description: file content
  * @version: v1.0.0
- * @Company: tujia
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:18
  * @LastEditors: SHENZHI
@@ -155,7 +154,7 @@ export default {
     this.getBaseInfo(this.pId).then(res => {
       const data = res.data;
       const baseInfo = [
-        { label: "项目id", value: data.id },
+        { label: "项目编号", value: data.sid },
         { label: "项目名称", value: data.name },
         {
           label: "合同主体",
@@ -172,7 +171,9 @@ export default {
         {
           label: "拍摄周期",
           value: data.shootingDuration && `${data.shootingDuration}天`
-        }
+        },
+        { label: "项目合同金额", value: data.contractAmount },
+        { label: "项目回款金额", value: data.returnAmount }
       ];
       const members = this.memberTypes.map(memberType => {
         const projectMember = data.projectMembers.filter(

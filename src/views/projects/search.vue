@@ -1,7 +1,6 @@
 <!--
  * @Description: file content
  * @version: v1.0.0
- * @Company: tujia
  * @Author: SHENZHI
  * @Date: 2019-07-07 17:15:15
  * @LastEditors: SHENZHI
@@ -13,7 +12,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="项目编号" label-width="120px">
-            <el-input v-model="searchInfo.id" style="width: 216px;" autocomplete="off" />
+            <el-input v-model="searchInfo.sid" style="width: 216px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -25,13 +24,15 @@
           <el-form-item label="项目执行状态" label-width="120px">
             <el-select
               v-model="searchInfo.states"
-              @change="onStateChange"
               style="width: 216px;"
               multiple
             >
-              <el-option :value="0" label="全部"></el-option>
-              <el-option :value="1" label="正常"></el-option>
-              <el-option :value="2" label="禁用"></el-option>
+              <el-option
+                v-for="item in projectState"
+                :key="item.state"
+                :value="item.state"
+                :label="item.name"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -307,6 +308,7 @@ export default {
       "allCompanys",
       "total",
       "projectState",
+      "contracts",
       "contractSubjects"
     ]),
     firstFees() {
@@ -383,16 +385,13 @@ export default {
       "getAllProviders",
       "getAllCompanys",
       "getFeeCategories",
+      "getProjectState",
+      "getContractSubjects",
       "searchProject",
       "exportProject",
       "getProjectState",
       "getContractSubjects"
     ]),
-    onStateChange(val) {
-      if (val.includes(0)) {
-        this.searchInfo.states = [1, 2];
-      }
-    },
     onDirectorChange(val) {
       if (val.includes(0)) {
         this.searchInfo.directorList = this.allStaffs.map(staff => staff.id);
@@ -542,7 +541,7 @@ export default {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
               return pDetail.childFeeList.map(childFee => ({
-                id: list.id,
+                sid: list.sid,
                 name: list.name,
                 contractSubjectId: list.contractSubjectId,
                 state: list.state,
@@ -556,7 +555,7 @@ export default {
             });
           } else {
             return {
-              id: list.id,
+              sid: list.sid,
               name: list.name,
               contractSubjectId: list.contractSubjectId,
               state: list.state,
