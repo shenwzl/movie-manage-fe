@@ -45,7 +45,8 @@
               controls-position="right"
               autocomplete="off"
             />
-          </el-form-item>分
+          </el-form-item>
+          <span>分</span>
           <el-form-item prop="filmDuration">
             <el-input-number
               :min="0"
@@ -53,7 +54,8 @@
               controls-position="right"
               autocomplete="off"
             />
-          </el-form-item>秒
+          </el-form-item>
+          <span>秒</span>
         </el-col>
         <el-col :span="24">
           <span class="label-info">拍摄开始日期</span>
@@ -65,10 +67,12 @@
           <span class="label-info">拍摄周期</span>
           <el-form-item prop="shootingDuration" class="item-info">
             <el-input-number
+              :min="1"
               v-model="baseInfo.shootingDuration"
               controls-position="right"
               autocomplete="off"
             />
+            <span>天</span>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -172,7 +176,7 @@
     </el-form>
     <el-form v-if="step === '2'" ref="shootingInfoForm" :model="feeInfo">
       <h3>拍摄费用</h3>
-      <el-table :data="feeInfo.shootingInfo" border :span-method="arraySpanMethod">
+      <el-table :data="feeInfo.shootingInfo" border :span-method="arraySpanMethod" empty-text="加载中...">
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -264,7 +268,6 @@
         <el-table-column prop="score" label="评分">
           <template scope="scope">
             <el-input-number
-              type="textarea"
               style="width: 100px;"
               controls-position="right"
               v-model="scope.row.score"
@@ -284,7 +287,7 @@
     </el-form>
     <el-form v-if="step === '3'" ref="lastInfoForm" :model="feeInfo">
       <h3>后期费用</h3>
-      <el-table :data="feeInfo.lastStateInfo" border :span-method="arrayLastMethod">
+      <el-table :data="feeInfo.lastStateInfo" border :span-method="arrayLastMethod" empty-text="加载中...">
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -376,7 +379,8 @@
         <el-table-column prop="score" label="评分">
           <template scope="scope">
             <el-input-number
-              type="textarea"
+              :min="0" 
+              :max="100" 
               style="width: 100px;"
               controls-position="right"
               v-model="scope.row.score"
@@ -427,21 +431,21 @@
       <el-form ref="createForm" :model="newStaff" :rules="staffRules">
         <el-form-item prop="name" label="姓名" label-width="200px">
           <el-row>
-            <el-col :span="10">
+            <el-col :span="20">
               <el-input v-model="newStaff.name" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item prop="cellphone" label="电话" label-width="200px">
           <el-row>
-            <el-col :span="10">
+            <el-col :span="20">
               <el-input v-model="newStaff.cellphone" autocomplete="off" />
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item prop="ascription" label="员工类型" label-width="200px">
           <el-row>
-            <el-col :span="10">
+            <el-col :span="20">
               <el-select v-model="newStaff.ascription" autocomplete="off">
                 <el-option label="内部员工" :value="1" />
                 <el-option label="外部员工" :value="2" />
