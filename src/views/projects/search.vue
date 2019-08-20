@@ -194,10 +194,8 @@
               style="width: 216px;"
               v-model="selectedFirstLevelFee"
               collapse-tags
-              @change="onFeeChange"
               multiple
             >
-              <el-option :value="0" label="全部"></el-option>
               <el-option
                 v-for="item in firstFees"
                 :key="item.id"
@@ -215,10 +213,9 @@
               style="width: 216px;"
               v-model="selectedSecondLevelFee"
               collapse-tags
-              @change="onFeeChange"
               multiple
             >
-              <el-option :value="0" label="全部"></el-option>
+
               <el-option
                 v-for="item in secondFees"
                 :key="item.id"
@@ -391,11 +388,6 @@ export default {
       "getProjectState",
       "getContractSubjects"
     ]),
-    onFeeChange(val) {
-      if (val.includes(0)) {
-        this.searchInfo.feeList = this.feeCategories.map(fee => fee.id);
-      }
-    },
     handlePageChange(page) {
       this.searchInfo.page = page;
       this.searchProject(this.searchInfo).then(lists => {
