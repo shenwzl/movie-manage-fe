@@ -1,7 +1,6 @@
 <!--
  * @Description: file content
  * @version: v1.0.0
- * @Company: tujia
  * @Author: SHENZHI
  * @Date: 2019-07-01 19:00:18
  * @LastEditors: SHENZHI
@@ -145,7 +144,7 @@ export default {
     this.getBaseInfo(this.pId).then(res => {
       const data = res.data;
       const baseInfo = [
-        { label: "项目id", value: data.id },
+        { label: "项目编号", value: data.sid },
         { label: "项目名称", value: data.name },
         {
           label: "合同主体",
@@ -162,7 +161,9 @@ export default {
         {
           label: "拍摄周期",
           value: data.shootingDuration && `${data.shootingDuration}天`
-        }
+        },
+        { label: "项目合同金额", value: data.contractAmount },
+        { label: "项目回款金额", value: data.returnAmount }
       ];
       const members = this.memberTypes.map(memberType => {
         const projectMember = data.projectMembers.filter(
@@ -239,11 +240,39 @@ export default {
       "getShootingInfo",
       "saveShootingInfo",
       "getLastStateInfo",
-      "saveLastStateInfo",
-      'exportDetailProject'
+      "saveLastStateInfo"
     ]),
     exportProject() {
-      this.exportDetailProject(this.pId)
+      const service = axios.create({
+        baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+        timeout: 20000 // request timeout
+      });
+      service.interceptors.request.use(
+        config => {
+          if (store.getters.token) {
+            config.headers["X-Token"] = getToken();
+          }
+          return config;
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+
+      service
+        .post("projects/" + this.pId + "/export", {}, {
+          responseType: "blob"
+        })
+        .then(resp => {
+          let url = window.URL.createObjectURL(resp.data);
+          let link = document.createElement("a");
+          link.style.display = "none";
+          link.href = url;
+          link.setAttribute("download", "project_detail.xlsx");
+
+          document.body.appendChild(link);
+          link.click();
+        });
     },
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);

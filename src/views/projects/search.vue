@@ -1,7 +1,6 @@
 <!--
  * @Description: file content
  * @version: v1.0.0
- * @Company: tujia
  * @Author: SHENZHI
  * @Date: 2019-07-07 17:15:15
  * @LastEditors: SHENZHI
@@ -13,7 +12,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="项目编号" label-width="120px">
-            <el-input v-model="searchInfo.id" style="width: 216px;" autocomplete="off" />
+            <el-input v-model="searchInfo.sid" style="width: 216px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -25,13 +24,15 @@
           <el-form-item label="项目执行状态" label-width="120px">
             <el-select
               v-model="searchInfo.states"
-              @change="onStateChange"
               style="width: 216px;"
               multiple
             >
-              <el-option :value="0" label="全部"></el-option>
-              <el-option :value="1" label="正常"></el-option>
-              <el-option :value="2" label="禁用"></el-option>
+              <el-option
+                v-for="item in projectState"
+                :key="item.state"
+                :value="item.state"
+                :label="item.name"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -234,18 +235,18 @@
       </el-row>
     </el-form>
     <el-table style="margin-top: 20px;" :data="searchList" :span-method="arraySpanMethod">
-      <el-table-column prop="id" label="项目id" />
+      <el-table-column prop="sid" label="项目编号" />
       <el-table-column prop="name" label="项目名称">
         <template scope="scope">
           <a style="color: blue;" :href="'#/detail/' + scope.row.id">{{ scope.row.name }}</a>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="项目执行状态">
+      <el-table-column prop="state" label="项目执行状态">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.state | getStateName(projectState) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="项目合同主体">
+      <el-table-column prop="contractSubjectId" label="项目合同主体">
         <template slot-scope="scope">
           <span
             style="margin-left: 10px"
@@ -307,6 +308,7 @@ export default {
       "allCompanys",
       "total",
       "projectState",
+      "contracts",
       "contractSubjects"
     ]),
     firstFees() {
@@ -357,7 +359,7 @@ export default {
     this.getAllStaffs();
     this.getAllProviders();
     this.getAllCompanys();
-    this.getContractSubjects()
+    this.getContractSubjects();
     this.getFeeCategories().then(res => {
       const firstFees = res[1].filter(fee => fee.categoryType === 1);
       this.feeGroups = firstFees.map(firstFee => {
@@ -382,14 +384,11 @@ export default {
       "getAllProviders",
       "getAllCompanys",
       "getFeeCategories",
+      "getProjectState",
+      "getContractSubjects",
       "searchProject",
       "exportProject"
     ]),
-    onStateChange(val) {
-      if (val.includes(0)) {
-        this.searchInfo.states = [1, 2];
-      }
-    },
     onDirectorChange(val) {
       if (val.includes(0)) {
         this.searchInfo.directorList = this.allStaffs.map(staff => staff.id);
@@ -504,8 +503,10 @@ export default {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
               return pDetail.childFeeList.map(childFee => ({
-                id: list.id,
+                sid: list.sid,
                 name: list.name,
+                state: list.state,
+                contractSubjectId: list.contractSubjectId,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
@@ -516,8 +517,10 @@ export default {
             });
           } else {
             return {
-              id: list.id,
+              sid: list.sid,
               name: list.name,
+              state: list.state,
+              contractSubjectId: list.contractSubjectId,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",

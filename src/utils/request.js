@@ -1,7 +1,6 @@
 /*
  * @Description: file content
  * @version: v1.0.0
- * @Company: tujia
  * @Author: SHENZHI
  * @Date: 2019-06-29 11:21:26
  * @LastEditors: SHENZHI

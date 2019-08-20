@@ -1,7 +1,6 @@
 <!--
  * @Description: file content
  * @version: v1.0.0
- * @Company: tujia
  * @Author: SHENZHI
  * @Date: 2019-07-03 22:54:30
  * @LastEditors: SHENZHI
@@ -45,7 +44,7 @@
     </el-dialog>
     <el-pagination
       layout="prev, pager, next"
-      :total="userTotal"
+      :total="total"
       @current-change="handlePageChange"
     />
   </div>
@@ -82,7 +81,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['contracts', 'userTotal']),
+    ...mapGetters(['contracts', 'total']),
     canEdit() {
       return hasPermission('contract_subject', 'manage')
     }
