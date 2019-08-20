@@ -530,6 +530,7 @@ export default {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
               return pDetail.childFeeList.map(childFee => ({
+                id: list.id,
                 sid: list.sid,
                 name: list.name,
                 contractSubjectId: list.contractSubjectId,
@@ -544,6 +545,7 @@ export default {
             });
           } else {
             return {
+              id: list.id,
               sid: list.sid,
               name: list.name,
               contractSubjectId: list.contractSubjectId,
