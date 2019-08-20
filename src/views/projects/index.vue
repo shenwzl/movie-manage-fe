@@ -27,7 +27,6 @@
             <el-select
             style="width: 180px;"
               v-model="searchInfo.state"
-              @change="onStateChange"
             >
             <el-option v-for="item in projectState" :key="item.state" :value="item.state" :label="item.name"></el-option>
             </el-select>
