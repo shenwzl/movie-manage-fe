@@ -234,7 +234,7 @@
       </el-row>
     </el-form>
     <el-table style="margin-top: 20px;" :data="searchList" :span-method="arraySpanMethod">
-      <el-table-column prop="id" label="项目id" />
+      <el-table-column prop="sid" label="项目编号" />
       <el-table-column prop="name" label="项目名称">
         <template scope="scope">
           <a style="color: blue;" :href="'#/detail/' + scope.row.id">{{ scope.row.name }}</a>

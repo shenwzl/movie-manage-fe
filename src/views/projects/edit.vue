@@ -65,6 +65,20 @@
             />
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <span class="label-info">项目合同金额</span>
+          <el-divider direction="vertical"></el-divider>
+          <el-form-item class="item-info" prop="contractAmount">
+            <el-input v-model="baseInfo.contractAmount" style="width: 180px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <span class="label-info">项目回款金额</span>
+          <el-divider direction="vertical"></el-divider>
+          <el-form-item class="item-info" prop="returnAmount">
+            <el-input v-model="baseInfo.returnAmount" style="width: 180px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
         <el-col v-for="mType in memberTypes" :key="mType.type" :span="24">
           <span class="label-info" style="width: 500px;display: inline-block;">{{ mType.name }}</span>
           <el-button
@@ -473,6 +487,8 @@ export default {
         filmDuration: 3, // 单位：秒
         shootingStartAt: "",
         shootingDuration: "",
+        contractAmount: 0,
+        returnAmount:0,
         projectMembers: [
           {
             id: 0,
@@ -493,6 +509,8 @@ export default {
         filmDuration: [{ required: true, message: "成片时长不能为空" }],
         shootingStartAt: [{ required: true, message: "拍摄开始日期不能为空" }],
         shootingDuration: [{ required: true, message: "拍摄周期不能为空" }],
+        contractAmount: [{ required: true, message: "项目合同金额不能为空" }],
+        returnAmount: [{ required: true, message: "项目回款金额不能为空" }],
         ascriptionType: [{ required: true, message: "员工类型不能为空" }],
         staffId: [{ required: true, message: "员工不能为空" }]
       },

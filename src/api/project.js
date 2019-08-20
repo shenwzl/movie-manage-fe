@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getProjects(data) {
   return request({
-    url: '/projects',
+    url: '/projects/list',
     method: 'post',
     data
   })
@@ -96,12 +96,5 @@ export function exportProject(data) {
     url: '/project_search/export',
     method: 'post',
     data
-  })
-}
-
-export function exportDetailProject(id) {
-  return request({
-    url: `/projects/${id}/export`,
-    method: 'post'
   })
 }

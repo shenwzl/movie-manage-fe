@@ -45,7 +45,7 @@
     </el-dialog>
     <el-pagination
       layout="prev, pager, next"
-      :total="userTotal"
+      :total="total"
       @current-change="handlePageChange"
     />
   </div>
@@ -82,7 +82,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['contracts', 'userTotal']),
+    ...mapGetters(['contracts', 'total']),
     canEdit() {
       return hasPermission('contract_subject', 'manage')
     }

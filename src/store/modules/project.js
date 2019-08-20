@@ -11,7 +11,6 @@ import {
   recoverProject,
   searchProject,
   exportProject,
-  exportDetailProject,
   updateState
 } from '@/api/project'
 
@@ -150,15 +149,6 @@ const actions = {
   exportProject({ commit }, data) {
     return new Promise((resolve, reject) => {
       exportProject(data).then(res => {
-        resolve()
-      }).catch(err => {
-        reject(err)
-      })
-    })
-  },
-  exportDetailProject({ commit }, id) {
-    return new Promise((resolve, reject) => {
-      exportDetailProject(id).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

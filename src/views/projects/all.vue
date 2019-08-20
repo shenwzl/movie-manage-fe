@@ -239,11 +239,39 @@ export default {
       "getShootingInfo",
       "saveShootingInfo",
       "getLastStateInfo",
-      "saveLastStateInfo",
-      'exportDetailProject'
+      "saveLastStateInfo"
     ]),
     exportProject() {
-      this.exportDetailProject(this.pId)
+      const service = axios.create({
+        baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+        timeout: 20000 // request timeout
+      });
+      service.interceptors.request.use(
+        config => {
+          if (store.getters.token) {
+            config.headers["X-Token"] = getToken();
+          }
+          return config;
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+
+      service
+        .post("projects/" + this.pId + "/export", {}, {
+          responseType: "blob"
+        })
+        .then(resp => {
+          let url = window.URL.createObjectURL(resp.data);
+          let link = document.createElement("a");
+          link.style.display = "none";
+          link.href = url;
+          link.setAttribute("download", "project_detail.xlsx");
+
+          document.body.appendChild(link);
+          link.click();
+        });
     },
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
