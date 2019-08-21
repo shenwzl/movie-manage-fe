@@ -37,9 +37,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <span class="label-info">成片时长</span>
+          <span class="label-info">成片时长</span>   
           <el-form-item prop="filmDuration" class="item-info">
             <el-input-number
+              style="width: 100px;" 
               :min="0"
               v-model="baseInfo.minute"
               controls-position="right"
@@ -47,9 +48,10 @@
               @change="onMinChange"
             />
           </el-form-item>
-          <span>分</span>
+          <span style="margin-right: 15px;">分</span>
           <el-form-item prop="filmDuration">
             <el-input-number
+              style="width: 100px;"              
               :min="0"
               v-model="baseInfo.second"
               controls-position="right"
@@ -94,13 +96,13 @@
         <el-col :span="24">
           <span class="label-info">项目合同金额</span>
           <el-form-item style="margin-left: 152px;" class="item-info" prop="contractAmount">
-            <el-input-number v-model="baseInfo.contractAmount" style="width: 100px;" :min="0" autocomplete="off" />
+            <el-input-number v-model="baseInfo.contractAmount" style="width: 180px;" :min="0" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目回款金额</span>
           <el-form-item style="margin-left: 152px;" class="item-info" prop="returnAmount">
-            <el-input-number :min="0" v-model="baseInfo.returnAmount" style="width: 100px;" autocomplete="off" />
+            <el-input-number :min="0" v-model="baseInfo.returnAmount" style="width: 180px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col v-for="mType in memberTypes" :key="mType.type" :span="24">

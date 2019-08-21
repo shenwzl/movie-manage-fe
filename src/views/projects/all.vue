@@ -45,7 +45,7 @@
               <template scope="scope">{{scope.row.providerId | getProviderName(allProviders)}}</template>
             </el-table-column>
             <el-table-column prop="remark" label="备注"></el-table-column>
-            <el-table-column prop="score" label="评分"></el-table-column>
+            <el-table-column prop="rankScore" label="评分"></el-table-column>
             <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
             <el-table-column prop="realAmount" label="实际金额"></el-table-column>
           </el-table>
@@ -75,7 +75,7 @@
               <template scope="scope">{{scope.row.providerId | getProviderName(allProviders)}}</template>
             </el-table-column>
             <el-table-column prop="remark" label="备注"></el-table-column>
-            <el-table-column prop="score" label="评分"></el-table-column>
+            <el-table-column prop="rankScore" label="评分"></el-table-column>
             <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
             <el-table-column prop="realAmount" label="实际金额"></el-table-column>
           </el-table>

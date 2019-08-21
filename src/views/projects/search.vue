@@ -264,8 +264,8 @@
         <el-table-column prop="childBudgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="childRealAmount" label="实际金额"></el-table-column>
       </el-table-column>
-      <el-table-column label="供应商" prop="provider">
-        <template scope="scope">{{ scope.row.providerId | getProviderName(allProviders) }}</template>
+      <el-table-column label="供应商" prop="providerName">
+        <!-- <template scope="scope">{{ scope.row.providerId | getProviderName(allProviders) }}</template> -->
       </el-table-column>
     </el-table>
     <el-pagination layout="prev, pager, next" :total="total" @current-change="handlePageChange" />
@@ -405,7 +405,8 @@ export default {
                 realAmount: pDetail.realAmount,
                 childCategoryId: childFee.categoryId,
                 childBudgetAmount: childFee.budgetAmount,
-                childRealAmount: childFee.realAmount
+                childRealAmount: childFee.realAmount,
+                providerName: childFee.providerName
               }));
             });
           } else {
@@ -424,6 +425,7 @@ export default {
           }
         });
         this.searchList = flattenDeep(newList);
+        console.log(this.searchList)
         this.getSpanArr();
       })
     },
@@ -433,7 +435,9 @@ export default {
         columnIndex === 1 ||
         columnIndex === 2 ||
         columnIndex === 3 ||
-        columnIndex === 4
+        columnIndex === 4 ||
+        columnIndex === 5 ||
+        columnIndex === 6
       ) {
         const _row = this.spanArr[rowIndex];
         const _col = _row > 0 ? 1 : 0;
@@ -463,11 +467,9 @@ export default {
           }
         }
       });
-      console.log(this.spanArr);
     },
     formatFee() {
       const newFeeList = [];
-
       this.selectedFirstLevelFee.forEach(fee => {
         newFeeList.push({
           categoryType: 1,
@@ -532,7 +534,8 @@ export default {
                 realAmount: pDetail.realAmount,
                 childCategoryId: childFee.categoryId,
                 childBudgetAmount: childFee.budgetAmount,
-                childRealAmount: childFee.realAmount
+                providerName: childFee.providerName,               
+               childRealAmount: childFee.realAmount
               }));
             });
           } else {
