@@ -60,7 +60,7 @@
         size="mini"
         :data="lastStateInfo"
         border
-        :span-method="arraySpanMethod"
+        :span-method="arrayLastMethod"
       >
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">

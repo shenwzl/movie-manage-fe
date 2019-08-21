@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: '腔调广告项目管理系统',
 
   /**
    * @type {boolean} true | false

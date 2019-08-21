@@ -94,13 +94,13 @@
         <el-col :span="24">
           <span class="label-info">项目合同金额</span>
           <el-form-item style="margin-left: 152px;" class="item-info" prop="contractAmount">
-            <el-input v-model="baseInfo.contractAmount" style="width: 180px;" autocomplete="off" />
+            <el-input-number v-model="baseInfo.contractAmount" style="width: 100px;" :min="0" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目回款金额</span>
           <el-form-item style="margin-left: 152px;" class="item-info" prop="returnAmount">
-            <el-input v-model="baseInfo.returnAmount" style="width: 180px;" autocomplete="off" />
+            <el-input-number :min="0" v-model="baseInfo.returnAmount" style="width: 100px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col v-for="mType in memberTypes" :key="mType.type" :span="24">
@@ -246,6 +246,7 @@
               <el-input-number
                 v-model="scope.row.budgetAmount"
                 controls-position="right"
+                :min="0"
                 autocomplete="off"
                 style="width: 100px;"
               />
@@ -261,6 +262,7 @@
               <el-input-number
                 style="width: 100px;"
                 v-model="scope.row.realAmount"
+                :min="0"
                 controls-position="right"
                 autocomplete="off"
               />
@@ -272,12 +274,12 @@
             <el-input type="textarea" v-model="scope.row.remark"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="score" label="评分">
+        <el-table-column prop="rankScore" label="评分">
           <template scope="scope">
             <el-input-number
               style="width: 100px;"
               controls-position="right"
-              v-model="scope.row.score"
+              v-model="scope.row.rankScore"
             ></el-input-number>
           </template>
         </el-table-column>
@@ -360,6 +362,7 @@
               :rules="{ required: true, message: '预算金额不能为空' }"
             >
               <el-input-number
+                :min="0"
                 v-model="scope.row.budgetAmount"
                 controls-position="right"
                 autocomplete="off"
@@ -375,6 +378,7 @@
               :rules="{ required: true, message: '实际金额不能为空' }"
             >
               <el-input-number
+                :min="0"
                 style="width: 100px;"
                 v-model="scope.row.realAmount"
                 controls-position="right"
@@ -388,14 +392,14 @@
             <el-input type="textarea" v-model="scope.row.remark"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="score" label="评分">
+        <el-table-column prop="rankScore" label="评分">
           <template scope="scope">
             <el-input-number
               :min="0"
               :max="100"
               style="width: 100px;"
               controls-position="right"
-              v-model="scope.row.score"
+              v-model="scope.row.rankScore"
             ></el-input-number>
           </template>
         </el-table-column>
@@ -731,7 +735,7 @@ export default {
         realAmount: 0,
         budgetAmount: 0,
         remark: "",
-        score: ""
+        rankScore: ""
       });
       this.feeInfo.shootingInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
@@ -747,7 +751,7 @@ export default {
         realAmount: 0,
         budgetAmount: 0,
         remark: "",
-        score: ""
+        rankScore: ""
       });
       this.feeInfo.shootingInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
@@ -764,7 +768,7 @@ export default {
         realAmount: 0,
         budgetAmount: 0,
         remark: "",
-        score: ""
+        rankScore: ""
       });
       this.feeInfo.lastStateInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
@@ -788,7 +792,7 @@ export default {
         realAmount: 0,
         budgetAmount: 0,
         remark: "",
-        score: ""
+        rankScore: ""
       });
       this.feeInfo.lastStateInfo.sort(
         (a, b) => a.feeCategoryId - b.feeCategoryId
