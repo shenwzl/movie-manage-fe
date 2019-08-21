@@ -16,56 +16,63 @@
         <el-table-column prop="value"></el-table-column>
       </el-table>
     </div>
-    <div class="shooting-info">
-      <h3>拍摄费用</h3>
-      <el-table size="mini" :data="shootingInfo" border :span-method="arraySpanMethod">
-        <el-table-column prop="feeCategoryId" label="一级费用">
-          <template scope="scope">
-            <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
-            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(shootingInfo) }}</div>
-            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(shootingInfo) }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="feeChildCategoryId" label="二级费用">
-          <template scope="scope">{{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}</template>
-        </el-table-column>
-        <el-table-column prop="providerId" label="供应商">
-          <template scope="scope">{{scope.row.providerId | getProviderName(allProviders)}}</template>
-        </el-table-column>
-        <el-table-column prop="remark" label="备注"></el-table-column>
-        <el-table-column prop="score" label="评分"></el-table-column>
-        <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
-        <el-table-column prop="realAmount" label="实际金额"></el-table-column>
-      </el-table>
-    </div>
-    <div class="last-info">
-      <h3>后期费用</h3>
-      <el-table size="mini" :data="lastStateInfo" border :span-method="arraySpanMethod">
-        <el-table-column prop="feeCategoryId" label="一级费用">
-          <template scope="scope">
-            <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
-            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(lastStateInfo) }}</div>
-            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(lastStateInfo) }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="feeChildCategoryId" label="二级费用">
-          <template scope="scope">{{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}</template>
-        </el-table-column>
-        <el-table-column prop="providerId" label="供应商">
-          <template scope="scope">{{scope.row.providerId | getProviderName(allProviders)}}</template>
-        </el-table-column>
-        <el-table-column prop="remark" label="备注"></el-table-column>
-        <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
-        <el-table-column prop="realAmount" label="实际金额"></el-table-column>
-      </el-table>
-    </div>
+    <el-row>
+      <el-col :span="12">
+        <div class="shooting-info">
+          <h3>拍摄费用</h3>
+          <el-table size="mini" :data="shootingInfo" border :span-method="arraySpanMethod">
+            <el-table-column prop="feeCategoryId" label="一级费用">
+              <template scope="scope">
+                <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
+                <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(shootingInfo) }}</div>
+                <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(shootingInfo) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="feeChildCategoryId" label="二级费用">
+              <template scope="scope">{{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}</template>
+            </el-table-column>
+            <el-table-column prop="providerId" label="供应商">
+              <template scope="scope">{{scope.row.providerId | getProviderName(allProviders)}}</template>
+            </el-table-column>
+            <el-table-column prop="remark" label="备注"></el-table-column>
+            <el-table-column prop="score" label="评分"></el-table-column>
+            <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
+            <el-table-column prop="realAmount" label="实际金额"></el-table-column>
+          </el-table>
+        </div>
+      </el-col>
+      <el-col :span="12" style="padding-left: 10px;">
+        <div class="last-info">
+          <h3>后期费用</h3>
+          <el-table size="mini" :data="lastStateInfo" border :span-method="arraySpanMethod">
+            <el-table-column prop="feeCategoryId" label="一级费用">
+              <template scope="scope">
+                <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
+                <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(lastStateInfo) }}</div>
+                <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(lastStateInfo) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="feeChildCategoryId" label="二级费用">
+              <template scope="scope">{{scope.row.feeChildCategoryId | getFeeName(feeCategories)}}</template>
+            </el-table-column>
+            <el-table-column prop="providerId" label="供应商">
+              <template scope="scope">{{scope.row.providerId | getProviderName(allProviders)}}</template>
+            </el-table-column>
+            <el-table-column prop="remark" label="备注"></el-table-column>
+            <el-table-column prop="score" label="评分"></el-table-column>
+            <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
+            <el-table-column prop="realAmount" label="实际金额"></el-table-column>
+          </el-table>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { hasPermission } from "@/utils/auth";
-import { reduce } from 'lodash'
+import { reduce } from "lodash";
 import axios from "axios";
 import store from "@/store";
 import { getToken } from "@/utils/auth";
@@ -104,7 +111,7 @@ export default {
       "allStaffs",
       "feeCategories",
       "allProviders",
-      'allCompanys'
+      "allCompanys"
     ]),
     // 内部员工
     insideStaffs() {
@@ -170,7 +177,15 @@ export default {
         },
         {
           label: "客户公司",
-          value: data.childCompanyId && `一级公司: ${this.getCompanyName(data.companyId, this.allCompanys)}   二级公司:${this.getCompanyName(data.childCompanyId, this.allCompanys)}`
+          value:
+            data.childCompanyId &&
+            `一级公司: ${this.getCompanyName(
+              data.companyId,
+              this.allCompanys
+            )}   二级公司:${this.getCompanyName(
+              data.childCompanyId,
+              this.allCompanys
+            )}`
         },
         { label: "项目合同金额", value: data.contractAmount },
         { label: "项目回款金额", value: data.returnAmount }
@@ -191,35 +206,39 @@ export default {
     });
     this.getShootingInfo(this.pId).then(res => {
       this.shootingInfo = res.data.projectFees;
-      this.shootingInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
+      this.shootingInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
       this.getSpanArr();
     });
     this.getLastStateInfo(this.pId).then(res => {
       this.lastStateInfo = res.data.projectFees;
-      this.lastStateInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
+      this.lastStateInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
       this.getLastArr();
     });
   },
   filters: {
     getBudget(id, lists) {
-      return reduce(lists, (sum, item) => {
-        if (item.feeCategoryId === id) {
-          return sum + item.budgetAmount
-        }
-        return sum
-      }, 0)
+      return reduce(
+        lists,
+        (sum, item) => {
+          if (item.feeCategoryId === id) {
+            return sum + item.budgetAmount;
+          }
+          return sum;
+        },
+        0
+      );
     },
     getRealAmount(id, lists) {
-      return reduce(lists, (sum, item) => {
-        if (item.feeCategoryId === id) {
-          return sum + item.realAmount
-        }
-        return sum
-      }, 0)
+      return reduce(
+        lists,
+        (sum, item) => {
+          if (item.feeCategoryId === id) {
+            return sum + item.realAmount;
+          }
+          return sum;
+        },
+        0
+      );
     },
     getStaff(id, staffs) {
       const staff = staffs.filter(stf => stf.id === id);
@@ -251,7 +270,7 @@ export default {
       "saveShootingInfo",
       "getLastStateInfo",
       "saveLastStateInfo",
-      'getAllCompanys'
+      "getAllCompanys"
     ]),
     exportProject() {
       const service = axios.create({
@@ -271,9 +290,13 @@ export default {
       );
 
       service
-        .post("projects/" + this.pId + "/export_detail", {}, {
-          responseType: "blob"
-        })
+        .post(
+          "projects/" + this.pId + "/export_detail",
+          {},
+          {
+            responseType: "blob"
+          }
+        )
         .then(resp => {
           let url = window.URL.createObjectURL(resp.data);
           let link = document.createElement("a");

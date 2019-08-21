@@ -44,6 +44,7 @@
               v-model="baseInfo.minute"
               controls-position="right"
               autocomplete="off"
+              @change="onMinChange"
             />
           </el-form-item>
           <span>分</span>
@@ -53,6 +54,7 @@
               v-model="baseInfo.second"
               controls-position="right"
               autocomplete="off"
+              @change="onSecChange"
             />
           </el-form-item>
           <span>秒</span>
@@ -176,7 +178,12 @@
     </el-form>
     <el-form v-if="step === '2'" ref="shootingInfoForm" :model="feeInfo">
       <h3>拍摄费用</h3>
-      <el-table :data="feeInfo.shootingInfo" border :span-method="arraySpanMethod" empty-text="加载中...">
+      <el-table
+        :data="feeInfo.shootingInfo"
+        border
+        :span-method="arraySpanMethod"
+        empty-text="加载中..."
+      >
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -287,7 +294,12 @@
     </el-form>
     <el-form v-if="step === '3'" ref="lastInfoForm" :model="feeInfo">
       <h3>后期费用</h3>
-      <el-table :data="feeInfo.lastStateInfo" border :span-method="arrayLastMethod" empty-text="加载中...">
+      <el-table
+        :data="feeInfo.lastStateInfo"
+        border
+        :span-method="arrayLastMethod"
+        empty-text="加载中..."
+      >
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -379,8 +391,8 @@
         <el-table-column prop="score" label="评分">
           <template scope="scope">
             <el-input-number
-              :min="0" 
-              :max="100" 
+              :min="0"
+              :max="100"
               style="width: 100px;"
               controls-position="right"
               v-model="scope.row.score"
@@ -512,7 +524,7 @@ export default {
         shootingDuration: "",
         contractAmount: 0,
         returnAmount: 0,
-        childCompanyId: '',
+        childCompanyId: "",
         projectMembers: [
           {
             id: 0,
@@ -687,6 +699,14 @@ export default {
       "addStaff",
       "getAllCompanys"
     ]),
+    onMinChange(val) {
+      this.baseInfo.filmDuration =
+        parseInt(val * 60) + parseInt(this.baseInfo.second);
+    },
+    onSecChange(val) {
+      this.baseInfo.filmDuration =
+        parseInt(this.baseInfo.minute) + parseInt(val);
+    },
     feeDisabled(fees, id) {
       const hasFee = find(fees, fee => fee.feeCategoryId === id);
       if (hasFee) {
@@ -778,9 +798,11 @@ export default {
           this.baseInfo.filmDuration =
             parseInt(this.baseInfo.minute * 60) +
             parseInt(this.baseInfo.second);
-          const company = find(this.allCompanys, cpy => cpy.id === this.baseInfo.childCompanyId)
-          console.log(company)
-          this.baseInfo.companyId = company.parentCompanyId
+          const company = find(
+            this.allCompanys,
+            cpy => cpy.id === this.baseInfo.childCompanyId
+          );
+          this.baseInfo.companyId = company.parentCompanyId;
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId
@@ -801,10 +823,8 @@ export default {
         ascriptionType: 1
       });
       this.baseInfo.projectMembers = projectMembers;
-      console.log(this.baseInfo.projectMembers);
     },
     editShootingInfo() {
-      console.log(this.feeInfo.shootingInfo);
       this.$refs.shootingInfoForm.validate(valid => {
         if (valid) {
           this.editLoading = true;
@@ -901,7 +921,6 @@ export default {
       }
     },
     getSpanArr() {
-      console.log(this.feeInfo.shootingInfo);
       this.shootingArr = [];
       this.feeInfo.shootingInfo.forEach((item, i) => {
         if (i === 0) {
@@ -940,7 +959,6 @@ export default {
           }
         }
       });
-      console.log(this.lastArr);
     }
   }
 };
