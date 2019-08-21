@@ -11,16 +11,26 @@
     <el-button type="primary" @click="exportProject">导出</el-button>
     <div class="base-info">
       <h3>基本信息</h3>
-      <el-table size="mini" border :data="baseInfo">
-        <el-table-column prop="label"></el-table-column>
-        <el-table-column prop="value"></el-table-column>
-      </el-table>
+      <el-row>
+        <el-col :span="12">
+          <el-table row-class-name="info-table-row" header-row-class-name="baseinfo-header-row" size="mini" border :data="baseInfo">
+            <el-table-column prop="label"></el-table-column>
+            <el-table-column prop="value"></el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
     </div>
     <el-row>
       <el-col :span="12">
         <div class="shooting-info">
           <h3>拍摄费用</h3>
-          <el-table size="mini" :data="shootingInfo" border :span-method="arraySpanMethod">
+          <el-table
+            row-class-name="info-table-row"
+            size="mini"
+            :data="shootingInfo"
+            border
+            :span-method="arraySpanMethod"
+          >
             <el-table-column prop="feeCategoryId" label="一级费用">
               <template scope="scope">
                 <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -44,7 +54,13 @@
       <el-col :span="12" style="padding-left: 10px;">
         <div class="last-info">
           <h3>后期费用</h3>
-          <el-table size="mini" :data="lastStateInfo" border :span-method="arraySpanMethod">
+          <el-table
+            row-class-name="info-table-row"
+            size="mini"
+            :data="lastStateInfo"
+            border
+            :span-method="arraySpanMethod"
+          >
             <el-table-column prop="feeCategoryId" label="一级费用">
               <template scope="scope">
                 <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>

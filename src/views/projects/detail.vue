@@ -9,15 +9,31 @@
 <template>
   <div class="dashboard-container">
     <div class="base-info" v-if="step === '1'">
-      <h3>基本信息</h3>
-      <el-table size="mini" border :data="baseInfo">
-        <el-table-column prop="label"></el-table-column>
-        <el-table-column prop="value"></el-table-column>
-      </el-table>
+      <el-row>
+        <el-col :span="12">
+          <h3>基本信息</h3>
+          <el-table
+            row-class-name="info-table-row"
+            header-row-class-name="baseinfo-header-row"
+            size="mini"
+            border
+            :data="baseInfo"
+          >
+            <el-table-column prop="label"></el-table-column>
+            <el-table-column prop="value"></el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
     </div>
     <div class="shooting-info" v-if="step === '2'">
       <h3>拍摄费用</h3>
-      <el-table size="mini" row-class-name="table-row" :data="shootingInfo" border :span-method="arraySpanMethod">
+      <el-table
+        size="mini"
+        :data="shootingInfo"
+        border
+        row-class-name="info-table-row"
+        :span-method="arraySpanMethod"
+      >
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -39,7 +55,13 @@
     </div>
     <div class="last-info" v-if="step === '3'">
       <h3>后期费用</h3>
-      <el-table size="mini" :data="lastStateInfo" border :span-method="arraySpanMethod">
+      <el-table
+        row-class-name="info-table-row"
+        size="mini"
+        :data="lastStateInfo"
+        border
+        :span-method="arraySpanMethod"
+      >
         <el-table-column prop="feeCategoryId" label="一级费用">
           <template scope="scope">
             <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
@@ -65,7 +87,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { hasPermission } from "@/utils/auth";
-import { reduce } from 'lodash'
+import { reduce } from "lodash";
 export default {
   name: "Dashboard",
   data: function() {
@@ -100,7 +122,7 @@ export default {
       "allStaffs",
       "feeCategories",
       "allProviders",
-      'allCompanys'
+      "allCompanys"
     ]),
     // 内部员工
     insideStaffs() {
@@ -143,79 +165,94 @@ export default {
     this.getContractSubjects();
     this.getAllStaffs();
     this.getMemberTypes();
-    this.getBaseInfo(this.pId).then(res => {
-      const data = res.data;
-      const baseInfo = [
-        { label: "项目编号", value: data.sid },
-        { label: "项目名称", value: data.name },
-        {
-          label: "合同主体",
-          value: this.getContractName(
-            data.contractSubjectId,
-            this.contractSubjects
-          )
-        },
-        {
-          label: "成片时长",
-          value: data.filmDuration && `${data.filmDuration}秒`
-        },
-        { label: "拍摄开始日期", value: data.shootingStartAt },
-        {
-          label: "拍摄周期",
-          value: data.shootingDuration && `${data.shootingDuration}天`
-        },
-        {
-          label: "客户公司",
-          value: data.childCompanyId && `一级公司: ${this.getCompanyName(data.companyId, this.allCompanys)}   二级公司:${this.getCompanyName(data.childCompanyId, this.allCompanys)}`
-        },
-        { label: "项目合同金额", value: data.contractAmount },
-        { label: "项目回款金额", value: data.returnAmount }
-      ];
-      const members = this.memberTypes.map(memberType => {
-        const projectMember = data.projectMembers.filter(
-          pMem => pMem.memberType === memberType.type
-        );
-        return {
-          label: memberType.name,
-          value: projectMember
-            .map(pMember => this.getFeeName(pMember.staffId, this.allStaffs))
-            .join(",")
-        };
+    this.step === "1" &&
+      this.getBaseInfo(this.pId).then(res => {
+        const data = res.data;
+        const baseInfo = [
+          { label: "项目编号", value: data.sid },
+          { label: "项目名称", value: data.name },
+          {
+            label: "合同主体",
+            value: this.getContractName(
+              data.contractSubjectId,
+              this.contractSubjects
+            )
+          },
+          {
+            label: "成片时长",
+            value: data.filmDuration && `${data.filmDuration}秒`
+          },
+          { label: "拍摄开始日期", value: data.shootingStartAt },
+          {
+            label: "拍摄周期",
+            value: data.shootingDuration && `${data.shootingDuration}天`
+          },
+          {
+            label: "客户公司",
+            value:
+              data.childCompanyId &&
+              `一级公司: ${this.getCompanyName(
+                data.companyId,
+                this.allCompanys
+              )}   二级公司:${this.getCompanyName(
+                data.childCompanyId,
+                this.allCompanys
+              )}`
+          },
+          { label: "项目合同金额", value: data.contractAmount },
+          { label: "项目回款金额", value: data.returnAmount }
+        ];
+        const members = this.memberTypes.map(memberType => {
+          const projectMember = data.projectMembers.filter(
+            pMem => pMem.memberType === memberType.type
+          );
+          return {
+            label: memberType.name,
+            value: projectMember
+              .map(pMember => this.getFeeName(pMember.staffId, this.allStaffs))
+              .join(",")
+          };
+        });
+        baseInfo.push(...members);
+        this.baseInfo = baseInfo;
       });
-      baseInfo.push(...members);
-      this.baseInfo = baseInfo;
-    });
-    this.getShootingInfo(this.pId).then(res => {
-      this.shootingInfo = res.data.projectFees;
-      this.shootingInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getSpanArr();
-    });
-    this.getLastStateInfo(this.pId).then(res => {
-      this.lastStateInfo = res.data.projectFees;
-      this.lastStateInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getLastArr();
-    });
+    this.step === "2" &&
+      this.getShootingInfo(this.pId).then(res => {
+        this.shootingInfo = res.data.projectFees;
+        this.shootingInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
+        this.getSpanArr();
+      });
+    this.step === "3" &&
+      this.getLastStateInfo(this.pId).then(res => {
+        this.lastStateInfo = res.data.projectFees;
+        this.lastStateInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
+        this.getLastArr();
+      });
   },
   filters: {
     getBudget(id, lists) {
-      return reduce(lists, (sum, item) => {
-        if (item.feeCategoryId === id) {
-          return sum + item.budgetAmount
-        }
-        return sum
-      }, 0)
+      return reduce(
+        lists,
+        (sum, item) => {
+          if (item.feeCategoryId === id) {
+            return sum + item.budgetAmount;
+          }
+          return sum;
+        },
+        0
+      );
     },
     getRealAmount(id, lists) {
-      return reduce(lists, (sum, item) => {
-        if (item.feeCategoryId === id) {
-          return sum + item.realAmount
-        }
-        return sum
-      }, 0)
+      return reduce(
+        lists,
+        (sum, item) => {
+          if (item.feeCategoryId === id) {
+            return sum + item.realAmount;
+          }
+          return sum;
+        },
+        0
+      );
     },
     getStaff(id, staffs) {
       const staff = staffs.filter(stf => stf.id === id);
@@ -247,7 +284,7 @@ export default {
       "saveShootingInfo",
       "getLastStateInfo",
       "saveLastStateInfo",
-      'getAllCompanys'
+      "getAllCompanys"
     ]),
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
@@ -393,15 +430,9 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
+<style>
+.dashboard-container {
+  margin: 30px;
 }
 .divider {
   border-bottom: solid 1px #eee;
@@ -427,5 +458,11 @@ export default {
   height: 1px;
   width: 100%;
   margin: 24px 0;
+}
+.info-table-row td .cell {
+  line-height: 14px !important;
+}
+.baseinfo-header-row {
+  display: none;
 }
 </style>

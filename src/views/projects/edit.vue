@@ -753,10 +753,12 @@ export default {
         (a, b) => a.feeCategoryId - b.feeCategoryId
       );
       this.getSpanArr();
+      this.firstShootingFeeVisible = false
+      this.fisrtShootingFee = ''
     },
     addFirstLastFee() {
       this.feeInfo.lastStateInfo.push({
-        feeCategoryId: this.fisrtShootingFee,
+        feeCategoryId: this.firstLastFee,
         feeChildCategoryId: "",
         providerId: "",
         realAmount: 0,
@@ -768,6 +770,8 @@ export default {
         (a, b) => a.feeCategoryId - b.feeCategoryId
       );
       this.getLastArr();
+      this.firstLastFeeVisible = false;
+      this.fisrtLastFee = ''
     },
     handleDeleteLast(index) {
       this.feeInfo.lastStateInfo.splice(index, 1);
