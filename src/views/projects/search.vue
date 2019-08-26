@@ -485,6 +485,8 @@
           >{{ scope.row.contractSubjectId | getContractsName(contractSubjects) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="contractAmount" label="项目合同金额" />
+      <el-table-column prop="realCost" label="项目实际总成本" />
       <el-table-column label="一级费用">
         <el-table-column prop="categoryId" label="费用名称">
           <template scope="scope">{{ scope.row.categoryId | getFeeName(feeCategories) }}</template>
@@ -773,13 +775,15 @@ export default {
                 name: list.name,
                 contractSubjectId: list.contractSubjectId,
                 state: list.state,
+                contractAmount: list.contractAmount,
+                realCost: list.realCost,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
                 childCategoryId: childFee.categoryId,
                 childBudgetAmount: childFee.budgetAmount,
                 providerName: childFee.providerName,               
-               childRealAmount: childFee.realAmount
+                childRealAmount: childFee.realAmount
               }));
             });
           } else {
@@ -789,6 +793,8 @@ export default {
               name: list.name,
               contractSubjectId: list.contractSubjectId,
               state: list.state,
+              contractAmount: list.contractAmount,
+              realCost: list.realCost,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",
