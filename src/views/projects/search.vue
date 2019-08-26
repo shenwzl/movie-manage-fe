@@ -76,6 +76,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+<<<<<<< HEAD
           <el-form-item label="项目回款金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
@@ -90,6 +91,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+=======
+>>>>>>> 30add3777f708faf839470f52e78cdb6357aa862
           <el-form-item label="项目成本金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
@@ -118,6 +121,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+<<<<<<< HEAD
           <el-form-item label="拍摄预算金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
@@ -174,6 +178,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+=======
+>>>>>>> 30add3777f708faf839470f52e78cdb6357aa862
           <el-form-item label="成片时长(分)" label-width="120px">
             <el-input-number
               style="width: 100px"
@@ -238,6 +244,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+<<<<<<< HEAD
           <el-form-item label="执行导演" label-width="120px">
             <el-select
               filterable
@@ -256,6 +263,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+=======
+>>>>>>> 30add3777f708faf839470f52e78cdb6357aa862
           <el-form-item label="制作人" label-width="120px">
             <el-select
               clearable 
@@ -275,6 +284,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+<<<<<<< HEAD
           <el-form-item label="项目负责人" label-width="120px">
             <el-select
               clearable 
@@ -422,6 +432,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+=======
+>>>>>>> 30add3777f708faf839470f52e78cdb6357aa862
           <el-form-item label="一级费用" label-width="120px">
             <el-select
               clearable 
@@ -520,6 +532,7 @@ export default {
       searchInfo: {
         directorList: [],
         producerList: [],
+<<<<<<< HEAD
         projectLeaderList: [],
         customerManagerList: [],
         executiveDirecrotList: [],
@@ -529,6 +542,8 @@ export default {
         artList: [],
         musicList: [],
         storyBoardList: [],
+=======
+>>>>>>> 30add3777f708faf839470f52e78cdb6357aa862
         page: 1,
         pageSize: 10,
         states: []
