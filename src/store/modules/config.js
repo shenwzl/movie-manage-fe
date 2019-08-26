@@ -60,7 +60,6 @@ const actions = {
     const { page, pageSize } = pageConfig
     return new Promise((resolve, reject) => {
       getStaffs({ page, page_size: pageSize }).then(res => {
-        console.log(res)
         commit('SET_STAFFS', res.data.data)
         commit('SET_TOTAL', res.data.total, { root: true })
         resolve()
