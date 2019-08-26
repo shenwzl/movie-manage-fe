@@ -76,6 +76,20 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+          <el-form-item label="项目回款金额(元)" label-width="120px">
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.returnAmountStart"
+            ></el-input-number>~
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.returnAmountEnd"
+            ></el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="项目成本金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
@@ -100,6 +114,62 @@
               style="width: 100px"
               controls-position="right"
               v-model="searchInfo.budgetCostEnd"
+            ></el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="拍摄预算金额(元)" label-width="120px">
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.shootingBudgetCostStart"
+            ></el-input-number>~
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.shootingBudgetCostEnd"
+            ></el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="后期预算金额(元)" label-width="120px">
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.lateStateBudgetCostStart"
+            ></el-input-number>~
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.lateStateBudgetCostEnd"
+            ></el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="拍摄实际金额(元)" label-width="120px">
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.shootingRealCostStart"
+            ></el-input-number>~
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.shootingRealCostEnd"
+            ></el-input-number>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="后期实际金额(元)" label-width="120px">
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.lateStateRealCostStart"
+            ></el-input-number>~
+            <el-input-number
+              style="width: 100px"
+              controls-position="right"
+              v-model="searchInfo.lateStateRealCostEnd"
             ></el-input-number>
           </el-form-item>
         </el-col>
@@ -168,12 +238,177 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
+          <el-form-item label="执行导演" label-width="120px">
+            <el-select
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.executiveDirecrotList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="制作人" label-width="120px">
             <el-select
               clearable 
               filterable
               style="width: 216px;"
               v-model="searchInfo.producerList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="项目负责人" label-width="120px">
+            <el-select
+              clearable 
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.projectLeaderList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="客户对接人" label-width="120px">
+            <el-select
+              clearable 
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.customerManagerList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="文案" label-width="120px">
+            <el-select
+              clearable 
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.copyWritingList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="后期剪辑" label-width="120px">
+            <el-select
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.postEditingList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="后期合成" label-width="120px">
+            <el-select
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.compositingList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="美术" label-width="120px">
+            <el-select
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.artList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="音乐" label-width="120px">
+            <el-select
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.musicList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="staff in allStaffs"
+                :key="staff.id"
+                :value="staff.id"
+                :label="staff.name"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="分镜" label-width="120px">
+            <el-select
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.storyBoardList"
               collapse-tags
               multiple
             >
@@ -250,6 +485,8 @@
           >{{ scope.row.contractSubjectId | getContractsName(contractSubjects) }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="contractAmount" label="项目合同金额" />
+      <el-table-column prop="realCost" label="项目实际总成本" />
       <el-table-column label="一级费用">
         <el-table-column prop="categoryId" label="费用名称">
           <template scope="scope">{{ scope.row.categoryId | getFeeName(feeCategories) }}</template>
@@ -285,6 +522,15 @@ export default {
       searchInfo: {
         directorList: [],
         producerList: [],
+        projectLeaderList: [],
+        customerManagerList: [],
+        executiveDirecrotList: [],
+        copyWritingList: [],
+        postEditingList: [],
+        compositingList: [],
+        artList: [],
+        musicList: [],
+        storyBoardList: [],
         page: 1,
         pageSize: 10,
         states: []
@@ -400,6 +646,8 @@ export default {
                 name: list.name,
                 contractSubjectId: list.contractSubjectId,
                 state: list.state,
+                contractAmount: list.contractAmount,
+                realCost: list.realCost,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
@@ -415,6 +663,8 @@ export default {
               name: list.name,
               contractSubjectId: list.contractSubjectId,
               state: list.state,
+              contractAmount: list.contractAmount,
+              realCost: list.realCost,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",
@@ -529,13 +779,15 @@ export default {
                 name: list.name,
                 contractSubjectId: list.contractSubjectId,
                 state: list.state,
+                contractAmount: list.contractAmount,
+                realCost: list.realCost,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
                 childCategoryId: childFee.categoryId,
                 childBudgetAmount: childFee.budgetAmount,
                 providerName: childFee.providerName,               
-               childRealAmount: childFee.realAmount
+                childRealAmount: childFee.realAmount
               }));
             });
           } else {
@@ -545,6 +797,8 @@ export default {
               name: list.name,
               contractSubjectId: list.contractSubjectId,
               state: list.state,
+              contractAmount: list.contractAmount,
+              realCost: list.realCost,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",

@@ -79,7 +79,7 @@ export default {
       permissionDialog: false,
       permissionInfo: 0,
       page: 1,
-      pageSize: 10,
+      pageSize: 20,
       isEdit: false,
       createLoading: false,
       staffRules: {

@@ -201,7 +201,7 @@
             >
               <el-select
                 v-model="scope.row.feeChildCategoryId"
-                style="width: 100px;"
+                style="width: 130px;"
                 @focus="onBlur(scope.row.feeCategoryId)"
                 width="200"
                 autocomplete="off"
@@ -225,7 +225,7 @@
             >
               <el-select
                 v-model="scope.row.providerId"
-                style="width: 100px;"
+                style="width: 130px;"
                 width="200"
                 autocomplete="off"
               >
@@ -251,7 +251,7 @@
                 controls-position="right"
                 :min="0"
                 autocomplete="off"
-                style="width: 100px;"
+                style="width: 130px;"
               />
             </el-form-item>
           </template>
@@ -263,7 +263,7 @@
               :rules="{ required: true, message: '实际金额不能为空' }"
             >
               <el-input-number
-                style="width: 100px;"
+                style="width: 130px;"
                 v-model="scope.row.realAmount"
                 :min="0"
                 controls-position="right"
@@ -286,7 +286,7 @@
             ></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="70px">
           <template scope="scope">
             <el-button
               type="danger"
@@ -547,18 +547,17 @@ export default {
       },
       secondFees: [],
       baseInfoRules: {
-        sid: [{ required: true, message: "编号不能为空" }],
-        name: [{ required: true, message: "名称不能为空" }],
-        contractSubjectId: [{ required: true, message: "合同主体不能为空" }],
-        minute: [{ required: true, message: "成片时长不能为空" }],
-        second: [{ required: true, message: "成片时长不能为空" }],
-        shootingStartAt: [{ required: true, message: "拍摄开始日期不能为空" }],
-        shootingDuration: [{ required: true, message: "拍摄周期不能为空" }],
-        contractAmount: [{ required: true, message: "项目合同金额不能为空" }],
-        returnAmount: [{ required: true, message: "项目回款金额不能为空" }],
-        ascriptionType: [{ required: true, message: "员工类型不能为空" }],
-        staffId: [{ required: true, message: "员工不能为空" }],
-        childCompanyId: [{ required: true, message: "客户公司不能为空" }]
+        // sid: [{ required: true, message: "编号不能为空" }],
+        // name: [{ required: true, message: "名称不能为空" }],
+        // contractSubjectId: [{ required: true, message: "合同主体不能为空" }],
+        // filmDuration: [{ required: true, message: "成片时长不能为空" }],
+        // shootingStartAt: [{ required: true, message: "拍摄开始日期不能为空" }],
+        // shootingDuration: [{ required: true, message: "拍摄周期不能为空" }],
+        // contractAmount: [{ required: true, message: "项目合同金额不能为空" }],
+        // returnAmount: [{ required: true, message: "项目回款金额不能为空" }],
+        // ascriptionType: [{ required: true, message: "员工类型不能为空" }],
+        // staffId: [{ required: true, message: "员工不能为空" }],
+        // childCompanyId: [{ required: true, message: "客户公司不能为空" }]
       },
       shootingInfoRules: {
         feeCategoryId: [{ required: true, message: "一级费用项不能为空" }],
@@ -814,7 +813,9 @@ export default {
             this.allCompanys,
             cpy => cpy.id === this.baseInfo.childCompanyId
           );
-          this.baseInfo.companyId = company.parentCompanyId;
+          if (company != undefined){
+            this.baseInfo.companyId = company.parentCompanyId;
+          }
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId

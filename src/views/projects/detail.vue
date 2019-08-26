@@ -200,7 +200,13 @@ export default {
               )}`
           },
           { label: "项目合同金额", value: data.contractAmount },
-          { label: "项目回款金额", value: data.returnAmount }
+          { label: "项目回款金额", value: data.returnAmount },
+          { label: "项目预算总成本", value: data.budgetCost },
+          { label: "项目实际总成本", value: data.realCost },
+          { label: "项目拍摄预算", value: data.shootingBudget },
+          { label: "项目后期预算", value: data.lateStateBudget },
+          { label: "项目拍摄成本", value: data.shootingCost },
+          { label: "项目后期成本", value: data.lateStateCost }
         ];
         const members = this.memberTypes.map(memberType => {
           const projectMember = data.projectMembers.filter(
