@@ -202,7 +202,7 @@
             >
               <el-select
                 v-model="scope.row.feeChildCategoryId"
-                style="width: 200px;"
+                style="width: 130px;"
                 @focus="onBlur(scope.row.feeCategoryId)"
                 width="200"
                 autocomplete="off"
@@ -225,7 +225,7 @@
             >
               <el-select
                 v-model="scope.row.providerId"
-                style="width: 200px;"
+                style="width: 130px;"
                 width="200"
                 autocomplete="off"
               >
@@ -250,7 +250,7 @@
                 controls-position="right"
                 :min="0"
                 autocomplete="off"
-                style="width: 100px;"
+                style="width: 130px;"
               />
             </el-form-item>
           </template>
@@ -262,7 +262,7 @@
               :rules="{ required: true, message: '实际金额不能为空' }"
             >
               <el-input-number
-                style="width: 100px;"
+                style="width: 130px;"
                 v-model="scope.row.realAmount"
                 :min="0"
                 controls-position="right"
@@ -285,7 +285,7 @@
             ></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="70px">
           <template scope="scope">
             <el-button
               type="danger"
