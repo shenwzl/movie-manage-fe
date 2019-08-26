@@ -188,16 +188,22 @@ export default {
             value: data.shootingDuration && `${data.shootingDuration}天`
           },
           {
-            label: "客户公司",
+            label: "客户所属公司一级",
             value:
               data.childCompanyId &&
-              `一级公司: ${this.getCompanyName(
+              this.getCompanyName(
                 data.companyId,
                 this.allCompanys
-              )}   二级公司:${this.getCompanyName(
+              )
+          },
+          {
+            label: "客户所属公司一级",
+            value:
+              data.childCompanyId &&
+              this.getCompanyName(
                 data.childCompanyId,
                 this.allCompanys
-              )}`
+              )
           },
           { label: "项目合同金额", value: data.contractAmount },
           { label: "项目回款金额", value: data.returnAmount },

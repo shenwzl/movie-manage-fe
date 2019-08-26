@@ -13,7 +13,13 @@
       <h3>基本信息</h3>
       <el-row>
         <el-col :span="12">
-          <el-table row-class-name="info-table-row" header-row-class-name="baseinfo-header-row" size="mini" border :data="baseInfo">
+          <el-table
+            row-class-name="info-table-row"
+            header-row-class-name="baseinfo-header-row"
+            size="mini"
+            border
+            :data="baseInfo"
+          >
             <el-table-column prop="label"></el-table-column>
             <el-table-column prop="value"></el-table-column>
           </el-table>
@@ -192,19 +198,25 @@ export default {
           value: data.shootingDuration && `${data.shootingDuration}天`
         },
         {
-          label: "客户公司",
+          label: "客户所属公司一级",
           value:
             data.childCompanyId &&
-            `一级公司: ${this.getCompanyName(
-              data.companyId,
-              this.allCompanys
-            )}   二级公司:${this.getCompanyName(
-              data.childCompanyId,
-              this.allCompanys
-            )}`
+            this.getCompanyName(data.companyId, this.allCompanys)
+        },
+        {
+          label: "客户所属公司一级",
+          value:
+            data.childCompanyId &&
+            this.getCompanyName(data.childCompanyId, this.allCompanys)
         },
         { label: "项目合同金额", value: data.contractAmount },
-        { label: "项目回款金额", value: data.returnAmount }
+        { label: "项目回款金额", value: data.returnAmount },
+        { label: "项目预算总成本", value: data.budgetCost },
+        { label: "项目实际总成本", value: data.realCost },
+        { label: "项目拍摄预算", value: data.shootingBudget },
+        { label: "项目后期预算", value: data.lateStateBudget },
+        { label: "项目拍摄成本", value: data.shootingCost },
+        { label: "项目后期成本", value: data.lateStateCost }
       ];
       const members = this.memberTypes.map(memberType => {
         const projectMember = data.projectMembers.filter(

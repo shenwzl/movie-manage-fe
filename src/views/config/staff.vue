@@ -60,6 +60,7 @@
     <el-pagination
       layout="prev, pager, next"
       :total="total"
+      :page-size="20"
       @current-change="handlePageChange"
     />
   </div>
