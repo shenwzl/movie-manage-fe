@@ -30,6 +30,7 @@
               <el-option
                 v-for="contract in contractSubjects"
                 :key="contract.id"
+                v-if="contract.state === 0"
                 :label="contract.name"
                 :value="contract.id"
               />
@@ -38,25 +39,23 @@
         </el-col>
         <el-col :span="24">
           <span class="label-info">成片时长</span>   
-          <el-form-item prop="filmDuration" class="item-info">
+          <el-form-item prop="minute" class="item-info">
             <el-input-number
               style="width: 100px;" 
               :min="0"
               v-model="baseInfo.minute"
               controls-position="right"
               autocomplete="off"
-              @change="onMinChange"
             />
           </el-form-item>
           <span style="margin-right: 15px;">分</span>
-          <el-form-item prop="filmDuration">
+          <el-form-item prop="second">
             <el-input-number
               style="width: 100px;"              
               :min="0"
               v-model="baseInfo.second"
               controls-position="right"
               autocomplete="off"
-              @change="onSecChange"
             />
           </el-form-item>
           <span>秒</span>
@@ -209,6 +208,7 @@
               >
                 <el-option
                   v-for="fee in secondFees"
+                  v-if="fee.state === 0"
                   :key="fee.id"
                   :value="fee.id"
                   :label="fee.name"
@@ -231,6 +231,7 @@
               >
                 <el-option
                   v-for="provider in allProviders"
+                  v-if="provider.state === 0"
                   :key="provider.id"
                   :value="provider.id"
                   :label="provider.name"
@@ -549,7 +550,8 @@ export default {
         sid: [{ required: true, message: "编号不能为空" }],
         name: [{ required: true, message: "名称不能为空" }],
         contractSubjectId: [{ required: true, message: "合同主体不能为空" }],
-        filmDuration: [{ required: true, message: "成片时长不能为空" }],
+        minute: [{ required: true, message: "成片时长不能为空" }],
+        second: [{ required: true, message: "成片时长不能为空" }],
         shootingStartAt: [{ required: true, message: "拍摄开始日期不能为空" }],
         shootingDuration: [{ required: true, message: "拍摄周期不能为空" }],
         contractAmount: [{ required: true, message: "项目合同金额不能为空" }],
