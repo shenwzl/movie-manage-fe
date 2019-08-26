@@ -118,7 +118,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="拍摄预算金额(元)" label-width="120px">
+          <el-form-item label="拍摄预算(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
               controls-position="right"
@@ -132,7 +132,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="后期预算金额(元)" label-width="120px">
+          <el-form-item label="后期预算(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
               controls-position="right"
@@ -146,7 +146,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="拍摄实际金额(元)" label-width="120px">
+          <el-form-item label="拍摄成本(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
               controls-position="right"
@@ -160,7 +160,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="后期实际金额(元)" label-width="120px">
+          <el-form-item label="后期成本(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
               controls-position="right"
@@ -487,21 +487,31 @@
       </el-table-column>
       <el-table-column prop="contractAmount" label="项目合同金额" />
       <el-table-column prop="realCost" label="项目实际总成本" />
-      <el-table-column label="一级费用">
+
+      <el-table-column prop="budgetCost" label="项目预算总成本" v-if="searchInfo.budgetCostStart || searchInfo.budgetCostEnd"/>
+      <el-table-column prop="shootingBudget" label="项目拍摄预算" v-if="searchInfo.shootingBudgetCostStart || searchInfo.shootingBudgetCostEnd"/>
+      <el-table-column prop="shootingCost" label="项目拍摄成本" v-if="searchInfo.shootingRealCostStart || searchInfo.shootingRealCostEnd"/>
+      <el-table-column prop="lateStateBudget" label="项目后期预算" v-if="searchInfo.lateStateBudgetCostStart || searchInfo.lateStateBudgetCostEnd"/>
+      <el-table-column prop="lateStateCost" label="项目后期成本" v-if="searchInfo.lateStateRealCostStart || searchInfo.lateStateRealCostEnd"/>
+      <el-table-column prop="filmDuration" label="成片时长" v-if="searchInfo.filmDurationMinuteStart || searchInfo.filmDurationMinuteEnd"/>
+      <el-table-column prop="shootingStartAt" label="拍摄时间" v-if="searchInfo.shootingStartAtStart || searchInfo.shootingStartAtEnd"/>
+      <el-table-column prop="shootingDuration" label="拍摄周期" v-if="searchInfo.shootingDurationStart || searchInfo.shootingDurationEnd"/>
+      
+      <el-table-column label="一级费用" v-if="selectedFirstLevelFee.length > 0 || selectedSecondLevelFee.length > 0">
         <el-table-column prop="categoryId" label="费用名称">
           <template scope="scope">{{ scope.row.categoryId | getFeeName(feeCategories) }}</template>
         </el-table-column>
         <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="realAmount" label="实际金额"></el-table-column>
       </el-table-column>
-      <el-table-column label="二级费用" style="text-align: center;">
+      <el-table-column label="二级费用" style="text-align: center;" v-if="selectedSecondLevelFee.length > 0">
         <el-table-column prop="childCategoryId" label="费用名称">
           <template scope="scope">{{ scope.row.childCategoryId | getFeeName(feeCategories) }}</template>
         </el-table-column>
         <el-table-column prop="childBudgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="childRealAmount" label="实际金额"></el-table-column>
       </el-table-column>
-      <el-table-column label="供应商" prop="providerName">
+      <el-table-column label="供应商" prop="providerName" v-if="selectedSecondLevelFee.length > 0">
         <!-- <template scope="scope">{{ scope.row.providerId | getProviderName(allProviders) }}</template> -->
       </el-table-column>
     </el-table>
@@ -649,6 +659,14 @@ export default {
                 state: list.state,
                 contractAmount: list.contractAmount,
                 realCost: list.realCost,
+                budgetCost: list.budgetCost,
+                shootingBudget: list.shootingBudget,
+                lateStateBudget: list.lateStateBudget,
+                shootingCost: list.shootingCost,
+                lateStateCost: list.lateStateCost,
+                filmDuration: list.filmDuration,
+                shootingStartAt: list.shootingStartAt,
+                shootingDuration: list.shootingDuration,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
@@ -666,6 +684,14 @@ export default {
               state: list.state,
               contractAmount: list.contractAmount,
               realCost: list.realCost,
+              budgetCost: list.budgetCost,
+              shootingBudget: list.shootingBudget,
+              lateStateBudget: list.lateStateBudget,
+              shootingCost: list.shootingCost,
+              lateStateCost: list.lateStateCost,
+              filmDuration: list.filmDuration,
+              shootingStartAt: list.shootingStartAt,
+              shootingDuration: list.shootingDuration,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",
@@ -688,7 +714,7 @@ export default {
         columnIndex === 3 ||
         columnIndex === 4 ||
         columnIndex === 5 ||
-        columnIndex === 6
+        columnIndex === 6 
       ) {
         const _row = this.spanArr[rowIndex];
         const _col = _row > 0 ? 1 : 0;
@@ -782,6 +808,14 @@ export default {
                 state: list.state,
                 contractAmount: list.contractAmount,
                 realCost: list.realCost,
+                budgetCost: list.budgetCost,
+                shootingBudget: list.shootingBudget,
+                lateStateBudget: list.lateStateBudget,
+                shootingCost: list.shootingCost,
+                lateStateCost: list.lateStateCost,
+                filmDuration: list.filmDuration,
+                shootingStartAt: list.shootingStartAt,
+                shootingDuration: list.shootingDuration,
                 categoryId: pDetail.categoryId,
                 budgetAmount: pDetail.budgetAmount,
                 realAmount: pDetail.realAmount,
@@ -800,6 +834,14 @@ export default {
               state: list.state,
               contractAmount: list.contractAmount,
               realCost: list.realCost,
+              budgetCost: list.budgetCost,
+              shootingBudget: list.shootingBudget,
+              lateStateBudget: list.lateStateBudget,
+              shootingCost: list.shootingCost,
+              lateStateCost: list.lateStateCost,
+              filmDuration: list.filmDuration,
+              shootingStartAt: list.shootingStartAt,
+              shootingDuration: list.shootingDuration,
               categoryId: "",
               budgetAmount: "",
               realAmount: "",
