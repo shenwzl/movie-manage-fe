@@ -855,55 +855,55 @@ export default {
         this.getSpanArr();
       });
     },
-    onExport() {
-      import('@/vendor/exportToExcel').then(excel => {
-        console.log(excel)
-        const tHeader = ['项目编号', '项目名称', '项目执行状态', '项目合同主体', '123']
-        const filterVal = ['sid', 'name', 'state', 'state', 'sid']
-        const list = this.searchList
-        const data = list
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          // filename: this.filename,
-          // autoWidth: this.autoWidth,
-          // bookType: this.bookType
-        })
-        this.downloadLoading = false
-      })
-    }
     // onExport() {
-    //   const service = axios.create({
-    //     baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-    //     timeout: 20000 // request timeout
-    //   });
-    //   service.interceptors.request.use(
-    //     config => {
-    //       if (store.getters.token) {
-    //         config.headers["X-Token"] = getToken();
-    //       }
-    //       return config;
-    //     },
-    //     error => {
-    //       return Promise.reject(error);
-    //     }
-    //   );
-
-    //   service
-    //     .post("project_search/export", this.searchInfo, {
-    //       responseType: "blob"
+    //   import('@/vendor/exportToExcel').then(excel => {
+    //     console.log(excel)
+    //     const tHeader = ['项目编号', '项目名称', '项目执行状态', '项目合同主体', '123']
+    //     const filterVal = ['sid', 'name', 'state', 'state', 'sid']
+    //     const list = this.searchList
+    //     const data = list
+    //     excel.export_json_to_excel({
+    //       header: tHeader,
+    //       data,
+    //       // filename: this.filename,
+    //       // autoWidth: this.autoWidth,
+    //       // bookType: this.bookType
     //     })
-    //     .then(resp => {
-    //       let url = window.URL.createObjectURL(resp.data);
-    //       let link = document.createElement("a");
-    //       link.style.display = "none";
-    //       link.href = url;
-    //       link.setAttribute("download", "projects.xlsx");
-
-    //       document.body.appendChild(link);
-    //       link.click();
-    //     });
+    //     this.downloadLoading = false
+    //   })
     // }
+    onExport() {
+      const service = axios.create({
+        baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+        timeout: 20000 // request timeout
+      });
+      service.interceptors.request.use(
+        config => {
+          if (store.getters.token) {
+            config.headers["X-Token"] = getToken();
+          }
+          return config;
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+
+      service
+        .post("project_search/export", this.searchInfo, {
+          responseType: "blob"
+        })
+        .then(resp => {
+          let url = window.URL.createObjectURL(resp.data);
+          let link = document.createElement("a");
+          link.style.display = "none";
+          link.href = url;
+          link.setAttribute("download", "projects.xlsx");
+
+          document.body.appendChild(link);
+          link.click();
+        });
+    }
   }
 };
 </script>
