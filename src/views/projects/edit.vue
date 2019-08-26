@@ -812,7 +812,9 @@ export default {
             this.allCompanys,
             cpy => cpy.id === this.baseInfo.childCompanyId
           );
-          this.baseInfo.companyId = company.parentCompanyId;
+          if (company != undefined){
+            this.baseInfo.companyId = company.parentCompanyId;
+          }
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId
