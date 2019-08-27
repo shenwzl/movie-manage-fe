@@ -497,6 +497,18 @@
       <el-table-column prop="filmDuration" label="成片时长" v-if="searchInfo.filmDurationMinuteStart || searchInfo.filmDurationMinuteEnd"/>
       <el-table-column prop="shootingStartAt" label="拍摄时间" v-if="searchInfo.shootingStartAtStart || searchInfo.shootingStartAtEnd"/>
       <el-table-column prop="shootingDuration" label="拍摄周期" v-if="searchInfo.shootingDurationStart || searchInfo.shootingDurationEnd"/>
+
+      <el-table-column prop="projectLeaderList" label="项目负责人" v-if="searchInfo.projectLeaderList.length > 0"/>
+      <el-table-column prop="customerManagerList" label="客户对接人" v-if="searchInfo.customerManagerList.length > 0"/>
+      <el-table-column prop="executiveDirecrotList" label="执行导演" v-if="searchInfo.executiveDirecrotList.length > 0"/>
+      <el-table-column prop="copyWritingList" label="文案" v-if="searchInfo.copyWritingList.length > 0"/>
+      <el-table-column prop="postEditingList" label="后期剪辑" v-if="searchInfo.postEditingList.length > 0"/>
+      <el-table-column prop="compositingList" label="后期合成" v-if="searchInfo.compositingList.length > 0"/>
+      <el-table-column prop="artList" label="美术" v-if="searchInfo.artList.length > 0"/>
+      <el-table-column prop="musicList" label="音乐" v-if="searchInfo.musicList.length > 0"/>
+      <el-table-column prop="storyBoardList" label="分镜" v-if="searchInfo.storyBoardList.length > 0"/>
+      <el-table-column prop="directorList" label="导演" v-if="searchInfo.directorList.length > 0"/>
+      <el-table-column prop="producerList" label="制片" v-if="searchInfo.producerList.length > 0"/>
       
       <el-table-column label="一级费用" v-if="selectedFirstLevelFee.length > 0 || selectedSecondLevelFee.length > 0">
         <el-table-column prop="categoryId" label="费用名称">
@@ -653,59 +665,87 @@ export default {
           if (list.projectDetailList) {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
-              return pDetail.childFeeList.map(childFee => ({
-                id: list.id,
-                name: list.name,
-                contractSubjectId: list.contractSubjectId,
-                state: list.state,
-                contractAmount: list.contractAmount,
-                realCost: list.realCost,
-                budgetCost: list.budgetCost,
-                shootingBudget: list.shootingBudget,
-                lateStateBudget: list.lateStateBudget,
-                shootingCost: list.shootingCost,
-                lateStateCost: list.lateStateCost,
-                filmDuration: list.filmDuration,
-                shootingStartAt: list.shootingStartAt,
-                shootingDuration: list.shootingDuration,
-                categoryId: pDetail.categoryId,
-                budgetAmount: pDetail.budgetAmount,
-                realAmount: pDetail.realAmount,
-                childCategoryId: childFee.categoryId,
-                childBudgetAmount: childFee.budgetAmount,
-                childRealAmount: childFee.realAmount,
-                providerName: childFee.providerName
-              }));
+              return pDetail.childFeeList.map(childFee => (this.buildProjectRespWithFee(list, pDetail, childFee)));
             });
           } else {
-            return {
-              id: list.id,
-              name: list.name,
-              contractSubjectId: list.contractSubjectId,
-              state: list.state,
-              contractAmount: list.contractAmount,
-              realCost: list.realCost,
-              budgetCost: list.budgetCost,
-              shootingBudget: list.shootingBudget,
-              lateStateBudget: list.lateStateBudget,
-              shootingCost: list.shootingCost,
-              lateStateCost: list.lateStateCost,
-              filmDuration: list.filmDuration,
-              shootingStartAt: list.shootingStartAt,
-              shootingDuration: list.shootingDuration,
-              categoryId: "",
-              budgetAmount: "",
-              realAmount: "",
-              childCategoryId: "",
-              childBudgetAmount: "",
-              childRealAmount: ""
-            };
+            return this.buildProjectRespWithoutFee(list)
           }
         });
         this.searchList = flattenDeep(newList);
         console.log(this.searchList)
         this.getSpanArr();
       })
+    },
+    buildProjectRespWithFee(list, pDetail, childFee){
+      return {
+        sid: list.sid,
+        name: list.name,
+        contractSubjectId: list.contractSubjectId,
+        state: list.state,
+        contractAmount: list.contractAmount,
+        realCost: list.realCost,
+        budgetCost: list.budgetCost,
+        shootingBudget: list.shootingBudget,
+        lateStateBudget: list.lateStateBudget,
+        shootingCost: list.shootingCost,
+        lateStateCost: list.lateStateCost,
+        filmDuration: list.filmDuration,
+        shootingStartAt: list.shootingStartAt,
+        shootingDuration: list.shootingDuration,
+        projectLeaderList: list.projectLeaderList,
+        customerManagerList: list.customerManagerList,
+        executiveDirecrotList: list.executiveDirecrotList,
+        copyWritingList: list.copyWritingList,
+        postEditingList: list.postEditingList,
+        compositingList: list.compositingList,
+        artList: list.artList,
+        musicList: list.musicList,
+        storyBoardList: list.storyBoardList,
+        directorList: list.directorList,
+        producerList: list.producerList,
+        categoryId: pDetail.categoryId,
+        budgetAmount: pDetail.budgetAmount,
+        realAmount: pDetail.realAmount,
+        childCategoryId: childFee.categoryId,
+        childBudgetAmount: childFee.budgetAmount,
+        childRealAmount: childFee.realAmount,
+        providerName: childFee.providerName
+      }
+    },
+    buildProjectRespWithoutFee(list){
+      return {
+        sid: list.sid,
+        name: list.name,
+        contractSubjectId: list.contractSubjectId,
+        state: list.state,
+        contractAmount: list.contractAmount,
+        realCost: list.realCost,
+        budgetCost: list.budgetCost,
+        shootingBudget: list.shootingBudget,
+        lateStateBudget: list.lateStateBudget,
+        shootingCost: list.shootingCost,
+        lateStateCost: list.lateStateCost,
+        filmDuration: list.filmDuration,
+        shootingStartAt: list.shootingStartAt,
+        shootingDuration: list.shootingDuration,
+        projectLeaderList: list.projectLeaderList,
+        customerManagerList: list.customerManagerList,
+        executiveDirecrotList: list.executiveDirecrotList,
+        copyWritingList: list.copyWritingList,
+        postEditingList: list.postEditingList,
+        compositingList: list.compositingList,
+        artList: list.artList,
+        musicList: list.musicList,
+        storyBoardList: list.storyBoardList,
+        directorList: list.directorList,
+        producerList: list.producerList,
+        categoryId: "",
+        budgetAmount: "",
+        realAmount: "",
+        childCategoryId: "",
+        childBudgetAmount: "",
+        childRealAmount: ""
+      }
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (
@@ -823,55 +863,10 @@ export default {
           if (list.projectDetailList) {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
-              return pDetail.childFeeList.map(childFee => ({
-                id: list.id,
-                sid: list.sid,
-                name: list.name,
-                contractSubjectId: list.contractSubjectId,
-                state: list.state,
-                contractAmount: list.contractAmount,
-                realCost: list.realCost,
-                budgetCost: list.budgetCost,
-                shootingBudget: list.shootingBudget,
-                lateStateBudget: list.lateStateBudget,
-                shootingCost: list.shootingCost,
-                lateStateCost: list.lateStateCost,
-                filmDuration: list.filmDuration,
-                shootingStartAt: list.shootingStartAt,
-                shootingDuration: list.shootingDuration,
-                categoryId: pDetail.categoryId,
-                budgetAmount: pDetail.budgetAmount,
-                realAmount: pDetail.realAmount,
-                childCategoryId: childFee.categoryId,
-                childBudgetAmount: childFee.budgetAmount,
-                providerName: childFee.providerName,               
-                childRealAmount: childFee.realAmount
-              }));
+              return pDetail.childFeeList.map(childFee => (this.buildProjectRespWithFee(list, pDetail, childFee)));
             });
           } else {
-            return {
-              id: list.id,
-              sid: list.sid,
-              name: list.name,
-              contractSubjectId: list.contractSubjectId,
-              state: list.state,
-              contractAmount: list.contractAmount,
-              realCost: list.realCost,
-              budgetCost: list.budgetCost,
-              shootingBudget: list.shootingBudget,
-              lateStateBudget: list.lateStateBudget,
-              shootingCost: list.shootingCost,
-              lateStateCost: list.lateStateCost,
-              filmDuration: list.filmDuration,
-              shootingStartAt: list.shootingStartAt,
-              shootingDuration: list.shootingDuration,
-              categoryId: "",
-              budgetAmount: "",
-              realAmount: "",
-              childCategoryId: "",
-              childBudgetAmount: "",
-              childRealAmount: ""
-            };
+            return this.buildProjectRespWithoutFee(list)
           }
         });
         this.searchList = flattenDeep(newList);
