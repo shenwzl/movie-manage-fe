@@ -461,6 +461,7 @@
           </el-form-item>
         </el-col>
         <el-col>
+          <el-button @click="onReset">重置</el-button>
           <el-button @click="onSearch" type="primary">查询</el-button>
           <el-button @click="onExport" :loading="downloadLoading" type="primary">导出</el-button>
         </el-col>
@@ -786,10 +787,32 @@ export default {
       if (this.searchInfo.filmDurationMinuteStart !== undefined) {
         this.searchInfo.filmDurationStart =
           this.searchInfo.filmDurationMinuteStart * 60;
+      } else {
+        delete this.searchInfo.filmDurationStart
       }
       if (this.searchInfo.filmDurationMinuteEnd !== undefined) {
         this.searchInfo.filmDurationEnd =
           this.searchInfo.filmDurationMinuteEnd * 60;
+      } else {
+        delete this.searchInfo.filmDurationEnd
+      }
+    },
+    onReset() {
+      this.searchInfo = {
+        directorList: [],
+        producerList: [],
+        projectLeaderList: [],
+        customerManagerList: [],
+        executiveDirecrotList: [],
+        copyWritingList: [],
+        postEditingList: [],
+        compositingList: [],
+        artList: [],
+        musicList: [],
+        storyBoardList: [],
+        page: 1,
+        pageSize: 10,
+        states: []
       }
     },
     onSearch() {
