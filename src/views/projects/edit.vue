@@ -38,10 +38,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <span class="label-info">成片时长</span>   
+          <span class="label-info">成片时长</span>
           <el-form-item prop="minute" class="item-info">
             <el-input-number
-              style="width: 100px;" 
+              style="width: 100px;"
               :min="0"
               v-model="baseInfo.minute"
               controls-position="right"
@@ -51,7 +51,7 @@
           <span style="margin-right: 15px;">分</span>
           <el-form-item prop="second">
             <el-input-number
-              style="width: 100px;"              
+              style="width: 100px;"
               :min="0"
               v-model="baseInfo.second"
               controls-position="right"
@@ -79,15 +79,29 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <span class="label-info">客户公司</span>
-          <el-form-item prop="childCompanyId" class="item-info">
-            <el-select v-model="baseInfo.childCompanyId">
+          <span class="label-info">客户所属公司1级</span>
+          <el-form-item prop="childCompanyId" class="item-info" style="margin-left: 126px;">
+            <el-select v-model="baseInfo.companyId" @change="onCompanyChange">
               <el-option
                 v-for="item in allCompanys"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"
-                v-if="item.companyType === 2 && item.state === 0"
+                v-if="item.companyType === 1 && item.state === 0"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <span class="label-info">客户所属公司2级</span>
+          <el-form-item prop="childCompanyId" class="item-info" style="margin-left: 126px;">
+            <el-select v-model="baseInfo.childCompanyId" :disabled="!baseInfo.companyId">
+              <el-option
+                v-for="item in allCompanys"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+                v-if="item.companyType === 2 && item.parentCompanyId === baseInfo.companyId && item.state === 0"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -95,13 +109,23 @@
         <el-col :span="24">
           <span class="label-info">项目合同金额</span>
           <el-form-item style="margin-left: 152px;" class="item-info" prop="contractAmount">
-            <el-input-number v-model="baseInfo.contractAmount" style="width: 180px;" :min="0" autocomplete="off" />
+            <el-input-number
+              v-model="baseInfo.contractAmount"
+              style="width: 180px;"
+              :min="0"
+              autocomplete="off"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目回款金额</span>
           <el-form-item style="margin-left: 152px;" class="item-info" prop="returnAmount">
-            <el-input-number :min="0" v-model="baseInfo.returnAmount" style="width: 180px;" autocomplete="off" />
+            <el-input-number
+              :min="0"
+              v-model="baseInfo.returnAmount"
+              style="width: 180px;"
+              autocomplete="off"
+            />
           </el-form-item>
         </el-col>
         <el-col v-for="mType in memberTypes" :key="mType.type" :span="24">
@@ -706,6 +730,9 @@ export default {
       "addStaff",
       "getAllCompanys"
     ]),
+    onCompanyChange() {
+      this.baseInfo.childCompanyId = null
+    },
     onMinChange(val) {
       this.baseInfo.filmDuration =
         parseInt(val * 60) + parseInt(this.baseInfo.second);
@@ -760,8 +787,8 @@ export default {
         (a, b) => a.feeCategoryId - b.feeCategoryId
       );
       this.getSpanArr();
-      this.firstShootingFeeVisible = false
-      this.fisrtShootingFee = ''
+      this.firstShootingFeeVisible = false;
+      this.fisrtShootingFee = "";
     },
     addFirstLastFee() {
       this.feeInfo.lastStateInfo.push({
@@ -778,7 +805,7 @@ export default {
       );
       this.getLastArr();
       this.firstLastFeeVisible = false;
-      this.fisrtLastFee = ''
+      this.fisrtLastFee = "";
     },
     handleDeleteLast(index) {
       this.feeInfo.lastStateInfo.splice(index, 1);
@@ -807,15 +834,8 @@ export default {
         if (valid) {
           this.editLoading = true;
           this.baseInfo.filmDuration =
-            parseInt(this.baseInfo.minute * 60) +
-            parseInt(this.baseInfo.second);
-          const company = find(
-            this.allCompanys,
-            cpy => cpy.id === this.baseInfo.childCompanyId
-          );
-          if (company != undefined){
-            this.baseInfo.companyId = company.parentCompanyId;
-          }
+            this.baseInfo.minute ? parseInt(this.baseInfo.minute * 60) +
+            parseInt(this.baseInfo.second) : parseInt(this.baseInfo.second);
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId

@@ -855,23 +855,6 @@ export default {
         this.getSpanArr();
       });
     },
-    // onExport() {
-    //   import('@/vendor/exportToExcel').then(excel => {
-    //     console.log(excel)
-    //     const tHeader = ['项目编号', '项目名称', '项目执行状态', '项目合同主体', '123']
-    //     const filterVal = ['sid', 'name', 'state', 'state', 'sid']
-    //     const list = this.searchList
-    //     const data = list
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       // filename: this.filename,
-    //       // autoWidth: this.autoWidth,
-    //       // bookType: this.bookType
-    //     })
-    //     this.downloadLoading = false
-    //   })
-    // }
     onExport() {
       const service = axios.create({
         baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -908,10 +891,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
 .el-pagination {
   text-align: right;
   margin-top: 20px;
+}
+.baseinfo-header-row {
+  display: none;
 }
 </style>
 

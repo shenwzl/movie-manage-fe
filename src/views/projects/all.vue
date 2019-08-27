@@ -519,4 +519,7 @@ export default {
   padding: 3px 0 !important;
   font-size: 12px !important;
 }
+.info-table-row td .cell {
+  line-height: 14px !important;
+}
 </style>
