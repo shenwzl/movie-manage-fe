@@ -22,12 +22,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="项目执行状态" label-width="120px">
-            <el-select
-              clearable 
-              v-model="searchInfo.states"
-              style="width: 216px;"
-              multiple
-            >
+            <el-select clearable v-model="searchInfo.states" style="width: 216px;" multiple>
               <el-option
                 v-for="item in projectState"
                 :key="item.state"
@@ -51,7 +46,12 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="所属子公司" label-width="120px">
-            <el-select clearable filterable v-model="searchInfo.companyChildId" style="width: 216px;">
+            <el-select
+              clearable
+              filterable
+              v-model="searchInfo.companyChildId"
+              style="width: 216px;"
+            >
               <el-option
                 v-for="company in childCompanys"
                 :key="company.id"
@@ -258,7 +258,7 @@
         <el-col :span="8">
           <el-form-item label="制作人" label-width="120px">
             <el-select
-              clearable 
+              clearable
               filterable
               style="width: 216px;"
               v-model="searchInfo.producerList"
@@ -277,7 +277,7 @@
         <el-col :span="8">
           <el-form-item label="项目负责人" label-width="120px">
             <el-select
-              clearable 
+              clearable
               filterable
               style="width: 216px;"
               v-model="searchInfo.projectLeaderList"
@@ -296,7 +296,7 @@
         <el-col :span="8">
           <el-form-item label="客户对接人" label-width="120px">
             <el-select
-              clearable 
+              clearable
               filterable
               style="width: 216px;"
               v-model="searchInfo.customerManagerList"
@@ -315,7 +315,7 @@
         <el-col :span="8">
           <el-form-item label="文案" label-width="120px">
             <el-select
-              clearable 
+              clearable
               filterable
               style="width: 216px;"
               v-model="searchInfo.copyWritingList"
@@ -424,7 +424,7 @@
         <el-col :span="8">
           <el-form-item label="一级费用" label-width="120px">
             <el-select
-              clearable 
+              clearable
               filterable
               style="width: 216px;"
               v-model="selectedFirstLevelFee"
@@ -443,14 +443,13 @@
         <el-col :span="8">
           <el-form-item label="二级费用" label-width="120px">
             <el-select
-              clearable 
+              clearable
               filterable
               style="width: 216px;"
               v-model="selectedSecondLevelFee"
               collapse-tags
               multiple
             >
-
               <el-option
                 v-for="item in secondFees"
                 :key="item.id"
@@ -489,35 +488,108 @@
       <el-table-column prop="contractAmount" label="项目合同金额" />
       <el-table-column prop="realCost" label="项目实际总成本" />
 
-      <el-table-column prop="budgetCost" label="项目预算总成本" v-if="searchInfo.budgetCostStart || searchInfo.budgetCostEnd"/>
-      <el-table-column prop="shootingBudget" label="项目拍摄预算" v-if="searchInfo.shootingBudgetCostStart || searchInfo.shootingBudgetCostEnd"/>
-      <el-table-column prop="shootingCost" label="项目拍摄成本" v-if="searchInfo.shootingRealCostStart || searchInfo.shootingRealCostEnd"/>
-      <el-table-column prop="lateStateBudget" label="项目后期预算" v-if="searchInfo.lateStateBudgetCostStart || searchInfo.lateStateBudgetCostEnd"/>
-      <el-table-column prop="lateStateCost" label="项目后期成本" v-if="searchInfo.lateStateRealCostStart || searchInfo.lateStateRealCostEnd"/>
-      <el-table-column prop="filmDuration" label="成片时长" v-if="searchInfo.filmDurationMinuteStart || searchInfo.filmDurationMinuteEnd"/>
-      <el-table-column prop="shootingStartAt" label="拍摄时间" v-if="searchInfo.shootingStartAtStart || searchInfo.shootingStartAtEnd"/>
-      <el-table-column prop="shootingDuration" label="拍摄周期" v-if="searchInfo.shootingDurationStart || searchInfo.shootingDurationEnd"/>
+      <el-table-column
+        prop="budgetCost"
+        label="项目预算总成本"
+        v-if="searchInfo.budgetCostStart || searchInfo.budgetCostEnd"
+      />
+      <el-table-column
+        prop="shootingBudget"
+        label="项目拍摄预算"
+        v-if="searchInfo.shootingBudgetCostStart || searchInfo.shootingBudgetCostEnd"
+      />
+      <el-table-column
+        prop="shootingCost"
+        label="项目拍摄成本"
+        v-if="searchInfo.shootingRealCostStart || searchInfo.shootingRealCostEnd"
+      />
+      <el-table-column
+        prop="lateStateBudget"
+        label="项目后期预算"
+        v-if="searchInfo.lateStateBudgetCostStart || searchInfo.lateStateBudgetCostEnd"
+      />
+      <el-table-column
+        prop="lateStateCost"
+        label="项目后期成本"
+        v-if="searchInfo.lateStateRealCostStart || searchInfo.lateStateRealCostEnd"
+      />
+      <el-table-column
+        prop="filmDuration"
+        label="成片时长"
+        v-if="searchInfo.filmDurationMinuteStart || searchInfo.filmDurationMinuteEnd"
+      />
+      <el-table-column
+        prop="shootingStartAt"
+        label="拍摄时间"
+        v-if="searchInfo.shootingStartAtStart || searchInfo.shootingStartAtEnd"
+      />
+      <el-table-column
+        prop="shootingDuration"
+        label="拍摄周期"
+        v-if="searchInfo.shootingDurationStart || searchInfo.shootingDurationEnd"
+      />
+      <el-table-column prop="companyId" label="客户所属公司" v-if="searchInfo.companyId">
+        <template scope="scope">{{ scope.row.companyId | getCompanyName(allCompanys) }}</template>
+      </el-table-column>
+      <el-table-column prop="shootingDuration" label="客户所属子公司" v-if="searchInfo.companyChildId" >
+        <template scope="scope">{{ scope.row.childCompanyId | getCompanyName(allCompanys) }}</template>
+      </el-table-column>
 
-      <el-table-column prop="projectLeaderList" label="项目负责人" v-if="searchInfo.projectLeaderList.length > 0"/>
-      <el-table-column prop="customerManagerList" label="客户对接人" v-if="searchInfo.customerManagerList.length > 0"/>
-      <el-table-column prop="executiveDirecrotList" label="执行导演" v-if="searchInfo.executiveDirecrotList.length > 0"/>
-      <el-table-column prop="copyWritingList" label="文案" v-if="searchInfo.copyWritingList.length > 0"/>
-      <el-table-column prop="postEditingList" label="后期剪辑" v-if="searchInfo.postEditingList.length > 0"/>
-      <el-table-column prop="compositingList" label="后期合成" v-if="searchInfo.compositingList.length > 0"/>
-      <el-table-column prop="artList" label="美术" v-if="searchInfo.artList.length > 0"/>
-      <el-table-column prop="musicList" label="音乐" v-if="searchInfo.musicList.length > 0"/>
-      <el-table-column prop="storyBoardList" label="分镜" v-if="searchInfo.storyBoardList.length > 0"/>
-      <el-table-column prop="directorList" label="导演" v-if="searchInfo.directorList.length > 0"/>
-      <el-table-column prop="producerList" label="制片" v-if="searchInfo.producerList.length > 0"/>
-      
-      <el-table-column label="一级费用" v-if="selectedFirstLevelFee.length > 0 || selectedSecondLevelFee.length > 0">
+      <el-table-column
+        prop="projectLeaderList"
+        label="项目负责人"
+        v-if="searchInfo.projectLeaderList.length > 0"
+      />
+      <el-table-column
+        prop="customerManagerList"
+        label="客户对接人"
+        v-if="searchInfo.customerManagerList.length > 0"
+      />
+      <el-table-column
+        prop="executiveDirecrotList"
+        label="执行导演"
+        v-if="searchInfo.executiveDirecrotList.length > 0"
+      />
+      <el-table-column
+        prop="copyWritingList"
+        label="文案"
+        v-if="searchInfo.copyWritingList.length > 0"
+      />
+      <el-table-column
+        prop="postEditingList"
+        label="后期剪辑"
+        v-if="searchInfo.postEditingList.length > 0"
+      />
+      <el-table-column
+        prop="compositingList"
+        label="后期合成"
+        v-if="searchInfo.compositingList.length > 0"
+      />
+      <el-table-column prop="artList" label="美术" v-if="searchInfo.artList.length > 0" />
+      <el-table-column prop="musicList" label="音乐" v-if="searchInfo.musicList.length > 0" />
+      <el-table-column
+        prop="storyBoardList"
+        label="分镜"
+        v-if="searchInfo.storyBoardList.length > 0"
+      />
+      <el-table-column prop="directorList" label="导演" v-if="searchInfo.directorList.length > 0" />
+      <el-table-column prop="producerList" label="制片" v-if="searchInfo.producerList.length > 0" />
+
+      <el-table-column
+        label="一级费用"
+        v-if="selectedFirstLevelFee.length > 0 || selectedSecondLevelFee.length > 0"
+      >
         <el-table-column prop="categoryId" label="费用名称">
           <template scope="scope">{{ scope.row.categoryId | getFeeName(feeCategories) }}</template>
         </el-table-column>
         <el-table-column prop="budgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="realAmount" label="实际金额"></el-table-column>
       </el-table-column>
-      <el-table-column label="二级费用" style="text-align: center;" v-if="selectedSecondLevelFee.length > 0">
+      <el-table-column
+        label="二级费用"
+        style="text-align: center;"
+        v-if="selectedSecondLevelFee.length > 0"
+      >
         <el-table-column prop="childCategoryId" label="费用名称">
           <template scope="scope">{{ scope.row.childCategoryId | getFeeName(feeCategories) }}</template>
         </el-table-column>
@@ -564,7 +636,7 @@ export default {
       pos: 0,
       selectedFirstLevelFee: [],
       selectedSecondLevelFee: [],
-      downloadLoading: false,
+      downloadLoading: false
     };
   },
   computed: {
@@ -619,6 +691,14 @@ export default {
         return contract[0].name;
       }
       return "";
+    },
+    getCompanyName(cId, companys) {
+      console.log(cId, companys);
+      if (cId && companys.length) {
+        const company = companys.filter(cpy => cpy.id === cId);
+        return company[0].name;
+      }
+      return "";
     }
   },
   beforeMount() {
@@ -665,22 +745,26 @@ export default {
           if (list.projectDetailList) {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
-              return pDetail.childFeeList.map(childFee => (this.buildProjectRespWithFee(list, pDetail, childFee)));
+              return pDetail.childFeeList.map(childFee =>
+                this.buildProjectRespWithFee(list, pDetail, childFee)
+              );
             });
           } else {
-            return this.buildProjectRespWithoutFee(list)
+            return this.buildProjectRespWithoutFee(list);
           }
         });
         this.searchList = flattenDeep(newList);
-        console.log(this.searchList)
+        console.log(this.searchList);
         this.getSpanArr();
-      })
+      });
     },
-    buildProjectRespWithFee(list, pDetail, childFee){
+    buildProjectRespWithFee(list, pDetail, childFee) {
       return {
         sid: list.sid,
         name: list.name,
         contractSubjectId: list.contractSubjectId,
+        companyId: list.companyId,
+        childCompanyId: list.childCompanyId,
         state: list.state,
         contractAmount: list.contractAmount,
         realCost: list.realCost,
@@ -710,14 +794,16 @@ export default {
         childBudgetAmount: childFee.budgetAmount,
         childRealAmount: childFee.realAmount,
         providerName: childFee.providerName
-      }
+      };
     },
-    buildProjectRespWithoutFee(list){
+    buildProjectRespWithoutFee(list) {
       return {
         sid: list.sid,
         name: list.name,
         contractSubjectId: list.contractSubjectId,
         state: list.state,
+        companyId: list.companyId,
+        childCompanyId: list.childCompanyId,
         contractAmount: list.contractAmount,
         realCost: list.realCost,
         budgetCost: list.budgetCost,
@@ -745,7 +831,7 @@ export default {
         childCategoryId: "",
         childBudgetAmount: "",
         childRealAmount: ""
-      }
+      };
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (
@@ -755,7 +841,7 @@ export default {
         columnIndex === 3 ||
         columnIndex === 4 ||
         columnIndex === 5 ||
-        columnIndex === 6 
+        columnIndex === 6
       ) {
         const _row = this.spanArr[rowIndex];
         const _col = _row > 0 ? 1 : 0;
@@ -828,13 +914,13 @@ export default {
         this.searchInfo.filmDurationStart =
           this.searchInfo.filmDurationMinuteStart * 60;
       } else {
-        delete this.searchInfo.filmDurationStart
+        delete this.searchInfo.filmDurationStart;
       }
       if (this.searchInfo.filmDurationMinuteEnd !== undefined) {
         this.searchInfo.filmDurationEnd =
           this.searchInfo.filmDurationMinuteEnd * 60;
       } else {
-        delete this.searchInfo.filmDurationEnd
+        delete this.searchInfo.filmDurationEnd;
       }
     },
     onReset() {
@@ -853,7 +939,7 @@ export default {
         page: 1,
         pageSize: 10,
         states: []
-      }
+      };
     },
     onSearch() {
       this.formatFee();
@@ -863,10 +949,12 @@ export default {
           if (list.projectDetailList) {
             let { projectDetailList } = list;
             return projectDetailList.map(pDetail => {
-              return pDetail.childFeeList.map(childFee => (this.buildProjectRespWithFee(list, pDetail, childFee)));
+              return pDetail.childFeeList.map(childFee =>
+                this.buildProjectRespWithFee(list, pDetail, childFee)
+              );
             });
           } else {
-            return this.buildProjectRespWithoutFee(list)
+            return this.buildProjectRespWithoutFee(list);
           }
         });
         this.searchList = flattenDeep(newList);
