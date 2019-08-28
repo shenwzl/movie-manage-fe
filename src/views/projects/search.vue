@@ -488,6 +488,7 @@
       <el-table-column prop="contractAmount" label="项目合同金额" />
       <el-table-column prop="realCost" label="项目实际总成本" />
 
+      <el-table-column prop="returnAmount" label="项目回款金额" v-if="searchInfo.returnAmountStart || searchInfo.returnAmountEnd"/>
       <el-table-column prop="budgetCost" label="项目预算总成本" v-if="searchInfo.budgetCostStart || searchInfo.budgetCostEnd"/>
       <el-table-column prop="shootingBudget" label="项目拍摄预算" v-if="searchInfo.shootingBudgetCostStart || searchInfo.shootingBudgetCostEnd"/>
       <el-table-column prop="shootingCost" label="项目拍摄成本" v-if="searchInfo.shootingRealCostStart || searchInfo.shootingRealCostEnd"/>
@@ -677,11 +678,13 @@ export default {
     },
     buildProjectRespWithFee(list, pDetail, childFee){
       return {
+        id: list.id,
         sid: list.sid,
         name: list.name,
         contractSubjectId: list.contractSubjectId,
         state: list.state,
         contractAmount: list.contractAmount,
+        returnAmount: list.returnAmount,
         realCost: list.realCost,
         budgetCost: list.budgetCost,
         shootingBudget: list.shootingBudget,
@@ -713,11 +716,13 @@ export default {
     },
     buildProjectRespWithoutFee(list){
       return {
+        id: list.id,
         sid: list.sid,
         name: list.name,
         contractSubjectId: list.contractSubjectId,
         state: list.state,
         contractAmount: list.contractAmount,
+        returnAmount: list.returnAmount,
         realCost: list.realCost,
         budgetCost: list.budgetCost,
         shootingBudget: list.shootingBudget,

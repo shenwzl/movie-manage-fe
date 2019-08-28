@@ -321,7 +321,7 @@
             >
               <el-select
                 v-model="scope.row.feeChildCategoryId"
-                style="width: 100px;"
+                style="width: 130px;"
                 @focus="onBlur(scope.row.feeCategoryId)"
                 width="200"
                 autocomplete="off"
@@ -344,7 +344,7 @@
             >
               <el-select
                 v-model="scope.row.providerId"
-                style="width: 100px;"
+                style="width: 130px;"
                 width="200"
                 autocomplete="off"
               >
@@ -369,7 +369,7 @@
                 v-model="scope.row.budgetAmount"
                 controls-position="right"
                 autocomplete="off"
-                style="width: 100px;"
+                style="width: 130px;"
               />
             </el-form-item>
           </template>
@@ -382,7 +382,7 @@
             >
               <el-input-number
                 :min="0"
-                style="width: 100px;"
+                style="width: 130px;"
                 v-model="scope.row.realAmount"
                 controls-position="right"
                 autocomplete="off"
