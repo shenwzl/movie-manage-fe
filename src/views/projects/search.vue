@@ -487,7 +487,15 @@
       </el-table-column>
       <el-table-column prop="contractAmount" label="项目合同金额" />
       <el-table-column prop="realCost" label="项目实际总成本" />
-
+      <el-table-column prop="returnAmount" label="项目回款金额" v-if="searchInfo.returnAmountStart || searchInfo.returnAmountEnd"/>
+      <el-table-column prop="budgetCost" label="项目预算总成本" v-if="searchInfo.budgetCostStart || searchInfo.budgetCostEnd"/>
+      <el-table-column prop="shootingBudget" label="项目拍摄预算" v-if="searchInfo.shootingBudgetCostStart || searchInfo.shootingBudgetCostEnd"/>
+      <el-table-column prop="shootingCost" label="项目拍摄成本" v-if="searchInfo.shootingRealCostStart || searchInfo.shootingRealCostEnd"/>
+      <el-table-column prop="lateStateBudget" label="项目后期预算" v-if="searchInfo.lateStateBudgetCostStart || searchInfo.lateStateBudgetCostEnd"/>
+      <el-table-column prop="lateStateCost" label="项目后期成本" v-if="searchInfo.lateStateRealCostStart || searchInfo.lateStateRealCostEnd"/>
+      <el-table-column prop="filmDuration" label="成片时长" v-if="searchInfo.filmDurationMinuteStart || searchInfo.filmDurationMinuteEnd"/>
+      <el-table-column prop="shootingStartAt" label="拍摄时间" v-if="searchInfo.shootingStartAtStart || searchInfo.shootingStartAtEnd"/>
+      <el-table-column prop="shootingDuration" label="拍摄周期" v-if="searchInfo.shootingDurationStart || searchInfo.shootingDurationEnd"/>
       <el-table-column
         prop="budgetCost"
         label="项目预算总成本"
@@ -760,6 +768,7 @@ export default {
     },
     buildProjectRespWithFee(list, pDetail, childFee) {
       return {
+        id: list.id,
         sid: list.sid,
         name: list.name,
         contractSubjectId: list.contractSubjectId,
@@ -767,6 +776,7 @@ export default {
         childCompanyId: list.childCompanyId,
         state: list.state,
         contractAmount: list.contractAmount,
+        returnAmount: list.returnAmount,
         realCost: list.realCost,
         budgetCost: list.budgetCost,
         shootingBudget: list.shootingBudget,
@@ -798,6 +808,7 @@ export default {
     },
     buildProjectRespWithoutFee(list) {
       return {
+        id: list.id,
         sid: list.sid,
         name: list.name,
         contractSubjectId: list.contractSubjectId,
@@ -805,6 +816,7 @@ export default {
         companyId: list.companyId,
         childCompanyId: list.childCompanyId,
         contractAmount: list.contractAmount,
+        returnAmount: list.returnAmount,
         realCost: list.realCost,
         budgetCost: list.budgetCost,
         shootingBudget: list.shootingBudget,
