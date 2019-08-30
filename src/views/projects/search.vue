@@ -65,11 +65,13 @@
           <el-form-item label="项目合同金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.contractAmountStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.contractAmountEnd"
             ></el-input-number>
@@ -79,11 +81,13 @@
           <el-form-item label="项目回款金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.returnAmountStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.returnAmountEnd"
             ></el-input-number>
@@ -93,11 +97,13 @@
           <el-form-item label="项目成本金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.realCostStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.realCostEnd"
             ></el-input-number>
@@ -107,11 +113,13 @@
           <el-form-item label="项目预算金额(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.budgetCostStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.budgetCostEnd"
             ></el-input-number>
@@ -121,11 +129,13 @@
           <el-form-item label="拍摄预算(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.shootingBudgetCostStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.shootingBudgetCostEnd"
             ></el-input-number>
@@ -135,11 +145,13 @@
           <el-form-item label="后期预算(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.lateStateBudgetCostStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.lateStateBudgetCostEnd"
             ></el-input-number>
@@ -149,11 +161,13 @@
           <el-form-item label="拍摄成本(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.shootingRealCostStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.shootingRealCostEnd"
             ></el-input-number>
@@ -163,11 +177,13 @@
           <el-form-item label="后期成本(元)" label-width="120px">
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.lateStateRealCostStart"
             ></el-input-number>~
             <el-input-number
               style="width: 100px"
+              :controls="false"
               controls-position="right"
               v-model="searchInfo.lateStateRealCostEnd"
             ></el-input-number>
