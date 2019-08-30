@@ -248,6 +248,7 @@
               :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
             >
               <el-select
+                filterable 
                 v-model="scope.row.providerId"
                 style="width: 130px;"
                 width="200"
@@ -367,6 +368,7 @@
               :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
             >
               <el-select
+                filterable
                 v-model="scope.row.providerId"
                 style="width: 130px;"
                 width="200"
