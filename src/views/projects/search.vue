@@ -621,7 +621,7 @@
 
       <el-table-column
         label="一级费用"
-        v-if="selectedFirstLevelFee.length > 0 || selectedSecondLevelFee.length > 0"
+        v-if="selectedFirstLevelFee.length > 0 || selectedSecondLevelFee.length > 0 || searchInfo.providerList.length > 0"
       >
         <el-table-column prop="categoryId" label="费用名称">
           <template scope="scope">{{ scope.row.categoryId | getFeeName(feeCategories) }}</template>
@@ -632,7 +632,7 @@
       <el-table-column
         label="二级费用"
         style="text-align: center;"
-        v-if="selectedSecondLevelFee.length > 0"
+        v-if="selectedSecondLevelFee.length > 0 || searchInfo.providerList.length > 0"
       >
         <el-table-column prop="childCategoryId" label="费用名称">
           <template scope="scope">{{ scope.row.childCategoryId | getFeeName(feeCategories) }}</template>
