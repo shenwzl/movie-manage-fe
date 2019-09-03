@@ -11,10 +11,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog
-      :title="isEdit ? '修改角色' : '新增角色'"
-      :visible.sync="createRoleDialog"
-    >
+    <el-dialog :title="isEdit ? '修改角色' : '新增角色'" :visible.sync="createRoleDialog">
       <el-form ref="createForm" :model="newRole" :rules="roleRules">
         <el-form-item prop="name" label="名称" label-width="150px">
           <el-row>
@@ -26,16 +23,18 @@
         <el-form-item label="权限" label-width="150px">
           <el-row>
             <el-col :span="24">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+              <el-checkbox
+                :indeterminate="isIndeterminate"
+                v-model="checkAll"
+                @change="handleCheckAllChange"
+              >全选</el-checkbox>
               <div style="margin: 15px 0;"></div>
               <el-checkbox-group v-model="checkedPermissions">
-                <el-checkbox 
+                <el-checkbox
                   v-for="permission in allPermissions"
                   :label="permission.id"
                   :key="permission.id"
-                >
-                  {{ permission.desc }}
-                </el-checkbox>
+                >{{ permission.desc }}</el-checkbox>
               </el-checkbox-group>
             </el-col>
           </el-row>
@@ -46,16 +45,12 @@
         <el-button type="primary" :loading="createLoading" @click="createRole">确 定</el-button>
       </div>
     </el-dialog>
-    <el-pagination
-      layout="prev, pager, next"
-      :total="total"
-      @current-change="handlePageChange"
-    />
+    <el-pagination layout="prev, pager, next" :total="total" @current-change="handlePageChange" />
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { hasPermission } from '@/utils/auth'
+import { mapActions, mapGetters } from "vuex";
+import { hasPermission } from "@/utils/auth";
 export default {
   data: function() {
     return {
@@ -69,7 +64,7 @@ export default {
       //   }
       // ],
       newRole: {
-        name: ''
+        name: ""
       },
       createRoleDialog: false,
       permissionDialog: false,
@@ -82,84 +77,96 @@ export default {
       checkedPermissions: [],
       checkAll: true,
       roleRules: {
-        name: [{ required: true, message: '名称不能为空' }]
+        name: [{ required: true, message: "名称不能为空" }]
       }
-    }
+    };
   },
   computed: {
-    ...mapGetters(['roles', 'total', 'allPermissions']),
+    ...mapGetters(["roles", "total", "allPermissions"]),
     canEdit() {
-      return hasPermission('role', 'manage')
+      return hasPermission("role", "manage");
     }
   },
   beforeMount() {
-    this.getRoles({ page: this.page, pageSize: this.pageSize })
-    this.getAllPermissions()
+    this.getRoles({ page: this.page, pageSize: this.pageSize });
+    this.getAllPermissions();
   },
   methods: {
     ...mapActions([
-      'getRoles',
-      'addRole',
-      'getAllPermissions',
-      'getRolePermission',
-      'updatePermission'
+      "getRoles",
+      "addRole",
+      "getAllPermissions",
+      "getRolePermission",
+      "updatePermission"
     ]),
     handleChange(row) {
       this.getRolePermission(row.id).then(res => {
-        this.newRole = row
-        this.isEdit = true
-        this.createRoleDialog = true
-        this.checkedPermissions = res.data.map(item => item.id)
-      })
+        this.newRole = row;
+        this.isEdit = true;
+        this.createRoleDialog = true;
+        this.checkedPermissions = res.data.map(item => item.id);
+      });
     },
-    setPermission() {
-    },
+    setPermission() {},
     createRole() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
-          this.createLoading = true
+          this.createLoading = true;
           if (this.isEdit) {
-            this.updatePermission({ checkedPermissions: this.checkedPermissions, id: this.newRole.id }).then(res => {
-              this.createRoleDialog = false
-              this.getRoles({ page: this.page, pageSize: this.pageSize })
-              this.createLoading = false
-              this.isEdit = false
-              this.newRole = {}
-              this.$message.success('更新成功')
-            })
-          } else {
-            this.addRole(this.newRole).then(
-              res => {
-                this.updatePermission({ checkedPermissions: this.checkedPermissions, id: res.data }).then(res => {
-                  this.createRoleDialog = false
-                  this.getRoles({ page: this.page, pageSize: this.pageSize })
-                  this.createLoading = false
-                  this.isEdit = false
-                  this.$message.success('添加成功')
-                  this.newRole = {}
-                })
+            this.updatePermission({
+              id: this.newRole.id,
+              data: {
+                name: this.newRole.name,
+                permissionIds: this.checkedPermissions
               }
-            )
+            }).then(res => {
+              this.createRoleDialog = false;
+              this.getRoles({ page: this.page, pageSize: this.pageSize });
+              this.createLoading = false;
+              this.isEdit = false;
+              this.newRole = {};
+              this.$message.success("更新成功");
+            });
+          } else {
+            this.addRole(this.newRole).then(res => {
+              this.updatePermission({
+                id: res.data,
+                data: {
+                  name: this.newRole.name,
+                  permissionIds: this.checkedPermissions
+                }
+              }).then(res => {
+                this.createRoleDialog = false;
+                this.getRoles({ page: this.page, pageSize: this.pageSize });
+                this.createLoading = false;
+                this.isEdit = false;
+                this.$message.success("添加成功");
+                this.newRole = {};
+              });
+            });
           }
         }
-      })
+      });
     },
     handlePageChange(page) {
-      this.page = page
-      this.getRoles({ page: this.page, pageSize: this.pageSize })
+      this.page = page;
+      this.getRoles({ page: this.page, pageSize: this.pageSize });
     },
     handleStateChange(row) {},
     handleCheckAllChange(val) {
-      this.checkedPermissions = val ? this.allPermissions.map(permission => permission.id) : [];
+      this.checkedPermissions = val
+        ? this.allPermissions.map(permission => permission.id)
+        : [];
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
       let checkedCount = value.length;
       this.checkAll = checkedCount === this.allPermissions.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.allPermissions.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.allPermissions.length;
     }
   }
-}
+};
 </script>
 
 <style scoped>

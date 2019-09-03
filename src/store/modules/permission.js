@@ -65,7 +65,7 @@ const actions = {
   },
   updatePermission({ commit }, data) {
     return new Promise((resolve, reject) => {
-      updatePermission(data.checkedPermissions, data.id).then(res => {
+      updatePermission(data.data, data.id).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

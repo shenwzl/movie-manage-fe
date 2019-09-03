@@ -475,6 +475,26 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item label="供应商" label-width="120px">
+            <el-select
+              clearable
+              filterable
+              style="width: 216px;"
+              v-model="searchInfo.providerList"
+              collapse-tags
+              multiple
+            >
+              <el-option
+                v-for="item in allProviders"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+                v-if="item.state === 0"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col>
           <el-button @click="onReset">重置</el-button>
           <el-button @click="onSearch" type="primary">查询</el-button>
@@ -620,7 +640,7 @@
         <el-table-column prop="childBudgetAmount" label="预算金额"></el-table-column>
         <el-table-column prop="childRealAmount" label="实际金额"></el-table-column>
       </el-table-column>
-      <el-table-column label="供应商" prop="providerName" v-if="selectedSecondLevelFee.length > 0">
+      <el-table-column label="供应商" prop="providerName" v-if="searchInfo.providerList.length > 0">
         <!-- <template scope="scope">{{ scope.row.providerId | getProviderName(allProviders) }}</template> -->
       </el-table-column>
     </el-table>
@@ -660,6 +680,7 @@ export default {
       pos: 0,
       selectedFirstLevelFee: [],
       selectedSecondLevelFee: [],
+      providerList: [],
       downloadLoading: false
     };
   },
