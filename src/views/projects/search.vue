@@ -672,7 +672,8 @@ export default {
         storyBoardList: [],
         page: 1,
         pageSize: 10,
-        states: []
+        states: [],
+        providerList: [],
       },
       feeGroups: [],
       searchList: [],
@@ -680,7 +681,6 @@ export default {
       pos: 0,
       selectedFirstLevelFee: [],
       selectedSecondLevelFee: [],
-      providerList: [],
       downloadLoading: false
     };
   },
