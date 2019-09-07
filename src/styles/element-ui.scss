@@ -42,3 +42,58 @@
     display: block
   }
 }
+
+.el-table {
+  font-size: 12px;
+}
+
+.el-table th, .el-table td {
+  padding: 3px 0;
+}
+
+.el-button {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.el-form {
+  font-size: 12px;
+}
+
+.el-form-item__label {
+  font-size: 12px;
+  line-height: 30px;
+}
+
+.el-form-item__content {
+  line-height: 20px;
+}
+
+.el-input__inner {
+  height: 30px;
+}
+
+.el-input-number.is-controls-right .el-input-number__decrease, .el-input-number.is-controls-right .el-input-number__increase  {
+  line-height: 14px;
+}
+
+// .el-input-number.is-controls-right .el-input-number__decrease {
+//   bottom: 5px;
+// }
+
+// .el-input-number__decrease, .el-input-number__increase  {
+//   top: 5px;
+// }
+
+.el-input-number  {
+  line-height: 30px;
+}
+
+.el-input__prefix{
+  top: -5px;
+}
+
+.el-input__suffix {
+  top: 5px;
+}
+

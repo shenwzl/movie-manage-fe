@@ -62,7 +62,7 @@
         </el-col>
         <el-col :span="24">
           <span class="label-info">拍摄开始日期</span>
-          <el-form-item style="margin-left: 152px;" prop="shootingStartAt" class="item-info">
+          <el-form-item style="margin-left: 159px;" prop="shootingStartAt" class="item-info">
             <el-date-picker v-model="baseInfo.shootingStartAt" autocomplete="off" />
           </el-form-item>
         </el-col>
@@ -80,7 +80,7 @@
         </el-col>
         <el-col :span="24">
           <span class="label-info">客户所属公司1级</span>
-          <el-form-item prop="childCompanyId" class="item-info" style="margin-left: 126px;">
+          <el-form-item prop="childCompanyId" class="item-info" style="margin-left: 139px;">
             <el-select v-model="baseInfo.companyId" @change="onCompanyChange">
               <el-option
                 v-for="item in allCompanys"
@@ -94,7 +94,7 @@
         </el-col>
         <el-col :span="24">
           <span class="label-info">客户所属公司2级</span>
-          <el-form-item prop="childCompanyId" class="item-info" style="margin-left: 126px;">
+          <el-form-item prop="childCompanyId" class="item-info" style="margin-left: 139px;">
             <el-select v-model="baseInfo.childCompanyId" :disabled="!baseInfo.companyId">
               <el-option
                 v-for="item in allCompanys"
@@ -108,7 +108,7 @@
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目合同金额</span>
-          <el-form-item style="margin-left: 152px;" class="item-info" prop="contractAmount">
+          <el-form-item style="margin-left: 159px;" class="item-info" prop="contractAmount">
             <el-input-number
               v-model="baseInfo.contractAmount"
               style="width: 180px;"
@@ -119,7 +119,7 @@
         </el-col>
         <el-col :span="24">
           <span class="label-info">项目回款金额</span>
-          <el-form-item style="margin-left: 152px;" class="item-info" prop="returnAmount">
+          <el-form-item style="margin-left: 159px;" class="item-info" prop="returnAmount">
             <el-input-number
               :min="0"
               v-model="baseInfo.returnAmount"
@@ -1050,8 +1050,8 @@ export default {
 }
 .add-button {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 30px;
+  left: 8px;
   margin-bottom: 5px;
 }
 .delete-button {

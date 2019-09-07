@@ -4,12 +4,12 @@
       <el-row>
         <el-col :span="5">
           <el-form-item label="项目编号">
-            <el-input v-model="searchInfo.sid" style="width: 180px;" autocomplete="off" />
+            <el-input v-model="searchInfo.sid" style="width: 200px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="5" :offset="1">
           <el-form-item label="项目名称">
-            <el-input v-model="searchInfo.projectName" style="width: 180px;" autocomplete="off" />
+            <el-input v-model="searchInfo.projectName" style="width: 200px;" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="5" :offset="1">
@@ -54,8 +54,8 @@
       </el-table-column>
       <el-table-column v-if="canChangeState || canViewLog || canEdit" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" v-if="canChangeState" @click="handleStateChange(scope.row)">修改状态</el-button>
-          <el-button type="text" v-if="canViewLog" @click="handleViewLog(scope.row)">查看日志</el-button>        
+          <el-button type="text" style="margin-left: 10px;" v-if="canChangeState" @click="handleStateChange(scope.row)">修改状态</el-button>
+          <el-button type="text" v-if="canViewLog" style="margin-left: 34px;" @click="handleViewLog(scope.row)">查看日志</el-button>        
           <el-button type="text" v-if="canViewBaseInfo" @click="handleViewBase(scope.row)">查看基本信息</el-button>        
           <el-button type="text" v-if="canViewShootingInfo" @click="handleViewShooting(scope.row)">查看拍摄费用</el-button>        
           <el-button type="text" v-if="canViewLastInfo" @click="handleViewLast(scope.row)">查看后期费用</el-button>        
