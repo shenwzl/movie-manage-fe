@@ -6,7 +6,7 @@
  * @LastEditors: SHENZHI
  * @LastEditTime: 2019-08-10 23:49:09
  */
-import { getAllUser, getRoleByUser, updateRole, createUser, resetPwd, deleteUser, recoverUser } from '@/api/users'
+import { getAllUser, getRoleByUser, updateRole, createUser, resetPwd, deleteUser, recoverUser, editUser } from '@/api/users'
 
 const state = {
   users: [],
@@ -58,6 +58,16 @@ const actions = {
     const { email, password, cellphone, name } = userInfo
     return new Promise((resolve, reject) => {
       createUser({ email, password, cellphone, name }).then(res => {
+        resolve()
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  editUser({ commit }, userInfo) {
+    const { email, cellphone, name, id } = userInfo
+    return new Promise((resolve, reject) => {
+      editUser({ email, cellphone, name }, id).then(res => {
         resolve()
       }).catch(err => {
         reject(err)

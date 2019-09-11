@@ -21,11 +21,12 @@
         <template slot-scope="scope">
           <el-button v-if="canEdit" size="small" type="text" @click="handleStateChange(scope.row)">{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
           <el-button v-if="canEdit" type="text" size="small" @click="resetPwdDialog(scope.row)">重置密码</el-button>
+          <el-button v-if="canGrant" type="text" size="small" @click="editUser(scope.row)">编辑用户</el-button>
           <el-button v-if="canGrant" type="text" size="small" @click="handleRoleChange(scope.row)">修改角色</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="创建用户" :visible.sync="createUserDialog">
+    <el-dialog :title="isEdit ? '创建用户' : '编辑用户'" :visible.sync="createUserDialog">
       <el-form ref="createForm" :model="newUser" :rules="newUserRules">
         <el-form-item prop="email" label="邮箱" label-width="200px">
           <el-row>
@@ -48,7 +49,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item prop="password" label="密码" label-width="200px">
+        <el-form-item v-if="!isEdit" prop="password" label="密码" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-input v-model="newUser.password" autocomplete="off" />
@@ -137,7 +138,8 @@ export default {
       },
       bindRules: {
         roles: [{ required: true, trigger: 'blur', message: '绑定角色不能为空' }]
-      }
+      },
+      isEdit: false
     }
   },
   computed: {
@@ -162,8 +164,17 @@ export default {
       'recoverUser',
       'getAllRoles',
       'getRoleByUser',
-      'updateRole'
+      'updateRole',
+      'editUser'
     ]),
+    editUser(row) {
+      this.createUserDialog = true
+      this.newUser = {
+        email: row.email,
+        name: row.name,
+        cellphone: row.cellphone
+      }
+    },
     handleDelete(row) {
       console.log(row)
     },
@@ -173,12 +184,16 @@ export default {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          this.addUser(this.newUser).then(res => {
-            this.createUserDialog = false
-            this.getAllUser({ page: this.page, pageSize: this.pageSize })
-            this.$message.success('创建成功')
-            this.newUser = {}
-          }).finally(() => this.createLoading = false)
+          if (isEdit) {
+
+          } else {
+            this.addUser(this.newUser).then(res => {
+              this.createUserDialog = false
+              this.getAllUser({ page: this.page, pageSize: this.pageSize })
+              this.$message.success('创建成功')
+              this.newUser = {}
+            }).finally(() => this.createLoading = false)
+          }
         }
       })
     },

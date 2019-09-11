@@ -16,6 +16,14 @@ export function createUser(data) {
   })
 }
 
+export function editUser(data, id) {
+  return request({
+    url:`/users/${id}`,
+    method: 'put',
+    data
+  })
+}
+
 export function resetPwd(data, userId) {
   return request({
     url: `/users/${userId}/reset_pwd`,
