@@ -201,33 +201,23 @@
         </el-col>
       </el-row>
     </el-form>
-    <el-form v-if="step === '2'" ref="shootingInfoForm" :model="feeInfo">
+    <el-form v-if="step === '2'" ref="shootingInfoForm" :model="tabsArr">
       <h3>拍摄费用</h3>
-      <el-tabs type="border-card" v-model="activeShooting" @tab-click="handleShootingClick">
+      <el-tabs type="card" v-model="activeShooting" @tab-click="handleShootingClick">
         <el-tab-pane
           v-for="item in shootingTabs"
           :key="item"
           :name="item + ''"
           :label="getFeeName(item, feeCategories)"
         >
-          <el-table
-            :data="shootingTabsArr"
-            border
-            :span-method="arraySpanMethod"
-            empty-text="加载中..."
-          >
-            <el-table-column prop="feeCategoryId" label="一级费用">
-              <template scope="scope">
-                <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
-                <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(feeInfo.shootingInfo) }}</div>
-                <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(feeInfo.shootingInfo) }}</div>
-                <el-button type="text" @click="handleAddShooting(scope.row)">添加二级费用</el-button>
-              </template>
-            </el-table-column>
+          <span>总预算金额：{{ item | getBudget(tabsArr.shootingTabsArr) }}</span>
+          <span style="margin-left: 20px;">总金额：{{ item | getRealAmount(tabsArr.shootingTabsArr) }}</span>
+          <el-button style="margin: 20px;" type="primary" @click="handleAddShooting(item)">添加二级费用</el-button>
+          <el-table :data="tabsArr.shootingTabsArr" border empty-text="加载中...">
             <el-table-column prop="feeChildCategoryId" label="二级费用">
               <template scope="scope">
                 <el-form-item
-                  :prop="'shootingInfo.' + scope.$index + '.feeChildCategoryId'"
+                  :prop="'shootingTabsArr.' + scope.$index + '.feeChildCategoryId'"
                   :rules="{ required: true, message: '二级费用不能为空' }"
                 >
                   <el-select
@@ -251,7 +241,7 @@
             <el-table-column prop="providerId" label="供应商">
               <template scope="scope">
                 <el-form-item
-                  :prop="'shootingInfo.' + scope.$index + '.providerId'"
+                  :prop="'shootingTabsArr.' + scope.$index + '.providerId'"
                   :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
                 >
                   <el-select
@@ -275,7 +265,7 @@
             <el-table-column prop="budgetAmount" label="预算金额">
               <template scope="scope">
                 <el-form-item
-                  :prop="'shootingInfo.' + scope.$index + '.budgetAmount'"
+                  :prop="'shootingTabsArr.' + scope.$index + '.budgetAmount'"
                   :rules="{ required: true, message: '预算金额不能为空' }"
                 >
                   <el-input-number
@@ -291,7 +281,7 @@
             <el-table-column prop="realAmount" label="实际金额">
               <template scope="scope">
                 <el-form-item
-                  :prop="'shootingInfo.' + scope.$index + '.realAmount'"
+                  :prop="'shootingTabsArr.' + scope.$index + '.realAmount'"
                   :rules="{ required: true, message: '实际金额不能为空' }"
                 >
                   <el-input-number
@@ -331,126 +321,125 @@
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <el-form v-if="step === '3'" ref="lastInfoForm" :model="feeInfo">
+    <el-form v-if="step === '3'" ref="lastInfoForm" :model="tabsArr">
       <h3>后期费用</h3>
-      <el-table
-        :data="feeInfo.lastStateInfo"
-        border
-        :span-method="arrayLastMethod"
-        empty-text="加载中..."
-      >
-        <el-table-column prop="feeCategoryId" label="一级费用">
-          <template scope="scope">
-            <div>{{scope.row.feeCategoryId | getFeeName(feeCategories)}}</div>
-            <div>总预算金额：{{ scope.row.feeCategoryId | getBudget(feeInfo.lastStateInfo) }}</div>
-            <div>总金额：{{ scope.row.feeCategoryId | getRealAmount(feeInfo.lastStateInfo) }}</div>
-            <el-button type="text" @click="handleAddLast(scope.row)">添加二级费用</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="feeChildCategoryId" label="二级费用">
-          <template scope="scope">
-            <el-form-item
-              :prop="'lastStateInfo.' + scope.$index + '.feeChildCategoryId'"
-              :rules="{ required: true, message: '二级费用不能为空' }"
-            >
-              <el-select
-                v-model="scope.row.feeChildCategoryId"
-                style="width: 130px;"
-                @focus="onBlur(scope.row.feeCategoryId)"
-                width="200"
-                autocomplete="off"
-              >
-                <el-option
-                  v-for="fee in secondFees"
-                  :key="fee.id"
-                  :value="fee.id"
-                  :label="fee.name"
-                />
-              </el-select>
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="providerId" label="供应商">
-          <template scope="scope">
-            <el-form-item
-              :prop="'lastStateInfo.' + scope.$index + '.providerId'"
-              :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
-            >
-              <el-select
-                filterable
-                v-model="scope.row.providerId"
-                style="width: 130px;"
-                width="200"
-                autocomplete="off"
-              >
-                <el-option
-                  v-for="provider in allProviders"
-                  :key="provider.id"
-                  :value="provider.id"
-                  :label="provider.name"
-                />
-              </el-select>
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="budgetAmount" label="预算金额">
-          <template scope="scope">
-            <el-form-item
-              :prop="'lastStateInfo.' + scope.$index + '.budgetAmount'"
-              :rules="{ required: true, message: '预算金额不能为空' }"
-            >
-              <el-input-number
-                :min="0"
-                v-model="scope.row.budgetAmount"
-                controls-position="right"
-                autocomplete="off"
-                style="width: 130px;"
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="realAmount" label="实际金额">
-          <template scope="scope">
-            <el-form-item
-              :prop="'lastStateInfo.' + scope.$index + '.realAmount'"
-              :rules="{ required: true, message: '实际金额不能为空' }"
-            >
-              <el-input-number
-                :min="0"
-                style="width: 130px;"
-                v-model="scope.row.realAmount"
-                controls-position="right"
-                autocomplete="off"
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="remark" label="备注">
-          <template scope="scope">
-            <el-input type="textarea" v-model="scope.row.remark"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="rankScore" label="评分">
-          <template scope="scope">
-            <el-input-number
-              :min="0"
-              :max="100"
-              style="width: 100px;"
-              controls-position="right"
-              v-model="scope.row.rankScore"
-            ></el-input-number>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template scope="scope">
-            <el-button
-              type="danger"
-              size="small"
-              @click="handleDeleteLast(scope.$index, scope.row)"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-tabs type="card" v-model="activeLast" @tab-click="handleLastClick">
+        <el-tab-pane
+          v-for="item in lastTabs"
+          :key="item"
+          :name="item + ''"
+          :label="getFeeName(item, feeCategories)"
+        >
+          <span>总预算金额：{{ item | getBudget(tabsArr.lastStateTabsArr) }}</span>
+          <span style="margin-left: 20px;">总金额：{{ item | getRealAmount(tabsArr.lastStateTabsArr) }}</span>
+          <el-button style="margin: 20px;" type="primary" @click="handleAddLast(item)">添加二级费用</el-button>
+          <el-table :data="tabsArr.lastStateTabsArr" border>
+            <el-table-column prop="feeChildCategoryId" label="二级费用">
+              <template scope="scope">
+                <el-form-item
+                  :prop="'lastStateTabsArr.' + scope.$index + '.feeChildCategoryId'"
+                  :rules="{ required: true, message: '二级费用不能为空' }"
+                >
+                  <el-select
+                    v-model="scope.row.feeChildCategoryId"
+                    style="width: 130px;"
+                    @focus="onBlur(scope.row.feeCategoryId)"
+                    width="200"
+                    autocomplete="off"
+                  >
+                    <el-option
+                      v-for="fee in secondFees"
+                      :key="fee.id"
+                      :value="fee.id"
+                      :label="fee.name"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column prop="providerId" label="供应商">
+              <template scope="scope">
+                <el-form-item
+                  :prop="'lastStateTabsArr.' + scope.$index + '.providerId'"
+                  :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
+                >
+                  <el-select
+                    filterable
+                    v-model="scope.row.providerId"
+                    style="width: 130px;"
+                    width="200"
+                    autocomplete="off"
+                  >
+                    <el-option
+                      v-for="provider in allProviders"
+                      :key="provider.id"
+                      :value="provider.id"
+                      :label="provider.name"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column prop="budgetAmount" label="预算金额">
+              <template scope="scope">
+                <el-form-item
+                  :prop="'lastStateTabsArr.' + scope.$index + '.budgetAmount'"
+                  :rules="{ required: true, message: '预算金额不能为空' }"
+                >
+                  <el-input-number
+                    :min="0"
+                    v-model="scope.row.budgetAmount"
+                    controls-position="right"
+                    autocomplete="off"
+                    style="width: 130px;"
+                  />
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column prop="realAmount" label="实际金额">
+              <template scope="scope">
+                <el-form-item
+                  :prop="'lastStateTabsArr.' + scope.$index + '.realAmount'"
+                  :rules="{ required: true, message: '实际金额不能为空' }"
+                >
+                  <el-input-number
+                    :min="0"
+                    style="width: 130px;"
+                    v-model="scope.row.realAmount"
+                    controls-position="right"
+                    autocomplete="off"
+                  />
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column prop="remark" label="备注">
+              <template scope="scope">
+                <el-input type="textarea" v-model="scope.row.remark"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="rankScore" label="评分">
+              <template scope="scope">
+                <el-input-number
+                  :min="0"
+                  :max="100"
+                  style="width: 100px;"
+                  controls-position="right"
+                  v-model="scope.row.rankScore"
+                ></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template scope="scope">
+                <el-button
+                  type="danger"
+                  size="small"
+                  @click="handleDeleteLast(scope.$index, scope.row)"
+                >删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
     </el-form>
     <el-button
       class="save-button"
@@ -549,7 +538,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { hasPermission } from "@/utils/auth";
-import { find, reduce } from "lodash";
+import { find, reduce, findIndex } from "lodash";
 
 export default {
   name: "Dashboard",
@@ -619,8 +608,13 @@ export default {
       fisrtShootingFee: "",
       fisrtLastFee: "",
       shootingTabs: [],
-      shootingTabsArr: [],
-      activeShooting: ''
+      activeShooting: "",
+      activeLast: "",
+      lastTabs: [],
+      tabsArr: {
+        shootingTabsArr: [],
+        lastStateTabsArr: []
+      }
     };
   },
   computed: {
@@ -683,20 +677,16 @@ export default {
     this.step === "2" &&
       this.getShootingInfo(this.pId).then(res => {
         this.feeInfo.shootingInfo = res.data.projectFees;
-        this.feeInfo.shootingInfo.sort(
-          (a, b) => a.feeCategoryId - b.feeCategoryId
-        );
-        this.getSpanArr();
-        this.getShootingTabsArr(res.data.projectFees[0].feeCategoryId)
-        this.activeShooting = res.data.projectFees[0].feeCategoryId + '' 
+        this.getShootingTabsArr(res.data.projectFees[0].feeCategoryId);
+        this.getSpanArr()
+        this.activeShooting = res.data.projectFees[0].feeCategoryId + "";
       });
     this.step === "3" &&
       this.getLastStateInfo(this.pId).then(res => {
         this.feeInfo.lastStateInfo = res.data.projectFees;
-        this.feeInfo.lastStateInfo.sort(
-          (a, b) => a.feeCategoryId - b.feeCategoryId
-        );
-        this.getLastArr();
+        this.getLastTabsArr(res.data.projectFees[0].feeCategoryId);
+        this.getLastArr()
+        this.activeLast = res.data.projectFees[0].feeCategoryId + "";
       });
   },
   filters: {
@@ -751,7 +741,20 @@ export default {
       return fee[0].name;
     },
     handleShootingClick(tab) {
-      this.getShootingTabsArr(this.shootingTabs[tab.index])
+      this.$refs.shootingInfoForm.validate(valid => {
+        if (valid) {
+          this.getShootingTabsArr(this.shootingTabs[tab.index]);
+          this.asyncShootingInfo(parseInt(this.activeShooting));
+        }
+      });
+    },
+    handleLastClick(tab) {
+      this.$refs.lastInfoForm.validate(valid => {
+        if (valid) {
+          this.getLastTabsArr(this.lastTabs[tab.index]);
+          this.asyncLastInfo(parseInt(this.activeLast));
+        }
+      });
     },
     onCompanyChange() {
       this.baseInfo.childCompanyId = null;
@@ -773,19 +776,22 @@ export default {
       }
     },
     getShootingTabsArr(id) {
-      this.shootingTabsArr = this.feeInfo.shootingInfo.filter(sInfo => sInfo.feeCategoryId === id)
+      this.tabsArr.shootingTabsArr = this.feeInfo.shootingInfo.filter(
+        sInfo => sInfo.feeCategoryId === id
+      );
+    },
+    getLastTabsArr(id) {
+      this.tabsArr.lastStateTabsArr = this.feeInfo.lastStateInfo.filter(
+        sInfo => sInfo.feeCategoryId === id
+      );
+      console.log(this.tabsArr)
     },
     handleDeleteShooting(index) {
-      this.feeInfo.shootingInfo.splice(index, 1);
-      this.feeInfo.shootingInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.feeInfo.shootingInfo.forEach((sInfo, i) => (sInfo.index = i));
-      this.getSpanArr();
+      this.tabsArr.shootingTabsArr.splice(index, 1);
     },
     handleAddShooting(record) {
-      this.feeInfo.shootingInfo.push({
-        feeCategoryId: record.feeCategoryId,
+      this.tabsArr.shootingTabsArr.push({
+        feeCategoryId: record,
         feeChildCategoryId: "",
         providerId: "",
         realAmount: 0,
@@ -793,56 +799,23 @@ export default {
         remark: "",
         rankScore: ""
       });
-      this.feeInfo.shootingInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.feeInfo.shootingInfo.forEach((sInfo, i) => (sInfo.index = i));
-      this.getSpanArr();
     },
     addFirstShootingFee() {
-      this.feeInfo.shootingInfo.push({
-        feeCategoryId: this.fisrtShootingFee,
-        feeChildCategoryId: "",
-        providerId: "",
-        realAmount: 0,
-        budgetAmount: 0,
-        remark: "",
-        rankScore: ""
-      });
-      this.feeInfo.shootingInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getSpanArr();
+      this.shootingTabs.push(this.fisrtShootingFee);
       this.firstShootingFeeVisible = false;
       this.fisrtShootingFee = "";
     },
     addFirstLastFee() {
-      this.feeInfo.lastStateInfo.push({
-        feeCategoryId: this.firstLastFee,
-        feeChildCategoryId: "",
-        providerId: "",
-        realAmount: 0,
-        budgetAmount: 0,
-        remark: "",
-        rankScore: ""
-      });
-      this.feeInfo.lastStateInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getLastArr();
+      this.lastTabs.push(this.firstLastFee);
       this.firstLastFeeVisible = false;
       this.fisrtLastFee = "";
     },
     handleDeleteLast(index) {
-      this.feeInfo.lastStateInfo.splice(index, 1);
-      this.feeInfo.lastStateInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getLastArr();
+      this.tabsArr.lastStateTabsArr.splice(index, 1);
     },
     handleAddLast(record) {
-      this.feeInfo.lastStateInfo.push({
-        feeCategoryId: record.feeCategoryId,
+      this.tabsArr.lastStateTabsArr.push({
+        feeCategoryId: record,
         feeChildCategoryId: "",
         providerId: "",
         realAmount: 0,
@@ -850,10 +823,6 @@ export default {
         remark: "",
         rankScore: ""
       });
-      this.feeInfo.lastStateInfo.sort(
-        (a, b) => a.feeCategoryId - b.feeCategoryId
-      );
-      this.getLastArr();
     },
     editProject() {
       this.$refs.baseInfoForm.validate(valid => {
@@ -884,9 +853,22 @@ export default {
       });
       this.baseInfo.projectMembers = projectMembers;
     },
+    asyncShootingInfo(id) {
+      const filter = this.feeInfo.shootingInfo.filter(
+        sInfo => sInfo.feeCategoryId !== id
+      );
+      this.feeInfo.shootingInfo.push(...this.tabsArr.shootingTabsArr);
+    },
+    asyncLastInfo(id) {
+      const filter = this.feeInfo.lastStateInfo.filter(
+        sInfo => sInfo.feeCategoryId !== id
+      );
+      this.feeInfo.lastStateInfo.push(...this.tabsArr.lastStateTabsArr);
+    },
     editShootingInfo() {
       this.$refs.shootingInfoForm.validate(valid => {
         if (valid) {
+          this.asyncShootingInfo(parseInt(this.activeShooting));
           this.editLoading = true;
           this.saveShootingInfo({
             shootingInfo: this.feeInfo.shootingInfo,
@@ -902,6 +884,7 @@ export default {
     editLastStateInfo() {
       this.$refs.lastInfoForm.validate(valid => {
         if (valid) {
+          this.asyncLastInfo(parseInt(this.activeLast));
           this.editLoading = true;
           this.saveLastStateInfo({
             lastStateInfo: this.feeInfo.lastStateInfo,
@@ -1003,7 +986,6 @@ export default {
           }
         }
       });
-      console.log(this.shootingTabs);
     },
     getLastArr() {
       this.lastArr = [];
@@ -1011,7 +993,8 @@ export default {
         if (i === 0) {
           this.lastArr.push(1);
           this.pos = 0;
-        } else {
+          this.lastTabs.push(item.feeCategoryId);       
+       } else {
           if (
             item.feeCategoryId ===
             this.feeInfo.lastStateInfo[i - 1].feeCategoryId
@@ -1021,6 +1004,9 @@ export default {
           } else {
             this.lastArr.push(1);
             this.pos = i;
+          }
+           if (!this.lastTabs.includes(item.feeCategoryId)) {
+            this.lastTabs.push(item.feeCategoryId);
           }
         }
       });
