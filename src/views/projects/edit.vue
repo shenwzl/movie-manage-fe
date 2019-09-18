@@ -747,6 +747,7 @@ export default {
           this.asyncShootingInfo(parseInt(this.activeShooting));
         }
       });
+      this.secondFees = this.feeCategories
     },
     handleLastClick(tab) {
       this.$refs.lastInfoForm.validate(valid => {
@@ -755,6 +756,7 @@ export default {
           this.asyncLastInfo(parseInt(this.activeLast));
         }
       });
+      this.secondFees = this.feeCategories      
     },
     onCompanyChange() {
       this.baseInfo.childCompanyId = null;
