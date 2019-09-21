@@ -1,6 +1,24 @@
 <template>
   <div class="app-container">
+    <el-form :model="searchInfo">
+      <el-row>
+        <el-col :span="5">
+          <el-form-item label="名称">
+            <el-input v-model="searchInfo.name" style="width: 200px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="类别">
+            <el-select v-model="searchInfo.companyType" style="width: 200px;" autocomplete="off">
+              <el-option :value="1" label="一级"></el-option>
+              <el-option :value="2" label="二级"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        </el-row>
+    </el-form>
     <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建客户公司</el-button>
+    <el-button type="primary" @click="onSearch">查询</el-button>
     <el-table :data="companys">
       <el-table-column prop="id" label="客户公司id" />
       <el-table-column prop="name" label="名称" />
@@ -89,6 +107,7 @@ import { hasPermission } from "@/utils/auth";
 export default {
   data: function() {
     return {
+      searchInfo: {},
       newCompany: {
         name: "",
         stage: "",
@@ -129,7 +148,7 @@ export default {
   },
   beforeMount() {
     this.getAllCompanys();
-    this.getCompanys({ page: this.page, pageSize: this.pageSize });
+    this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo });
   },
   methods: {
     ...mapActions([
@@ -140,6 +159,9 @@ export default {
       "recoverCompany",
       "getAllCompanys"
     ]),
+    onSearch() {
+      this.getCompanys({ page: 1, pageSize: this.pageSize, ...this.searchInfo });
+    },
     handleChange(row) {
       this.newCompany = row;
       this.isEdit = true;
@@ -178,18 +200,18 @@ export default {
     },
     handlePageChange(page) {
       this.page = page;
-      this.getCompanys({ page: this.page, pageSize: this.pageSize });
+      this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo });
     },
     handleStateChange(row) {
       if (!row.state) {
         this.deleteCompany(row.id).then(res => {
           this.$message.success("更新成功");
-          this.getCompanys({ page: this.page, pageSize: this.pageSize });
+          this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo });
         });
       } else {
         this.recoverCompany(row.id).then(res => {
           this.$message.success("更新成功");
-          this.getCompanys({ page: this.page, pageSize: this.pageSize });
+          this.getCompanys({ page: this.page, pageSize: this.pageSize , ...this.searchInfo});
         });
       }
     }

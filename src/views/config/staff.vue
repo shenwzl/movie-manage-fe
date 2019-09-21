@@ -1,6 +1,29 @@
 <template>
   <div class="app-container">
+    <el-form :model="searchInfo">
+      <el-row>
+        <el-col :span="5">
+          <el-form-item label="名称">
+            <el-input v-model="searchInfo.name" style="width: 200px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-form-item label="电话">
+            <el-input v-model="searchInfo.cellphone" style="width: 200px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="类别">
+            <el-select v-model="searchInfo.ascription" style="width: 200px;" autocomplete="off">
+              <el-option :value="1" label="内部员工"></el-option>
+              <el-option :value="2" label="外部员工"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        </el-row>
+    </el-form>
     <el-button type="primary" v-if="canEdit" @click="createStaffDialog = true; newStaff = {}">创建新员工</el-button>
+    <el-button type="primary" @click="onSearch">查询</el-button>    
     <el-table :data="staffs">
       <el-table-column prop="id" label="员工id" />
       <el-table-column prop="name" label="姓名" />
@@ -71,6 +94,7 @@ import { hasPermission } from '@/utils/auth'
 export default {
   data: function() {
     return {
+      searchInfo: {},
       newStaff: {
         name: '',
         cellphone: '',
@@ -97,7 +121,7 @@ export default {
     }
   },
   beforeMount() {
-    this.getStaffs({ page: this.page, pageSize: this.pageSize })
+    this.getStaffs({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
   },
   methods: {
     ...mapActions([
@@ -107,6 +131,9 @@ export default {
       'deleteStaff',
       'recoverStaff'
     ]),
+    onSearch() {
+      this.getStaffs({ page: 1, pageSize: this.pageSize, ...this.searchInfo })
+    },
     handleChange(row) {
       this.newStaff = row
       this.isEdit = true
@@ -147,18 +174,18 @@ export default {
     },
     handlePageChange(page) {
       this.page = page
-      this.getStaffs({ page: this.page, pageSize: this.pageSize })
+      this.getStaffs({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     },
     handleStateChange(row) {
       if (!row.state) {
         this.deleteStaff(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getStaffs({ page: this.page, pageSize: this.pageSize })
+          this.getStaffs({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
         })
       } else {
         this.recoverStaff(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getStaffs({ page: this.page, pageSize: this.pageSize })
+          this.getStaffs({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
         })
       }
     }

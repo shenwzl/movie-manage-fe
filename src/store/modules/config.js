@@ -56,10 +56,9 @@ const mutations = {
 
 const actions = {
   // 分页获取员工
-  getStaffs({ commit }, pageConfig) {
-    const { page, pageSize } = pageConfig
+  getStaffs({ commit }, data) {
     return new Promise((resolve, reject) => {
-      getStaffs({ page, page_size: pageSize }).then(res => {
+      getStaffs(data).then(res => {
         commit('SET_STAFFS', res.data.data)
         commit('SET_TOTAL', res.data.total, { root: true })
         resolve()
@@ -104,10 +103,9 @@ const actions = {
       })
     })
   },
-  getCompanys({ commit }, pageConfig) {
-    const { page, pageSize } = pageConfig
+  getCompanys({ commit }, data) {
     return new Promise((resolve, reject) => {
-      getCompanys({ page, page_size: pageSize }).then(res => {
+      getCompanys(data).then(res => {
         commit('SET_COMPANYS', res.data.data)
         commit('SET_TOTAL', res.data.total, { root: true })
         resolve()
@@ -152,10 +150,9 @@ const actions = {
       })
     })
   },
-  getProviders({ commit }, pageConfig) {
-    const { page, pageSize } = pageConfig
+  getProviders({ commit }, data) {
     return new Promise((resolve, reject) => {
-      getProviders({ page, page_size: pageSize }).then(res => {
+      getProviders(data).then(res => {
         commit('SET_PROVIDERS', res.data.data)
         commit('SET_TOTAL', res.data.total, { root: true })
         resolve()

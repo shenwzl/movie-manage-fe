@@ -27,6 +27,7 @@
     </div>
     <div class="shooting-info" v-if="step === '2'">
       <h3>拍摄费用</h3>
+      <el-switch style="margin-bottom: 15px;" v-model="isHide" @change="onHideShootChange" active-text="隐藏" inactive-text="显示全部"></el-switch>
       <el-table
         size="mini"
         :data="shootingInfo"
@@ -55,6 +56,7 @@
     </div>
     <div class="last-info" v-if="step === '3'">
       <h3>后期费用</h3>
+      <el-switch style="margin-bottom: 15px;" v-model="isHide" @change="onHideLastChange" active-text="隐藏" inactive-text="显示全部"></el-switch>      
       <el-table
         row-class-name="info-table-row"
         size="mini"
@@ -112,7 +114,9 @@ export default {
       lastStateInfo: [],
       secondFees: [],
       shootingArr: [],
-      lastArr: []
+      lastArr: [],
+      isHide: false,
+      responseFees: []
     };
   },
   computed: {
@@ -191,19 +195,13 @@ export default {
             label: "客户所属公司一级",
             value:
               data.childCompanyId &&
-              this.getCompanyName(
-                data.companyId,
-                this.allCompanys
-              )
+              this.getCompanyName(data.companyId, this.allCompanys)
           },
           {
             label: "客户所属公司一级",
             value:
               data.childCompanyId &&
-              this.getCompanyName(
-                data.childCompanyId,
-                this.allCompanys
-              )
+              this.getCompanyName(data.childCompanyId, this.allCompanys)
           },
           { label: "项目合同金额", value: data.contractAmount },
           { label: "项目回款金额", value: data.returnAmount },
@@ -230,12 +228,14 @@ export default {
       });
     this.step === "2" &&
       this.getShootingInfo(this.pId).then(res => {
+        this.responseFees = res.data.projectFees;
         this.shootingInfo = res.data.projectFees;
         this.shootingInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
         this.getSpanArr();
       });
     this.step === "3" &&
       this.getLastStateInfo(this.pId).then(res => {
+        this.responseFees = res.data.projectFees;        
         this.lastStateInfo = res.data.projectFees;
         this.lastStateInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
         this.getLastArr();
@@ -298,6 +298,27 @@ export default {
       "saveLastStateInfo",
       "getAllCompanys"
     ]),
+    onHideShootChange(val) {
+      if (val) {
+        this.shootingInfo = this.responseFees.filter(fee => fee.budgetAmount !== 0 || fee.realAmount !== 0);
+      } else {
+        this.shootingInfo = this.responseFees
+      }
+      console.log(this.shootingInfo, this.responseFees, val)
+      this.shootingInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
+        this.getSpanArr();
+    },
+    onHideLastChange(val) {
+      if (val) {
+        console.log(this.responseFees)
+        this.lastStateInfo = this.responseFees.filter(fee => fee.budgetAmount !== 0 || fee.realAmount !== 0);
+        
+      } else {
+        this.lastStateInfo = this.responseFees
+      }
+      this.lastStateInfo.sort((a, b) => a.feeCategoryId - b.feeCategoryId);
+        this.getLastArr();
+    },
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
       return fee[0].name;
@@ -369,7 +390,6 @@ export default {
           }
         }
       });
-      console.log(this.lastArr);
     },
     editProject() {
       this.editLoading = true;

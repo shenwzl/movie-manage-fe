@@ -203,6 +203,12 @@
     </el-form>
     <el-form v-if="step === '2'" ref="shootingInfoForm" :model="tabsArr">
       <h3>拍摄费用</h3>
+      <div style="margin-bottom: 15px;">
+        <span>项目名称: {{projectInfo.name}}</span>
+        <span>项目编号: {{projectInfo.sid}}</span>
+        <span>总预算金额: {{undefined | getBudget(feeInfo.shootingInfo)}}</span>
+        <span>总金额: {{undefined | getRealAmount(feeInfo.shootingInfo)}}</span>
+      </div>
       <el-tabs type="card" v-model="activeShooting" @tab-click="handleShootingClick">
         <el-tab-pane
           v-for="item in shootingTabs"
@@ -323,6 +329,12 @@
     </el-form>
     <el-form v-if="step === '3'" ref="lastInfoForm" :model="tabsArr">
       <h3>后期费用</h3>
+      <div style="margin-bottom: 15px;">
+        <span>项目名称: {{projectInfo.name}}</span>
+        <span>项目编号: {{projectInfo.sid}}</span>
+        <span>总预算金额: {{undefined | getBudget(feeInfo.lastStateInfo)}}</span>
+        <span>总金额: {{undefined | getRealAmount(feeInfo.lastStateInfo)}}</span>
+      </div>
       <el-tabs type="card" v-model="activeLast" @tab-click="handleLastClick">
         <el-tab-pane
           v-for="item in lastTabs"
@@ -614,7 +626,10 @@ export default {
       tabsArr: {
         shootingTabsArr: [],
         lastStateTabsArr: []
-      }
+      },
+      projectInfo: {},
+      budgets: 0,
+      allMounts: 0
     };
   },
   computed: {
@@ -663,29 +678,43 @@ export default {
     this.getContractSubjects();
     this.getAllStaffs();
     this.getMemberTypes();
-    this.step === "1" &&
-      this.getBaseInfo(this.pId).then(res => {
-        res.data.projectMembers.forEach(pMember => {
-          const { staffId } = pMember;
-          const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
-          pMember.ascriptionType = staff[0].ascription;
-        });
-        res.data.minute = Math.floor(res.data.filmDuration / 60);
-        res.data.second = res.data.filmDuration % 60;
-        this.baseInfo = res.data;
+
+    this.getBaseInfo(this.pId).then(res => {
+      res.data.projectMembers.forEach(pMember => {
+        const { staffId } = pMember;
+        const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
+        pMember.ascriptionType = staff[0].ascription;
       });
+      res.data.minute = Math.floor(res.data.filmDuration / 60);
+      res.data.second = res.data.filmDuration % 60;
+      this.baseInfo = res.data;
+      this.projectInfo = {
+        name: res.data.name,
+        sid: res.data.sid
+      };
+    });
     this.step === "2" &&
       this.getShootingInfo(this.pId).then(res => {
         this.feeInfo.shootingInfo = res.data.projectFees;
         this.getShootingTabsArr(res.data.projectFees[0].feeCategoryId);
-        this.getSpanArr()
+        this.getSpanArr();
         this.activeShooting = res.data.projectFees[0].feeCategoryId + "";
+        this.budgets = reduce(
+          res.data.projectFees,
+          (sum, n) => {
+            return sum + n.budgetAmount;
+          },
+          0
+        );
+        this.allMounts = res.data.projectFees.reduce((prev, curr) => {
+          return prev.realAmount + curr.realAmount;
+        }, 0);
       });
     this.step === "3" &&
       this.getLastStateInfo(this.pId).then(res => {
         this.feeInfo.lastStateInfo = res.data.projectFees;
         this.getLastTabsArr(res.data.projectFees[0].feeCategoryId);
-        this.getLastArr()
+        this.getLastArr();
         this.activeLast = res.data.projectFees[0].feeCategoryId + "";
       });
   },
@@ -695,19 +724,30 @@ export default {
       return fee[0].name;
     },
     getBudget(id, lists) {
-      return reduce(
-        lists,
-        (sum, item) => {
-          if (item.feeCategoryId === id) {
+      if (id) {
+        return reduce(
+          lists,
+          (sum, item) => {
+            if (item.feeCategoryId === id) {
+              return sum + item.budgetAmount;
+            }
+            return sum;
+          },
+          0
+        );
+      } else {
+        return reduce(
+          lists,
+          (sum, item) => {
             return sum + item.budgetAmount;
-          }
-          return sum;
-        },
-        0
-      );
+          },
+          0
+        );
+      }
     },
     getRealAmount(id, lists) {
-      return reduce(
+      if (id) {
+        return reduce(
         lists,
         (sum, item) => {
           if (item.feeCategoryId === id) {
@@ -717,6 +757,15 @@ export default {
         },
         0
       );
+      } else {
+        return reduce(
+          lists,
+          (sum, item) => {
+            return sum + item.realAmount;
+          },
+          0
+        )
+      }
     }
   },
   methods: {
@@ -736,6 +785,12 @@ export default {
       "addStaff",
       "getAllCompanys"
     ]),
+    // onFocus(index, field, step) {
+    //   if (this.tabsArr[step][index][field] === 0) {
+    //     this.tabsArr[step][index][field] = ''
+    //   }
+    //   console.log(this.tabsArr, index)
+    // },
     getFeeName(id, fees) {
       const fee = fees.filter(f => f.id === id);
       return fee[0].name;
@@ -747,7 +802,7 @@ export default {
           this.asyncShootingInfo(parseInt(this.activeShooting));
         }
       });
-      this.secondFees = this.feeCategories
+      this.secondFees = this.feeCategories;
     },
     handleLastClick(tab) {
       this.$refs.lastInfoForm.validate(valid => {
@@ -756,7 +811,7 @@ export default {
           this.asyncLastInfo(parseInt(this.activeLast));
         }
       });
-      this.secondFees = this.feeCategories      
+      this.secondFees = this.feeCategories;
     },
     onCompanyChange() {
       this.baseInfo.childCompanyId = null;
@@ -786,7 +841,7 @@ export default {
       this.tabsArr.lastStateTabsArr = this.feeInfo.lastStateInfo.filter(
         sInfo => sInfo.feeCategoryId === id
       );
-      console.log(this.tabsArr)
+      console.log(this.tabsArr);
     },
     handleDeleteShooting(index) {
       this.tabsArr.shootingTabsArr.splice(index, 1);
@@ -995,8 +1050,8 @@ export default {
         if (i === 0) {
           this.lastArr.push(1);
           this.pos = 0;
-          this.lastTabs.push(item.feeCategoryId);       
-       } else {
+          this.lastTabs.push(item.feeCategoryId);
+        } else {
           if (
             item.feeCategoryId ===
             this.feeInfo.lastStateInfo[i - 1].feeCategoryId
@@ -1007,7 +1062,7 @@ export default {
             this.lastArr.push(1);
             this.pos = i;
           }
-           if (!this.lastTabs.includes(item.feeCategoryId)) {
+          if (!this.lastTabs.includes(item.feeCategoryId)) {
             this.lastTabs.push(item.feeCategoryId);
           }
         }

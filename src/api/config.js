@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getStaffs(params = {}) {
+export function getStaffs(data) {
   return request({
-    url: '/staffs',
-    method: 'get',
-    params
+    url: '/staffs/search',
+    method: 'post',
+    data
   })
 }
 
@@ -38,11 +38,11 @@ export function recoverStaff(staffId) {
   })
 }
 
-export function getCompanys(params = {}) {
+export function getCompanys(data) {
   return request({
-    url: '/customer_company',
-    method: 'get',
-    params
+    url: '/customer_company/search',
+    method: 'post',
+    data
   })
 }
 
@@ -114,11 +114,11 @@ export function recoverFee(feeId) {
   })
 }
 
-export function getProviders(params = {}) {
+export function getProviders(data = {}) {
   return request({
-    url: '/providers',
-    method: 'get',
-    params
+    url: '/providers/search',
+    method: 'post',
+    data
   })
 }
 

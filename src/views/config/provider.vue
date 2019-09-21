@@ -1,6 +1,21 @@
 <template>
   <div class="app-container">
+    <el-form :model="searchInfo">
+      <el-row>
+        <el-col :span="5">
+          <el-form-item label="名称">
+            <el-input v-model="searchInfo.name" style="width: 200px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="电话">
+            <el-input v-model="searchInfo.cellphone" style="width: 200px;" autocomplete="off" />
+          </el-form-item>
+        </el-col>
+        </el-row>
+    </el-form>
     <el-button type="primary" v-if="canEdit" @click="createProviderDialog = true; newProvider={};">创建新供应商</el-button>
+    <el-button type="primary" @click="onSearch">查询</el-button>
     <el-table :data="providers">
       <el-table-column prop="id" label="供应商id" />
       <el-table-column prop="name" label="姓名" />
@@ -83,6 +98,7 @@ export default {
       //     state: 1
       //   }
       // ],
+      searchInfo: {},
       newProvider: {
         name: '',
         cellphone: '',
@@ -111,7 +127,7 @@ export default {
     }
   },
   beforeMount() {
-    this.getProviders({ page: this.page, pageSize: this.pageSize })
+    this.getProviders({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
   },
   methods: {
     ...mapActions([
@@ -121,6 +137,9 @@ export default {
       'deleteProvider',
       'recoverProvider'
     ]),
+    onSearch() {
+      this.getProviders({ page: 1, pageSize: this.pageSize, ...this.searchInfo })
+    },
     handleChange(row) {
       this.newProvider = row
       this.isEdit = true
@@ -166,18 +185,18 @@ export default {
     },
     handlePageChange(page) {
       this.page = page
-      this.getProviders({ page: this.page, pageSize: this.pageSize })
+      this.getProviders({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     },
     handleStateChange(row) {
       if (!row.state) {
         this.deleteProvider(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getProviders({ page: this.page, pageSize: this.pageSize })
+          this.getProviders({ page: this.page, pageSize: this.pageSize,...this.searchInfo })
         })
       } else {
         this.recoverProvider(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getProviders({ page: this.page, pageSize: this.pageSize })
+          this.getProviders({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
         })
       }
     }
