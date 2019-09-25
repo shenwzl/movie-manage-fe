@@ -798,8 +798,8 @@ export default {
     handleShootingClick(tab) {
       this.$refs.shootingInfoForm.validate(valid => {
         if (valid) {
-          this.getShootingTabsArr(this.shootingTabs[tab.index]);
           this.asyncShootingInfo(parseInt(this.activeShooting));
+          this.getShootingTabsArr(this.shootingTabs[tab.index]);
         }
       });
       this.secondFees = this.feeCategories;
@@ -807,8 +807,8 @@ export default {
     handleLastClick(tab) {
       this.$refs.lastInfoForm.validate(valid => {
         if (valid) {
-          this.getLastTabsArr(this.lastTabs[tab.index]);
           this.asyncLastInfo(parseInt(this.activeLast));
+          this.getLastTabsArr(this.lastTabs[tab.index]);
         }
       });
       this.secondFees = this.feeCategories;
@@ -844,7 +844,13 @@ export default {
       console.log(this.tabsArr);
     },
     handleDeleteShooting(index) {
+      let id = this.tabsArr.shootingTabsArr[index].id
+      if (!id) {
+        id = this.tabsArr.shootingTabsArr[index].timestamp
+      }
       this.tabsArr.shootingTabsArr.splice(index, 1);
+      const fIndex = findIndex(this.feeInfo.shootingInfo, sInfo => sInfo.id === id || sInfo.timestamp === id)
+      this.feeInfo.shootingInfo.splice(fIndex, 1)
     },
     handleAddShooting(record) {
       this.tabsArr.shootingTabsArr.push({
@@ -854,7 +860,8 @@ export default {
         realAmount: 0,
         budgetAmount: 0,
         remark: "",
-        rankScore: ""
+        rankScore: "",
+        timestamp: new Date().getTime()
       });
     },
     addFirstShootingFee() {
@@ -868,7 +875,13 @@ export default {
       this.fisrtLastFee = "";
     },
     handleDeleteLast(index) {
+       let id = this.tabsArr.lastStateTabsArr[index].id
+      if (!id) {
+        id = this.tabsArr.lastStateTabsArr[index].timestamp
+      }
       this.tabsArr.lastStateTabsArr.splice(index, 1);
+      const fIndex = findIndex(this.feeInfo.lastStateInfo, sInfo => sInfo.id === id || sInfo.timestamp === id)
+      this.feeInfo.lastStateInfo.splice(fIndex, 1)
     },
     handleAddLast(record) {
       this.tabsArr.lastStateTabsArr.push({
@@ -878,7 +891,8 @@ export default {
         realAmount: 0,
         budgetAmount: 0,
         remark: "",
-        rankScore: ""
+        rankScore: "",
+        timestamp: new Date().getTime()
       });
     },
     editProject() {
@@ -911,16 +925,34 @@ export default {
       this.baseInfo.projectMembers = projectMembers;
     },
     asyncShootingInfo(id) {
-      const filter = this.feeInfo.shootingInfo.filter(
-        sInfo => sInfo.feeCategoryId !== id
-      );
-      this.feeInfo.shootingInfo.push(...this.tabsArr.shootingTabsArr);
+      this.tabsArr.shootingTabsArr.forEach(sTab => {
+        if (sTab.id) {
+          const index = findIndex(this.feeInfo.shootingInfo, sInfo => sInfo.id === sTab.id)
+          this.feeInfo.shootingInfo.splice(index, 1, sTab)
+        } else {
+          const index = findIndex(this.feeInfo.shootingInfo, sInfo => sInfo.timestamp === sTab.timestamp)
+          if (index !== -1) {
+            this.feeInfo.shootingInfo.splice(index, 1, sTab)
+          } else {
+            this.feeInfo.shootingInfo.push(sTab)
+          }
+        }
+      })
     },
     asyncLastInfo(id) {
-      const filter = this.feeInfo.lastStateInfo.filter(
-        sInfo => sInfo.feeCategoryId !== id
-      );
-      this.feeInfo.lastStateInfo.push(...this.tabsArr.lastStateTabsArr);
+    this.tabsArr.lastStateTabsArr.forEach(lTab => {
+        if (lTab.id) {
+          const index = findIndex(this.feeInfo.lastStateInfo, lInfo => lInfo.id === lTab.id)
+          this.feeInfo.lastStateInfo.splice(index, 1, lTab)
+        } else {
+          const index = findIndex(this.feeInfo.lastStateInfo, lInfo => lInfo.timestamp === lTab.timestamp)
+          if (index !== -1) {
+            this.feeInfo.lastStateInfo.splice(index, 1, lTab)
+          } else {
+            this.feeInfo.lastStateInfo.push(lTab)
+          }
+        }
+      })  
     },
     editShootingInfo() {
       this.$refs.shootingInfoForm.validate(valid => {
