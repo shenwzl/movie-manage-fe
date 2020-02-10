@@ -105,3 +105,24 @@ export function exportDetailProject(id) {
     method: 'post'
   })
 }
+
+export function getProjectUser(id) {
+  return request({
+    url: `/project_permissions/${id}/permissions?permissionType=1`,
+    method: 'get'
+  })
+}
+
+export function editProjectUser(data) {
+  return request({
+    url: `/project_permissions/${data.id}/permissions`,
+    method: 'post'
+  })
+}
+
+export function getAllUsers() {
+  return request({
+    url: '/configs/users',
+    method: 'get'
+  })
+}

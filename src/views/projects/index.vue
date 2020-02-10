@@ -15,7 +15,7 @@
         <el-col :span="5" :offset="1">
           <el-form-item label="项目合同主体">
             <el-select
-              clearable 
+              clearable
               v-model="searchInfo.contractId"
               style="width: 180px;"
             >
@@ -54,14 +54,16 @@
       </el-table-column>
       <el-table-column v-if="canChangeState || canViewLog || canEdit" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" style="margin-left: 10px;" v-if="canChangeState" @click="handleStateChange(scope.row)">修改状态</el-button>
+          <el-button type="text" style="margin-left: 10px;" v-if="canChangeState && scope.row.canEdit" @click="handleStateChange(scope.row)">修改状态</el-button>
           <el-button type="text" v-if="canViewLog" style="margin-left: 34px;" @click="handleViewLog(scope.row)">查看日志</el-button>        
           <el-button type="text" v-if="canViewBaseInfo" @click="handleViewBase(scope.row)">查看基本信息</el-button>        
           <el-button type="text" v-if="canViewShootingInfo" @click="handleViewShooting(scope.row)">查看拍摄费用</el-button>        
           <el-button type="text" v-if="canViewLastInfo" @click="handleViewLast(scope.row)">查看后期费用</el-button>        
-          <el-button type="text" v-if="canEditBaseInfo" @click="handleChangeBase(scope.row)">编辑基本信息</el-button>        
-          <el-button type="text" v-if="canEditShootingInfo" @click="handleChangeShooting(scope.row)">编辑拍摄费用</el-button>        
-          <el-button type="text" v-if="canEditLastInfo" @click="handleChangeLast(scope.row)">编辑后期费用</el-button>        
+          <el-button type="text" v-if="canEditBaseInfo && scope.row.canEdit" @click="handleChangeBase(scope.row)">编辑基本信息</el-button>        
+          <el-button type="text" v-if="canEditShootingInfo && scope.row.canEdit" @click="handleChangeShooting(scope.row)">编辑拍摄费用</el-button>        
+          <el-button type="text" v-if="canEditLastInfo && scope.row.canEdit" @click="handleChangeLast(scope.row)">编辑后期费用</el-button>        
+          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleViewUser(scope.row)">查看权限</el-button>        
+          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleEditUser(scope.row)">编辑权限</el-button>        
         </template>
       </el-table-column>
     </el-table>
@@ -78,6 +80,14 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="createDialog = false">取 消</el-button>
         <el-button type="primary" :loading="createLoading" @click="createProject">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="查看项目用户权限" :visible.sync="viewDialog">
+      <div v-for="user in projectUsers" :key="user.id">
+        <p>{{ user.name }}</p>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="viewDialog = false">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改状态" :visible.sync="changeStateDialog">
@@ -100,6 +110,35 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="changeStateDialog = false">取 消</el-button>
         <el-button type="primary" :loading="stateLoading" @click="handleChangeState">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :title="编辑项目用户权限" :visible.sync="editDialog">
+      <el-form ref="editForms" :model="editUsers" :rules="userRules">
+        <h2>{{selectedPrjName}}</h2>
+        <el-form-item label="用户" label-width="150px">
+          <el-row>
+            <el-col :span="24">
+              <el-checkbox
+                :indeterminate="isIndeterminate"
+                v-model="checkAll"
+                @change="handleCheckAllChange"
+              >全选</el-checkbox>
+              <div style="margin: 15px 0;"></div>
+              <el-checkbox-group v-model="checkedUsers">
+                <el-checkbox
+                  v-for="user in allUsers"
+                  :label="user.id"
+                  :key="user.id"
+                  :disabled="user.id === creatorId"
+                >{{ user.name }}</el-checkbox>
+              </el-checkbox-group>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialog = false">取 消</el-button>
+        <el-button type="primary" @click="editProjectUser">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -148,7 +187,25 @@ export default {
       projectRules: {
         name: [{ required: true, message: '名称不能为空' }],
         state: [{ required: true, message: '状态不能为空' }]
-      }
+      },
+      viewDialog: false,
+      editDialog: false,
+      allUsers: [],
+      projectUsers: [],
+      selectedPrjName: '',
+      isIndeterminate: true,
+      checkedUsers: [],
+      checkAll: true,
+      editUsers: {
+        userIds: []
+      },
+      userRules: {
+        userIds: [
+          { required: true, trigger: 'blur', mesage: '用户不能为空' }
+        ]
+      },
+      selectedPrjId: '',
+      creatorId: ''
     }
   },
   computed: {
@@ -225,6 +282,9 @@ export default {
     this.getContractSubjects().then(res => {
       this.getProjects({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     })
+    this.getAllUsers().then(res => {
+      this.allUsers = res
+    })
   },
   methods: {
     ...mapActions([
@@ -236,8 +296,31 @@ export default {
       'deleteProject',
       'recoverProject',
       'getProjectState',
-      'updateState'
+      'updateState',
+      'getProjectUser',
+      'getAllUsers'
     ]),
+    handleCheckAllChange(val) {
+      this.checkedUsers = val
+        ? this.allUsers.map(permission => permission.id)
+        : []
+      this.isIndeterminate = false
+    },
+    handleViewUser(row) {
+      this.getProjectUser(row.id).then(res => {
+        this.viewDialog = true
+        this.selectedPrjName = row.name
+      })
+    },
+    handleEditUser(row) {
+      this.creatorId = row.creatorId
+      this.getProjectUser(row.id).then(res => {
+        this.editDialog = true
+        this.projectUsers = res
+        this.checkedUsers = res.map(item => item.id)
+        this.checkedUsers.push(row.creatorId)
+      })
+    },
     handleSubmit() {
       this.getProjects({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     },
@@ -279,7 +362,15 @@ export default {
     handleViewLog(row) {
       window.location.href = `/#/log/${row.id}`
     },
-    editProject() {
+    editProjectUser() {
+      this.editProjectUser({
+        id: this.selectedPrjId,
+        permissionType: 2,
+        userIds: this.checkedUsers
+      }).then(res => {
+        this.$message.success('编辑成功')
+        this.editDialog = false
+      })
     },
     addMemberType(id) {
       this.baseInfo.projectMembers.push({

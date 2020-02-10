@@ -100,26 +100,26 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-import { hasPermission } from "@/utils/auth";
+import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
 // import
 export default {
   data: function() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("密码长度不能小于6"));
+        callback(new Error('密码长度不能小于6'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       newUser: {
-        email: "",
-        password: ""
+        email: '',
+        password: ''
       },
       resetPwdModel: {
-        userId: "",
-        password: ""
+        userId: '',
+        password: ''
       },
       createUserDialog: false,
       resetDialog: false,
@@ -128,7 +128,7 @@ export default {
       pageSize: 10,
       createLoading: false,
       resetLoading: false,
-      userRole: "",
+      userRole: '',
       bindRoleDialog: false,
       newRoles: { roles: [] },
       bindRoleLoading: false,
@@ -137,162 +137,164 @@ export default {
         email: [
           {
             required: true,
-            trigger: "blur",
-            type: "email",
-            message: "邮箱格式错误"
+            trigger: 'blur',
+            type: 'email',
+            message: '邮箱格式错误'
           }
         ],
         password: [
-          { required: true, trigger: "blur", validator: validatePassword }
+          { required: true, trigger: 'blur', validator: validatePassword }
         ],
-        name: [{ required: true, trigger: "blur", message: "用户名不能为空" }],
+        name: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
         cellphone: [
-          { required: true, trigger: "blur", message: "电话不能为空" }
+          { required: true, trigger: 'blur', message: '电话不能为空' }
         ]
       },
       resetRules: {
         password: [
-          { required: true, trigger: "blur", validator: validatePassword }
+          { required: true, trigger: 'blur', validator: validatePassword }
         ]
       },
       bindRules: {
         roles: [
-          { required: true, trigger: "blur", message: "绑定角色不能为空" }
+          { required: true, trigger: 'blur', message: '绑定角色不能为空' }
         ]
       },
       isEdit: false
-    };
+    }
   },
   computed: {
-    ...mapGetters(["users", "total", "allRoles"]),
+    ...mapGetters(['users', 'total', 'allRoles']),
     canEdit() {
-      return hasPermission("user", "manage");
+      return hasPermission('user', 'manage')
     },
     canGrant() {
-      return hasPermission("role", "grant");
+      return hasPermission('role', 'grant')
     }
   },
   beforeMount() {
-    this.getAllUser({ page: this.page, pageSize: this.pageSize });
-    this.getAllRoles().then(res => this.allRoles);
+    this.getAllUser({ page: this.page, pageSize: this.pageSize })
+    this.getAllRoles().then(res => this.allRoles)
+    this.getAllUsers()
   },
   methods: {
     ...mapActions([
-      "getAllUser",
-      "addUser",
-      "resetPwd",
-      "deleteUser",
-      "recoverUser",
-      "getAllRoles",
-      "getRoleByUser",
-      "updateRole",
-      "editUser"
+      'getAllUser',
+      'addUser',
+      'resetPwd',
+      'deleteUser',
+      'recoverUser',
+      'getAllRoles',
+      'getRoleByUser',
+      'updateRole',
+      'editUser',
+      'getAllUsers'
     ]),
     clickCreateUser() {
-      createUserDialog = true;
-      this.isEdit = false;
+      this.createUserDialog = true
+      this.isEdit = false
     },
     clickEditUser(row) {
-      this.createUserDialog = true;
-      this.isEdit = true;
+      this.createUserDialog = true
+      this.isEdit = true
       this.newUser = {
         email: row.email,
         name: row.name,
         cellphone: row.cellphone,
         id: row.id
-      };
+      }
     },
     handleDelete(row) {
-      console.log(row);
+      console.log(row)
     },
     setPermission() {},
     createUser() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
-          this.createLoading = true;
+          this.createLoading = true
           if (this.isEdit) {
             this.editUser(this.newUser)
               .then(res => {
-                this.createUserDialog = false;
-                this.getAllUser({ page: this.page, pageSize: this.pageSize });
-                this.$message.success("编辑成功");
-                this.newUser = {};
+                this.createUserDialog = false
+                this.getAllUser({ page: this.page, pageSize: this.pageSize })
+                this.$message.success('编辑成功')
+                this.newUser = {}
               })
-              .finally(() => (this.createLoading = false));
+              .finally(() => (this.createLoading = false))
           } else {
             this.addUser(this.newUser)
               .then(res => {
-                this.createUserDialog = false;
-                this.getAllUser({ page: this.page, pageSize: this.pageSize });
-                this.$message.success("创建成功");
-                this.newUser = {};
+                this.createUserDialog = false
+                this.getAllUser({ page: this.page, pageSize: this.pageSize })
+                this.$message.success('创建成功')
+                this.newUser = {}
               })
-              .finally(() => (this.createLoading = false));
+              .finally(() => (this.createLoading = false))
           }
         }
-      });
+      })
     },
     handlePageChange(page) {
-      this.page = page;
-      this.getAllUser({ page: this.page, pageSize: this.pageSize });
+      this.page = page
+      this.getAllUser({ page: this.page, pageSize: this.pageSize })
     },
     resetPwdDialog(row) {
-      this.resetDialog = true;
-      this.resetPwdModel = { userId: row.id, password: "" };
+      this.resetDialog = true
+      this.resetPwdModel = { userId: row.id, password: '' }
     },
     setPassword() {
       this.$refs.resetForm.validate(valid => {
         if (valid) {
-          this.resetLoading = true;
+          this.resetLoading = true
           this.resetPwd(this.resetPwdModel)
             .then(res => {
-              this.$message.success("更新成功");
-              this.resetDialog = false;
+              this.$message.success('更新成功')
+              this.resetDialog = false
             })
-            .finally(() => (this.resetLoading = false));
+            .finally(() => (this.resetLoading = false))
         }
-      });
+      })
     },
     handleStateChange(row) {
       if (!row.state) {
         this.deleteUser(row.id).then(res => {
-          this.$message.success("更新成功");
-          this.getAllUser({ page: this.page, pageSize: this.pageSize });
-        });
+          this.$message.success('更新成功')
+          this.getAllUser({ page: this.page, pageSize: this.pageSize })
+        })
       } else {
         this.recoverUser(row.id).then(res => {
-          this.$message.success("更新成功");
-          this.getAllUser({ page: this.page, pageSize: this.pageSize });
-        });
+          this.$message.success('更新成功')
+          this.getAllUser({ page: this.page, pageSize: this.pageSize })
+        })
       }
     },
     handleRoleChange(row) {
-      this.choosenUser = row.id;
+      this.choosenUser = row.id
       this.getRoleByUser(row.id).then(res => {
-        this.newRoles.roles = res.data.map(item => item.roleId);
-        console.log(this.newRoles.roles);
-        this.bindRoleDialog = true;
-      });
+        this.newRoles.roles = res.data.map(item => item.roleId)
+        console.log(this.newRoles.roles)
+        this.bindRoleDialog = true
+      })
     },
     bindRole() {
       this.$refs.bindForm.validate(valid => {
         if (valid) {
-          this.bindRoleLoading = true;
+          this.bindRoleLoading = true
           this.updateRole({
             role: this.newRoles.roles,
             id: this.choosenUser
           }).then(res => {
-            this.bindRoleLoading = false;
-            this.bindRoleDialog = false;
-            this.$message.success("绑定成功");
-            this.getAllUser({ page: this.page, pageSize: this.pageSize });
-            this.newRoles.roles = [];
-          });
+            this.bindRoleLoading = false
+            this.bindRoleDialog = false
+            this.$message.success('绑定成功')
+            this.getAllUser({ page: this.page, pageSize: this.pageSize })
+            this.newRoles.roles = []
+          })
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>

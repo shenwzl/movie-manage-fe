@@ -61,6 +61,18 @@
             </el-select>
           </el-form-item>
         </el-col>
+         <el-col :span="8">
+          <el-form-item label="项目合同主体" label-width="120px">
+            <el-select clearable filterable v-model="searchInfo.contractSubjectId" style="width: 216px;">
+              <el-option
+                v-for="contract in contractSubjects"
+                :key="contract.id"
+                :value="contract.id"
+                :label="contract.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="8">
           <el-form-item label="项目合同金额(元)" label-width="120px">
             <el-input-number
@@ -578,7 +590,6 @@
       <el-table-column prop="shootingDuration" label="客户所属子公司" v-if="searchInfo.companyChildId" >
         <template scope="scope">{{ scope.row.childCompanyId | getCompanyName(allCompanys) }}</template>
       </el-table-column>
-
       <el-table-column
         prop="projectLeaderList"
         label="项目负责人"

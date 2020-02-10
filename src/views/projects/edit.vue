@@ -201,7 +201,7 @@
         </el-col>
       </el-row>
     </el-form>
-    <el-form v-if="step === '2'" ref="shootingInfoForm" :model="tabsArr">
+    <el-form v-if="step === '2'" ref="shootingInfoForm" v-loading="tabsLoading" :model="tabsArr">
       <h3>拍摄费用</h3>
       <div style="margin-bottom: 15px;">
         <span>项目名称: {{projectInfo.name}}</span>
@@ -293,6 +293,7 @@
                   <el-input-number
                     style="width: 130px;"
                     v-model="scope.row.realAmount"
+                    :disabled="!canEditShootingInfo"
                     :min="0"
                     controls-position="right"
                     autocomplete="off"
@@ -327,7 +328,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <el-form v-if="step === '3'" ref="lastInfoForm" :model="tabsArr">
+    <el-form v-if="step === '3'" v-loading="tabsLoading" ref="lastInfoForm" :model="tabsArr">
       <h3>后期费用</h3>
       <div style="margin-bottom: 15px;">
         <span>项目名称: {{projectInfo.name}}</span>
@@ -418,6 +419,7 @@
                     :min="0"
                     style="width: 130px;"
                     v-model="scope.row.realAmount"
+                    :disabled="!canEditLastInfo"
                     controls-position="right"
                     autocomplete="off"
                   />
@@ -629,7 +631,8 @@ export default {
       },
       projectInfo: {},
       budgets: 0,
-      allMounts: 0
+      allMounts: 0,
+      tabsLoading: true,
     };
   },
   computed: {
@@ -669,6 +672,12 @@ export default {
     },
     canAddStaff() {
       return hasPermission("staff", "manage");
+    },
+    canEditShootingInfo() {
+      return hasPermission('project_shooting_info', 'manage_real_amount')
+    },
+    canEditLastInfo() {
+      return hasPermission('project_last_state_info', 'manage_real_amount')
     }
   },
   beforeMount() {
@@ -836,12 +845,13 @@ export default {
       this.tabsArr.shootingTabsArr = this.feeInfo.shootingInfo.filter(
         sInfo => sInfo.feeCategoryId === id
       );
+      this.tabsLoading = false
     },
     getLastTabsArr(id) {
       this.tabsArr.lastStateTabsArr = this.feeInfo.lastStateInfo.filter(
         sInfo => sInfo.feeCategoryId === id
       );
-      console.log(this.tabsArr);
+      this.tabsLoading = false      
     },
     handleDeleteShooting(index) {
       let id = this.tabsArr.shootingTabsArr[index].id

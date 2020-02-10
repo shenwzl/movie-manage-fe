@@ -11,7 +11,10 @@ import {
   recoverProject,
   searchProject,
   exportProject,
-  updateState
+  updateState,
+  getProjectUser,
+  editProjectUser,
+  getAllUsers
 } from '@/api/project'
 
 const state = {
@@ -43,6 +46,31 @@ const actions = {
       }).catch(err => {
         reject(err)
       })
+    })
+  },
+  getProjectUser({ commit }, id) {
+    return new Promise((resolve, reject) => {
+      getProjectUser(id).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  editProjectUser({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      editProjectUser(data).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  getAllUsers() {
+    return new Promise((resolve, reject) => {
+      getAllUsers().then(res => {
+        resolve(res)
+      }).catch(err => reject(err))
     })
   },
   saveProjects({ commit }, data) {
