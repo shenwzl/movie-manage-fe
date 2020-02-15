@@ -48,9 +48,9 @@ const actions = {
       })
     })
   },
-  getProjectUser({ commit }, id) {
+  getProjectUser({ commit }, data) {
     return new Promise((resolve, reject) => {
-      getProjectUser(id).then(res => {
+      getProjectUser(data).then(res => {
         resolve(res)
       }).catch(err => {
         reject(err)

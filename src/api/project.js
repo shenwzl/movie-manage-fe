@@ -106,9 +106,9 @@ export function exportDetailProject(id) {
   })
 }
 
-export function getProjectUser(id) {
+export function getProjectUser({ id, type }) {
   return request({
-    url: `/project_permissions/${id}/permissions?permission_type=1`,
+    url: `/project_permissions/${id}/permissions?permission_type=${type}`,
     method: 'get'
   })
 }

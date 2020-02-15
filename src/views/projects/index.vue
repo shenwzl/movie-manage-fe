@@ -62,8 +62,8 @@
           <el-button type="text" v-if="canEditBaseInfo && scope.row.canEdit" @click="handleChangeBase(scope.row)">编辑基本信息</el-button>        
           <el-button type="text" v-if="canEditShootingInfo && scope.row.canEdit" @click="handleChangeShooting(scope.row)">编辑拍摄费用</el-button>        
           <el-button type="text" v-if="canEditLastInfo && scope.row.canEdit" @click="handleChangeLast(scope.row)">编辑后期费用</el-button>        
-          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleViewUser(scope.row)">查看权限</el-button>        
-          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleEditUser(scope.row)">编辑权限</el-button>        
+          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleViewUser(scope.row)">分配查看权限</el-button>        
+          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleEditUser(scope.row)">分配编辑权限</el-button>        
         </template>
       </el-table-column>
     </el-table>
@@ -82,17 +82,39 @@
         <el-button type="primary" :loading="createLoading" @click="createProject">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="查看项目用户权限" :visible.sync="viewDialog">
-      <div style="margin-left: 90px;">
-        <p style="font-weight: 700;">用户名</p>
-        <el-row>
-          <el-col v-for="user in projectUsers" :key="user.id" :span="6">
-            {{ user.userName }}
-          </el-col>
-        </el-row>
-      </div>
+    <el-dialog title="分配查看项目用户权限" :visible.sync="viewDialog">
+      <el-form ref="viewForms" :model="viewUsers" :rules="userRules">
+        <p style="margin-left: 90px;">
+          <span style="font-weight: 700;">项目名称</span>
+          <span style="margin-left: 10px;">{{selectedPrjName}}</span>
+        </p>
+        <el-form-item label="用户" label-width="150px">
+          <el-row>
+            <el-col :span="24">
+              <el-checkbox
+                :indeterminate="isIndeterminate"
+                v-model="checkAll"
+                @change="handleCheckAllChange"
+              >全选</el-checkbox>
+              <div style="margin: 15px 0;"></div>
+              <el-row>
+                <el-col :span="6"  v-for="user in allUsers" :key="user.id">
+                <el-checkbox-group v-model="checkedUsers">
+                <el-checkbox
+                  :label="user.id"
+                  :disabled="user.id === creatorId"
+                >{{ user.name }}</el-checkbox>
+              </el-checkbox-group>
+                </el-col>
+               
+              </el-row>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="viewDialog = false">确定</el-button>
+        <el-button @click="viewDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleViewUsers">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改状态" :visible.sync="changeStateDialog">
@@ -117,7 +139,7 @@
         <el-button type="primary" :loading="stateLoading" @click="handleChangeState">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="编辑项目用户权限" :visible.sync="editDialog">
+    <el-dialog title="分配编辑项目用户权限" :visible.sync="editDialog">
       <el-form ref="editForms" :model="editUsers" :rules="userRules">
         <p style="margin-left: 90px;">
           <span style="font-weight: 700;">项目名称</span>
@@ -315,26 +337,27 @@ export default {
     ]),
     handleCheckAllChange(val) {
       this.checkedUsers = val
-      console.log(this.checkedUsers)
         ? this.allUsers.map(permission => permission.id)
         : []
       this.isIndeterminate = false
     },
     handleViewUser(row) {
-      this.getProjectUser(row.id).then(res => {
+      this.creatorId = row.creatorId
+      this.getProjectUser({ id: row.id, type: 1 }).then(res => {
         this.viewDialog = true
-        console.log(res)
-        this.projectUsers = res.data
         this.selectedPrjName = row.name
+        this.selectedPrjId = row.id
+        this.checkedUsers = res.data.map(item => item.userId)
+        this.checkedUsers.push(row.creatorId)
       })
     },
     handleEditUser(row) {
       this.creatorId = row.creatorId
-      this.getProjectUser(row.id).then(res => {
+      this.getProjectUser({ id: row.id, type: 2 }).then(res => {
         this.editDialog = true
         this.selectedPrjName = row.name
         this.selectedPrjId = row.id
-        this.checkedUsers = res.data.map(item => item.id)
+        this.checkedUsers = res.data.map(item => item.userId)
         this.checkedUsers.push(row.creatorId)
       })
     },
@@ -379,14 +402,23 @@ export default {
     handleViewLog(row) {
       window.location.href = `/#/log/${row.id}`
     },
+    handleViewUsers() {
+      this.editProjectUser({
+        id: this.selectedPrjId,
+        permissionType: 1,
+        userIds: this.checkedUsers
+      }).then(res => {
+        this.$message.success('分配查看用户权限成功')
+        this.viewDialog = false
+      })
+    },
     handleEditUsers() {
-      console.log(this.checkedUsers)
       this.editProjectUser({
         id: this.selectedPrjId,
         permissionType: 2,
         userIds: this.checkedUsers
       }).then(res => {
-        this.$message.success('编辑成功')
+        this.$message.success('分配编辑用户权限成功')
         this.editDialog = false
       })
     },
