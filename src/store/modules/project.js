@@ -58,6 +58,7 @@ const actions = {
     })
   },
   editProjectUser({ commit }, data) {
+    console.log(data, 'data')
     return new Promise((resolve, reject) => {
       editProjectUser(data).then(res => {
         resolve(res)

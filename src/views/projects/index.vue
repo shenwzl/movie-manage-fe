@@ -83,8 +83,13 @@
       </div>
     </el-dialog>
     <el-dialog title="查看项目用户权限" :visible.sync="viewDialog">
-      <div v-for="user in projectUsers" :key="user.id">
-        <p>{{ user.name }}</p>
+      <div style="margin-left: 90px;">
+        <p style="font-weight: 700;">用户名</p>
+        <el-row>
+          <el-col v-for="user in projectUsers" :key="user.id" :span="6">
+            {{ user.userName }}
+          </el-col>
+        </el-row>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="viewDialog = false">确定</el-button>
@@ -112,9 +117,12 @@
         <el-button type="primary" :loading="stateLoading" @click="handleChangeState">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="编辑项目用户权限" :visible.sync="editDialog">
+    <el-dialog title="编辑项目用户权限" :visible.sync="editDialog">
       <el-form ref="editForms" :model="editUsers" :rules="userRules">
-        <h2>{{selectedPrjName}}</h2>
+        <p style="margin-left: 90px;">
+          <span style="font-weight: 700;">项目名称</span>
+          <span style="margin-left: 10px;">{{selectedPrjName}}</span>
+        </p>
         <el-form-item label="用户" label-width="150px">
           <el-row>
             <el-col :span="24">
@@ -124,21 +132,24 @@
                 @change="handleCheckAllChange"
               >全选</el-checkbox>
               <div style="margin: 15px 0;"></div>
-              <el-checkbox-group v-model="checkedUsers">
+              <el-row>
+                <el-col :span="6"  v-for="user in allUsers" :key="user.id">
+                <el-checkbox-group v-model="checkedUsers">
                 <el-checkbox
-                  v-for="user in allUsers"
                   :label="user.id"
-                  :key="user.id"
                   :disabled="user.id === creatorId"
                 >{{ user.name }}</el-checkbox>
               </el-checkbox-group>
+                </el-col>
+               
+              </el-row>
             </el-col>
           </el-row>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editDialog = false">取 消</el-button>
-        <el-button type="primary" @click="editProjectUser">确 定</el-button>
+        <el-button type="primary" @click="handleEditUsers">确 定</el-button>
       </div>
     </el-dialog>
     <el-pagination
@@ -283,7 +294,8 @@ export default {
       this.getProjects({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     })
     this.getAllUsers().then(res => {
-      this.allUsers = res
+      console.log(res)
+      this.allUsers = res.data
     })
   },
   methods: {
@@ -298,10 +310,12 @@ export default {
       'getProjectState',
       'updateState',
       'getProjectUser',
-      'getAllUsers'
+      'getAllUsers',
+      'editProjectUser'
     ]),
     handleCheckAllChange(val) {
       this.checkedUsers = val
+      console.log(this.checkedUsers)
         ? this.allUsers.map(permission => permission.id)
         : []
       this.isIndeterminate = false
@@ -309,6 +323,8 @@ export default {
     handleViewUser(row) {
       this.getProjectUser(row.id).then(res => {
         this.viewDialog = true
+        console.log(res)
+        this.projectUsers = res.data
         this.selectedPrjName = row.name
       })
     },
@@ -316,8 +332,9 @@ export default {
       this.creatorId = row.creatorId
       this.getProjectUser(row.id).then(res => {
         this.editDialog = true
-        this.projectUsers = res
-        this.checkedUsers = res.map(item => item.id)
+        this.selectedPrjName = row.name
+        this.selectedPrjId = row.id
+        this.checkedUsers = res.data.map(item => item.id)
         this.checkedUsers.push(row.creatorId)
       })
     },
@@ -362,7 +379,8 @@ export default {
     handleViewLog(row) {
       window.location.href = `/#/log/${row.id}`
     },
-    editProjectUser() {
+    handleEditUsers() {
+      console.log(this.checkedUsers)
       this.editProjectUser({
         id: this.selectedPrjId,
         permissionType: 2,

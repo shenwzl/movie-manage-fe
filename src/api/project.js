@@ -108,7 +108,7 @@ export function exportDetailProject(id) {
 
 export function getProjectUser(id) {
   return request({
-    url: `/project_permissions/${id}/permissions?permissionType=1`,
+    url: `/project_permissions/${id}/permissions?permission_type=1`,
     method: 'get'
   })
 }
@@ -116,7 +116,8 @@ export function getProjectUser(id) {
 export function editProjectUser(data) {
   return request({
     url: `/project_permissions/${data.id}/permissions`,
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
