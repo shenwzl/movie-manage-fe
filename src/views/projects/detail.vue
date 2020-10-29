@@ -194,11 +194,10 @@ export default {
           {
             label: "客户所属公司一级",
             value:
-              data.childCompanyId &&
               this.getCompanyName(data.companyId, this.allCompanys)
           },
           {
-            label: "客户所属公司一级",
+            label: "客户所属公司二级",
             value:
               data.childCompanyId &&
               this.getCompanyName(data.childCompanyId, this.allCompanys)

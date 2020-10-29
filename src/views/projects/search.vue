@@ -49,7 +49,7 @@
             <el-select
               clearable
               filterable
-              v-model="searchInfo.companyChildId"
+              v-model="searchInfo.childCompanyId"
               style="width: 216px;"
             >
               <el-option
@@ -587,7 +587,7 @@
       <el-table-column prop="companyId" label="客户所属公司" v-if="searchInfo.companyId">
         <template scope="scope">{{ scope.row.companyId | getCompanyName(allCompanys) }}</template>
       </el-table-column>
-      <el-table-column prop="shootingDuration" label="客户所属子公司" v-if="searchInfo.companyChildId" >
+      <el-table-column prop="shootingDuration" label="客户所属子公司" v-if="searchInfo.childCompanyId" >
         <template scope="scope">{{ scope.row.childCompanyId | getCompanyName(allCompanys) }}</template>
       </el-table-column>
       <el-table-column
