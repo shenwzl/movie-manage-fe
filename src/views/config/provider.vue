@@ -12,9 +12,9 @@
             <el-input v-model="searchInfo.cellphone" style="width: 200px;" autocomplete="off" />
           </el-form-item>
         </el-col>
-        </el-row>
+      </el-row>
     </el-form>
-    <el-button type="primary" v-if="canEdit" @click="createProviderDialog = true; newProvider={};">创建新供应商</el-button>
+    <el-button v-if="canEdit" type="primary" @click="createProviderDialog = true; newProvider={};">创建新供应商</el-button>
     <el-button type="primary" @click="onSearch">查询</el-button>
     <el-table :data="providers">
       <el-table-column prop="id" label="供应商id" />
@@ -147,14 +147,14 @@ export default {
     },
     setPermission() {
     },
-    saveProvider(){
+    saveProvider() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          if(this.isEdit){
+          if (this.isEdit) {
             console.log(this.newProvider)
             this.editProvider()
-          }else{
+          } else {
             this.createProvider()
           }
         }
@@ -191,7 +191,7 @@ export default {
       if (!row.state) {
         this.deleteProvider(row.id).then(res => {
           this.$message.success('更新成功')
-          this.getProviders({ page: this.page, pageSize: this.pageSize,...this.searchInfo })
+          this.getProviders({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
         })
       } else {
         this.recoverProvider(row.id).then(res => {

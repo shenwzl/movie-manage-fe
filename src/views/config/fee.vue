@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createFeeDialog = true; newFee = {};">创建费用项</el-button>
+    <el-button v-if="canEdit" type="primary" @click="createFeeDialog = true; newFee = {};">创建费用项</el-button>
     <el-table :data="fees">
       <el-table-column prop="id" label="费用项id" />
       <el-table-column prop="name" label="名称" />
@@ -53,11 +53,11 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item prop="parentCategoryId" v-if="newFee.categoryType === 2" label="父费用项" label-width="200px">
+        <el-form-item v-if="newFee.categoryType === 2" prop="parentCategoryId" label="父费用项" label-width="200px">
           <el-row>
             <el-col :span="10">
               <el-select v-model="newFee.parentCategoryId" autocomplete="off">
-                <el-option 
+                <el-option
                   v-for="fee in parentFees"
                   v-if="fee.state === 0"
                   :key="fee.id"
@@ -163,9 +163,9 @@ export default {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          if (this.isEdit){
+          if (this.isEdit) {
             this.editFee()
-          }else {
+          } else {
             this.createFee()
           }
         }

@@ -14,33 +14,34 @@
         </el-col>
         <el-col :span="5" :offset="1">
           <el-form-item label="项目合同主体">
-            <el-select
-              clearable
-              v-model="searchInfo.contractId"
-              style="width: 180px;"
-            >
-              <el-option v-for="item in contractSubjects"  :key="item.id" :value="item.id" :label="item.name"></el-option>
+            <el-select v-model="searchInfo.contractId" clearable style="width: 180px;">
+              <el-option
+                v-for="item in contractSubjects"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name"
+              />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="5" :offset="1">
           <el-form-item label="项目执行状态">
-            <el-select
-              clearable 
-              style="width: 180px;"
-              v-model="searchInfo.state"
-            >
-            <el-option v-for="item in projectState" :key="item.state" :value="item.state" :label="item.name"></el-option>
+            <el-select v-model="searchInfo.state" clearable style="width: 180px;">
+              <el-option
+                v-for="item in projectState"
+                :key="item.state"
+                :value="item.state"
+                :label="item.name"
+              />
             </el-select>
           </el-form-item>
         </el-col>
-        </el-row>
+      </el-row>
     </el-form>
     <el-button v-if="canCreate" type="primary" @click="createDialog = true">创建新项目</el-button>
     <el-button type="primary" @click="handleSubmit">搜索</el-button>
     <el-table :data="projects">
-      <el-table-column prop="sid" label="项目编号">
-      </el-table-column>
+      <el-table-column prop="sid" label="项目编号" />
       <el-table-column prop="name" label="项目名称" />
       <el-table-column prop="state" label="项目执行状态" width="150">
         <template slot-scope="scope">
@@ -49,21 +50,65 @@
       </el-table-column>
       <el-table-column prop="contractSubjectId" label="项目合同主体">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.contractSubjectId | getContractsName(contractSubjects) }}</span>
+          <span style="margin-left: 10px">{{
+            scope.row.contractSubjectId | getContractsName(contractSubjects)
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="canChangeState || canViewLog || canEdit" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" style="margin-left: 10px;" v-if="canChangeState && scope.row.canEdit" @click="handleStateChange(scope.row)">修改状态</el-button>
-          <el-button type="text" v-if="canViewLog" style="margin-left: 34px;" @click="handleViewLog(scope.row)">查看日志</el-button>        
-          <el-button type="text" v-if="canViewBaseInfo" @click="handleViewBase(scope.row)">查看基本信息</el-button>        
-          <el-button type="text" v-if="canViewShootingInfo" @click="handleViewShooting(scope.row)">查看拍摄费用</el-button>        
-          <el-button type="text" v-if="canViewLastInfo" @click="handleViewLast(scope.row)">查看后期费用</el-button>        
-          <el-button type="text" v-if="canEditBaseInfo && scope.row.canEdit" @click="handleChangeBase(scope.row)">编辑基本信息</el-button>        
-          <el-button type="text" v-if="canEditShootingInfo && scope.row.canEdit" @click="handleChangeShooting(scope.row)">编辑拍摄费用</el-button>        
-          <el-button type="text" v-if="canEditLastInfo && scope.row.canEdit" @click="handleChangeLast(scope.row)">编辑后期费用</el-button>        
-          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleViewUser(scope.row)">分配查看权限</el-button>        
-          <el-button type="text" v-if="scope.row.canGrantPermission" @click="handleEditUser(scope.row)">分配编辑权限</el-button>        
+          <el-button
+            v-if="canChangeState && scope.row.canEdit"
+            type="text"
+            style="margin-left: 10px;"
+            @click="handleStateChange(scope.row)"
+          >修改状态</el-button>
+          <el-button
+            v-if="canViewLog"
+            type="text"
+            style="margin-left: 34px;"
+            @click="handleViewLog(scope.row)"
+          >查看日志</el-button>
+          <el-button
+            v-if="canViewBaseInfo"
+            type="text"
+            @click="handleViewBase(scope.row)"
+          >查看基本信息</el-button>
+          <el-button
+            v-if="canViewShootingInfo"
+            type="text"
+            @click="handleViewShooting(scope.row)"
+          >查看拍摄费用</el-button>
+          <el-button
+            v-if="canViewLastInfo"
+            type="text"
+            @click="handleViewLast(scope.row)"
+          >查看后期费用</el-button>
+          <el-button
+            v-if="canEditBaseInfo && scope.row.canEdit"
+            type="text"
+            @click="handleChangeBase(scope.row)"
+          >编辑基本信息</el-button>
+          <el-button
+            v-if="canEditShootingInfo && scope.row.canEdit"
+            type="text"
+            @click="handleChangeShooting(scope.row)"
+          >编辑拍摄费用</el-button>
+          <el-button
+            v-if="canEditLastInfo && scope.row.canEdit"
+            type="text"
+            @click="handleChangeLast(scope.row)"
+          >编辑后期费用</el-button>
+          <el-button
+            v-if="scope.row.canGrantPermission"
+            type="text"
+            @click="handleViewUser(scope.row)"
+          >分配查看权限</el-button>
+          <el-button
+            v-if="scope.row.canGrantPermission"
+            type="text"
+            @click="handleEditUser(scope.row)"
+          >分配编辑权限</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -86,27 +131,25 @@
       <el-form ref="viewForms" :model="viewUsers" :rules="userRules">
         <p style="margin-left: 90px;">
           <span style="font-weight: 700;">项目名称</span>
-          <span style="margin-left: 10px;">{{selectedPrjName}}</span>
+          <span style="margin-left: 10px;">{{ selectedPrjName }}</span>
         </p>
         <el-form-item label="用户" label-width="150px">
           <el-row>
             <el-col :span="24">
               <el-checkbox
-                :indeterminate="isIndeterminate"
                 v-model="checkAll"
+                :indeterminate="isIndeterminate"
                 @change="handleCheckAllChange"
               >全选</el-checkbox>
-              <div style="margin: 15px 0;"></div>
+              <div style="margin: 15px 0;" />
               <el-row>
-                <el-col :span="6"  v-for="user in allUsers" :key="user.id">
-                <el-checkbox-group v-model="checkedUsers">
-                <el-checkbox
-                  :label="user.id"
-                  :disabled="user.id === creatorId"
-                >{{ user.name }}</el-checkbox>
-              </el-checkbox-group>
+                <el-col v-for="user in allUsers" :key="user.id" :span="6">
+                  <el-checkbox-group v-model="checkedUsers">
+                    <el-checkbox :label="user.id" :disabled="user.id === creatorId">{{
+                      user.name
+                    }}</el-checkbox>
+                  </el-checkbox-group>
                 </el-col>
-               
               </el-row>
             </el-col>
           </el-row>
@@ -128,7 +171,7 @@
                   :key="item.state"
                   :value="item.state"
                   :label="item.name"
-                ></el-option>
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -136,34 +179,36 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="changeStateDialog = false">取 消</el-button>
-        <el-button type="primary" :loading="stateLoading" @click="handleChangeState">确 定</el-button>
+        <el-button
+          type="primary"
+          :loading="stateLoading"
+          @click="handleChangeState"
+        > 确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="分配编辑项目用户权限" :visible.sync="editDialog">
       <el-form ref="editForms" :model="editUsers" :rules="userRules">
         <p style="margin-left: 90px;">
           <span style="font-weight: 700;">项目名称</span>
-          <span style="margin-left: 10px;">{{selectedPrjName}}</span>
+          <span style="margin-left: 10px;">{{ selectedPrjName }}</span>
         </p>
         <el-form-item label="用户" label-width="150px">
           <el-row>
             <el-col :span="24">
               <el-checkbox
-                :indeterminate="isIndeterminate"
                 v-model="checkAll"
+                :indeterminate="isIndeterminate"
                 @change="handleCheckAllChange"
               >全选</el-checkbox>
-              <div style="margin: 15px 0;"></div>
+              <div style="margin: 15px 0;" />
               <el-row>
-                <el-col :span="6"  v-for="user in allUsers" :key="user.id">
-                <el-checkbox-group v-model="checkedUsers">
-                <el-checkbox
-                  :label="user.id"
-                  :disabled="user.id === creatorId"
-                >{{ user.name }}</el-checkbox>
-              </el-checkbox-group>
+                <el-col v-for="user in allUsers" :key="user.id" :span="6">
+                  <el-checkbox-group v-model="checkedUsers">
+                    <el-checkbox :label="user.id" :disabled="user.id === creatorId">{{
+                      user.name
+                    }}</el-checkbox>
+                  </el-checkbox-group>
                 </el-col>
-               
               </el-row>
             </el-col>
           </el-row>
@@ -174,11 +219,7 @@
         <el-button type="primary" @click="handleEditUsers">确 定</el-button>
       </div>
     </el-dialog>
-    <el-pagination
-      layout="prev, pager, next"
-      :total="total"
-      @current-change="handlePageChange"
-    />
+    <el-pagination layout="prev, pager, next" :total="total" @current-change="handlePageChange" />
   </div>
 </template>
 
@@ -188,6 +229,22 @@ import { hasPermission } from '@/utils/auth'
 
 export default {
   name: 'Dashboard',
+  filters: {
+    getContractsName(cId, contracts) {
+      if (cId && contracts.length) {
+        const contract = contracts.filter(ctr => ctr.id === cId)
+        return contract[0].name
+      }
+      return ''
+    },
+    getStateName(state, states) {
+      if (state && states.length) {
+        const cur = states.filter(ctr => ctr.state === state)
+        return cur[0].name
+      }
+      return ''
+    }
+  },
   data: function() {
     return {
       page: 1,
@@ -210,12 +267,14 @@ export default {
         filmDuration: 3, // 单位：秒
         shootingStartAt: '',
         shootingDuration: '',
-        projectMembers: [{
-          id: 0,
-          projectId: 0,
-          memberType: '',
-          staffId: 0
-        }]
+        projectMembers: [
+          {
+            id: 0,
+            projectId: 0,
+            memberType: '',
+            staffId: 0
+          }
+        ]
       },
       projectRules: {
         name: [{ required: true, message: '名称不能为空' }],
@@ -233,9 +292,7 @@ export default {
         userIds: []
       },
       userRules: {
-        userIds: [
-          { required: true, trigger: 'blur', mesage: '用户不能为空' }
-        ]
+        userIds: [{ required: true, trigger: 'blur', mesage: '用户不能为空' }]
       },
       selectedPrjId: '',
       creatorId: ''
@@ -265,13 +322,25 @@ export default {
       return hasPermission('project_state', 'manage')
     },
     canView() {
-      return hasPermission('project_base_info', 'view') || hasPermission('project_shooting_info', 'view') || hasPermission('project_last_state_info', 'view')
+      return (
+        hasPermission('project_base_info', 'view') ||
+        hasPermission('project_shooting_info', 'view') ||
+        hasPermission('project_last_state_info', 'view')
+      )
     },
     canEdit() {
-      return hasPermission('project_base_info', 'manage') || hasPermission('project_shooting_info', 'manage') || hasPermission('project_last_state_info', 'manage')      
+      return (
+        hasPermission('project_base_info', 'manage') ||
+        hasPermission('project_shooting_info', 'manage') ||
+        hasPermission('project_last_state_info', 'manage')
+      )
     },
     canViewLog() {
-      return hasPermission('project_base_info_history', 'view') || hasPermission('project_shooting_info_history', 'view') || hasPermission('project_last_state_info_history', 'view')
+      return (
+        hasPermission('project_base_info_history', 'view') ||
+        hasPermission('project_shooting_info_history', 'view') ||
+        hasPermission('project_last_state_info_history', 'view')
+      )
     },
     canEditBaseInfo() {
       return hasPermission('project_base_info', 'manage')
@@ -290,22 +359,6 @@ export default {
     },
     canViewLastInfo() {
       return hasPermission('project_last_state_info', 'view')
-    }
-  },
-  filters: {
-    getContractsName(cId, contracts) {
-      if (cId && contracts.length) {
-        const contract = contracts.filter(ctr => ctr.id === cId)
-        return contract[0].name
-      }
-      return ''
-    },
-    getStateName(state, states) {
-      if (state && states.length) {
-        const cur = states.filter(ctr => ctr.state === state)
-        return cur[0].name
-      }
-      return ''
     }
   },
   beforeMount() {
@@ -336,9 +389,7 @@ export default {
       'editProjectUser'
     ]),
     handleCheckAllChange(val) {
-      this.checkedUsers = val
-        ? this.allUsers.map(permission => permission.id)
-        : []
+      this.checkedUsers = val ? this.allUsers.map(permission => permission.id) : []
       this.isIndeterminate = false
     },
     handleViewUser(row) {
@@ -440,14 +491,12 @@ export default {
     },
     handleChangeState() {
       this.stateLoading = true
-      this.updateState(this.newState).then(
-        res => {
-          this.$message.success('更新成功')
-          this.stateLoading = false
-          this.changeStateDialog = false
-          this.getProjects({ page: this.page, pageSize: this.pageSize })
-        }
-      )
+      this.updateState(this.newState).then(res => {
+        this.$message.success('更新成功')
+        this.stateLoading = false
+        this.changeStateDialog = false
+        this.getProjects({ page: this.page, pageSize: this.pageSize })
+      })
     }
   }
 }

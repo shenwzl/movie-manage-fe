@@ -15,15 +15,15 @@
         <el-col :span="5" :offset="1">
           <el-form-item label="类别">
             <el-select v-model="searchInfo.ascription" style="width: 200px;" autocomplete="off">
-              <el-option :value="1" label="内部员工"></el-option>
-              <el-option :value="2" label="外部员工"></el-option>
+              <el-option :value="1" label="内部员工" />
+              <el-option :value="2" label="外部员工" />
             </el-select>
           </el-form-item>
         </el-col>
-        </el-row>
+      </el-row>
     </el-form>
-    <el-button type="primary" v-if="canEdit" @click="createStaffDialog = true; newStaff = {}">创建新员工</el-button>
-    <el-button type="primary" @click="onSearch">查询</el-button>    
+    <el-button v-if="canEdit" type="primary" @click="createStaffDialog = true; newStaff = {}">创建新员工</el-button>
+    <el-button type="primary" @click="onSearch">查询</el-button>
     <el-table :data="staffs">
       <el-table-column prop="id" label="员工id" />
       <el-table-column prop="name" label="姓名" />
@@ -110,7 +110,7 @@ export default {
       staffRules: {
         name: [{ required: true, message: '名称不能为空' }],
         cellphone: [{ required: true, message: '电话不能为空' }],
-        ascription: [{ required: true, message: '员工类型不能为空' }],
+        ascription: [{ required: true, message: '员工类型不能为空' }]
       }
     }
   },
@@ -141,13 +141,13 @@ export default {
     },
     setPermission() {
     },
-    saveStaff(){
+    saveStaff() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          if (this.isEdit){
+          if (this.isEdit) {
             this.editStaff()
-          }else{
+          } else {
             this.createStaff()
           }
         }

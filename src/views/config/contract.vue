@@ -8,7 +8,7 @@
  -->
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createContractDialog = true;newContract= {}">创建新合同主体</el-button>
+    <el-button v-if="canEdit" type="primary" @click="createContractDialog = true;newContract= {}">创建新合同主体</el-button>
     <el-table :data="contracts">
       <el-table-column prop="id" label="合同id" />
       <el-table-column prop="name" label="名称" />
@@ -109,9 +109,9 @@ export default {
       this.$refs.createForm.validate(valid => {
         if (valid) {
           this.createLoading = true
-          if (this.isEdit){
+          if (this.isEdit) {
             this.editContract()
-          }else{
+          } else {
             this.createContract()
           }
         }

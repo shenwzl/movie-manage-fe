@@ -41,9 +41,9 @@
           <span class="label-info">成片时长</span>
           <el-form-item prop="minute" class="item-info">
             <el-input-number
+              v-model="baseInfo.minute"
               style="width: 100px;"
               :min="0"
-              v-model="baseInfo.minute"
               controls-position="right"
               autocomplete="off"
             />
@@ -51,9 +51,9 @@
           <span style="margin-right: 15px;">分</span>
           <el-form-item prop="second">
             <el-input-number
+              v-model="baseInfo.second"
               style="width: 100px;"
               :min="0"
-              v-model="baseInfo.second"
               controls-position="right"
               autocomplete="off"
             />
@@ -70,8 +70,8 @@
           <span class="label-info">拍摄周期</span>
           <el-form-item prop="shootingDuration" class="item-info">
             <el-input-number
-              :min="1"
               v-model="baseInfo.shootingDuration"
+              :min="1"
               controls-position="right"
               autocomplete="off"
             />
@@ -84,11 +84,11 @@
             <el-select v-model="baseInfo.companyId" @change="onCompanyChange">
               <el-option
                 v-for="item in allCompanys"
+                v-if="item.companyType === 1 && item.state === 0"
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"
-                v-if="item.companyType === 1 && item.state === 0"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -101,8 +101,12 @@
                 :key="item.id"
                 :value="item.id"
                 :label="item.name"
-                v-if="item.companyType === 2 && item.parentCompanyId === baseInfo.companyId && item.state === 0"
-              ></el-option>
+                v-if="
+                  item.companyType === 2 &&
+                    item.parentCompanyId === baseInfo.companyId &&
+                    item.state === 0
+                "
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -121,25 +125,25 @@
           <span class="label-info">项目回款金额</span>
           <el-form-item style="margin-left: 159px;" class="item-info" prop="returnAmount">
             <el-input-number
-              :min="0"
               v-model="baseInfo.returnAmount"
+              :min="0"
               style="width: 180px;"
               autocomplete="off"
             />
           </el-form-item>
         </el-col>
         <el-col v-for="mType in memberTypes" :key="mType.type" :span="24">
-          <span class="label-info" style="width: 500px;display: inline-block;">{{ mType.name }}</span>
-          <el-button
-            class="add-button"
-            type="text"
-            @click="addMemberType(mType.type)"
-          >{{`添加${mType.name}`}}</el-button>
+          <span class="label-info" style="width: 500px;display: inline-block;">{{
+            mType.name
+          }}</span>
+          <el-button class="add-button" type="text" @click="addMemberType(mType.type)">{{
+            `添加${mType.name}`
+          }}</el-button>
           <el-col
-            :span="18"
-            :offset="4"
             v-for="(pMember, i) in baseInfo.projectMembers"
             :key="pMember.id"
+            :span="18"
+            :offset="4"
           >
             <el-col :span="6" style="margin-right: 20px;">
               <el-form-item
@@ -204,12 +208,12 @@
     <el-form v-if="step === '2'" ref="shootingInfoForm" v-loading="tabsLoading" :model="tabsArr">
       <h3>拍摄费用</h3>
       <div style="margin-bottom: 15px;">
-        <span>项目名称: {{projectInfo.name}}</span>
-        <span>项目编号: {{projectInfo.sid}}</span>
-        <span>总预算金额: {{undefined | getBudget(feeInfo.shootingInfo)}}</span>
-        <span>总金额: {{undefined | getRealAmount(feeInfo.shootingInfo)}}</span>
+        <span>项目名称: {{ projectInfo.name }}</span>
+        <span>项目编号: {{ projectInfo.sid }}</span>
+        <span>总预算金额: {{ undefined | getBudget(feeInfo.shootingInfo) }}</span>
+        <span>总金额: {{ undefined | getRealAmount(feeInfo.shootingInfo) }}</span>
       </div>
-      <el-tabs type="card" v-model="activeShooting" @tab-click="handleShootingClick">
+      <el-tabs v-model="activeShooting" type="card" @tab-click="handleShootingClick">
         <el-tab-pane
           v-for="item in shootingTabs"
           :key="item"
@@ -229,9 +233,9 @@
                   <el-select
                     v-model="scope.row.feeChildCategoryId"
                     style="width: 130px;"
-                    @focus="onBlur(scope.row.feeCategoryId)"
                     width="200"
                     autocomplete="off"
+                    @focus="onBlur(scope.row.feeCategoryId)"
                   >
                     <el-option
                       v-for="fee in secondFees"
@@ -251,8 +255,8 @@
                   :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
                 >
                   <el-select
-                    filterable
                     v-model="scope.row.providerId"
+                    filterable
                     style="width: 130px;"
                     width="200"
                     autocomplete="off"
@@ -291,8 +295,8 @@
                   :rules="{ required: true, message: '实际金额不能为空' }"
                 >
                   <el-input-number
-                    style="width: 130px;"
                     v-model="scope.row.realAmount"
+                    style="width: 130px;"
                     :disabled="!canEditShootingInfo"
                     :min="0"
                     controls-position="right"
@@ -303,16 +307,16 @@
             </el-table-column>
             <el-table-column prop="remark" label="备注">
               <template scope="scope">
-                <el-input type="textarea" v-model="scope.row.remark"></el-input>
+                <el-input v-model="scope.row.remark" type="textarea" />
               </template>
             </el-table-column>
             <el-table-column prop="rankScore" label="评分">
               <template scope="scope">
                 <el-input-number
-                  style="width: 100px;"
-                  controls-position="right"
                   v-model="scope.row.rankScore"
-                ></el-input-number>
+                  controls-position="right"
+                  style="width: 100px;"
+                />
               </template>
             </el-table-column>
             <el-table-column label="操作" width="70px">
@@ -328,15 +332,15 @@
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <el-form v-if="step === '3'" v-loading="tabsLoading" ref="lastInfoForm" :model="tabsArr">
+    <el-form v-if="step === '3'" ref="lastInfoForm" v-loading="tabsLoading" :model="tabsArr">
       <h3>后期费用</h3>
       <div style="margin-bottom: 15px;">
-        <span>项目名称: {{projectInfo.name}}</span>
-        <span>项目编号: {{projectInfo.sid}}</span>
-        <span>总预算金额: {{undefined | getBudget(feeInfo.lastStateInfo)}}</span>
-        <span>总金额: {{undefined | getRealAmount(feeInfo.lastStateInfo)}}</span>
+        <span>项目名称: {{ projectInfo.name }}</span>
+        <span>项目编号: {{ projectInfo.sid }}</span>
+        <span>总预算金额: {{ undefined | getBudget(feeInfo.lastStateInfo) }}</span>
+        <span>总金额: {{ undefined | getRealAmount(feeInfo.lastStateInfo) }}</span>
       </div>
-      <el-tabs type="card" v-model="activeLast" @tab-click="handleLastClick">
+      <el-tabs v-model="activeLast" type="card" @tab-click="handleLastClick">
         <el-tab-pane
           v-for="item in lastTabs"
           :key="item"
@@ -356,9 +360,9 @@
                   <el-select
                     v-model="scope.row.feeChildCategoryId"
                     style="width: 130px;"
-                    @focus="onBlur(scope.row.feeCategoryId)"
                     width="200"
                     autocomplete="off"
+                    @focus="onBlur(scope.row.feeCategoryId)"
                   >
                     <el-option
                       v-for="fee in secondFees"
@@ -377,8 +381,8 @@
                   :rules="{ required: scope.row.realAmount !== 0, message: '供应商不能为空' }"
                 >
                   <el-select
-                    filterable
                     v-model="scope.row.providerId"
+                    filterable
                     style="width: 130px;"
                     width="200"
                     autocomplete="off"
@@ -400,8 +404,8 @@
                   :rules="{ required: true, message: '预算金额不能为空' }"
                 >
                   <el-input-number
-                    :min="0"
                     v-model="scope.row.budgetAmount"
+                    :min="0"
                     controls-position="right"
                     autocomplete="off"
                     style="width: 130px;"
@@ -416,9 +420,9 @@
                   :rules="{ required: true, message: '实际金额不能为空' }"
                 >
                   <el-input-number
+                    v-model="scope.row.realAmount"
                     :min="0"
                     style="width: 130px;"
-                    v-model="scope.row.realAmount"
                     :disabled="!canEditLastInfo"
                     controls-position="right"
                     autocomplete="off"
@@ -428,18 +432,18 @@
             </el-table-column>
             <el-table-column prop="remark" label="备注">
               <template scope="scope">
-                <el-input type="textarea" v-model="scope.row.remark"></el-input>
+                <el-input v-model="scope.row.remark" type="textarea" />
               </template>
             </el-table-column>
             <el-table-column prop="rankScore" label="评分">
               <template scope="scope">
                 <el-input-number
+                  v-model="scope.row.rankScore"
                   :min="0"
                   :max="100"
                   style="width: 100px;"
                   controls-position="right"
-                  v-model="scope.row.rankScore"
-                ></el-input-number>
+                />
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -456,24 +460,32 @@
       </el-tabs>
     </el-form>
     <el-button
-      class="save-button"
       v-if="step === '1'"
+      class="save-button"
       type="primary"
       :loading="editLoading"
       @click="editProject"
     >保存</el-button>
-    <el-button class="add-button-info" v-if="step === '2'" @click="addShootingInfo">添加一级费用</el-button>
     <el-button
-      class="save-button"
       v-if="step === '2'"
+      class="add-button-info"
+      @click="addShootingInfo"
+    >添加一级费用</el-button>
+    <el-button
+      v-if="step === '2'"
+      class="save-button"
       type="primary"
       :loading="editLoading"
       @click="editShootingInfo"
     >保存</el-button>
-    <el-button class="add-button-info" v-if="step === '3'" @click="addLastInfo">添加一级费用</el-button>
     <el-button
-      class="save-button"
       v-if="step === '3'"
+      class="add-button-info"
+      @click="addLastInfo"
+    >添加一级费用</el-button>
+    <el-button
+      v-if="step === '3'"
+      class="save-button"
       type="primary"
       :loading="editLoading"
       @click="editLastStateInfo"
@@ -481,8 +493,8 @@
     <el-button
       v-if="canAddStaff && step === '1'"
       class="add-new"
-      @click="createStaffDialog = true"
       type="primary"
+      @click="createStaffDialog = true"
     >新增员工</el-button>
     <el-dialog title="新增员工" :visible.sync="createStaffDialog">
       <el-form ref="createForm" :model="newStaff" :rules="staffRules">
@@ -516,12 +528,12 @@
         <el-button type="primary" :loading="createLoading" @click="createStaff">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="新增一级费用" v-if="step === '2'" :visible.sync="firstShootingFeeVisible">
+    <el-dialog v-if="step === '2'" title="新增一级费用" :visible.sync="firstShootingFeeVisible">
       <el-select v-model="fisrtShootingFee">
         <el-option
           v-for="fee in firstShootingFee"
-          :disabled="feeDisabled(feeInfo.shootingInfo, fee.id)"
           :key="fee.id"
+          :disabled="feeDisabled(feeInfo.shootingInfo, fee.id)"
           :value="fee.id"
           :label="fee.name"
         />
@@ -531,12 +543,12 @@
         <el-button type="primary" @click="addFirstShootingFee">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="新增一级费用" v-if="step === '3'" :visible.sync="firstLastFeeVisible">
+    <el-dialog v-if="step === '3'" title="新增一级费用" :visible.sync="firstLastFeeVisible">
       <el-select v-model="fisrtLastFee">
         <el-option
           v-for="fee in firstLastFee"
-          :disabled="feeDisabled(feeInfo.lastStateInfo, fee.id)"
           :key="fee.id"
+          :disabled="feeDisabled(feeInfo.lastStateInfo, fee.id)"
           :value="fee.id"
           :label="fee.name"
         />
@@ -550,31 +562,81 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import { hasPermission } from "@/utils/auth";
-import { find, reduce, findIndex } from "lodash";
+import { mapGetters, mapActions } from 'vuex'
+import { hasPermission } from '@/utils/auth'
+import { find, reduce, findIndex } from 'lodash'
 
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
+  filters: {
+    getFeeName(id, fees) {
+      const fee = fees.filter(f => f.id === id)
+      return fee[0].name
+    },
+    getBudget(id, lists) {
+      if (id) {
+        return reduce(
+          lists,
+          (sum, item) => {
+            if (item.feeCategoryId === id) {
+              return sum + item.budgetAmount
+            }
+            return sum
+          },
+          0
+        )
+      } else {
+        return reduce(
+          lists,
+          (sum, item) => {
+            return sum + item.budgetAmount
+          },
+          0
+        )
+      }
+    },
+    getRealAmount(id, lists) {
+      if (id) {
+        return reduce(
+          lists,
+          (sum, item) => {
+            if (item.feeCategoryId === id) {
+              return sum + item.realAmount
+            }
+            return sum
+          },
+          0
+        )
+      } else {
+        return reduce(
+          lists,
+          (sum, item) => {
+            return sum + item.realAmount
+          },
+          0
+        )
+      }
+    }
+  },
   data: function() {
     return {
       createLoading: false,
       editLoading: false,
       baseInfo: {
-        sid: "",
-        name: "",
+        sid: '',
+        name: '',
         contractSubjectId: 0,
         filmDuration: 3, // 单位：秒
-        shootingStartAt: "",
-        shootingDuration: "",
+        shootingStartAt: '',
+        shootingDuration: '',
         contractAmount: 0,
         returnAmount: 0,
-        childCompanyId: "",
+        childCompanyId: '',
         projectMembers: [
           {
             id: 0,
             projectId: 0,
-            memberType: "",
+            memberType: '',
             staffId: 0
           }
         ]
@@ -598,32 +660,32 @@ export default {
         // childCompanyId: [{ required: true, message: "客户公司不能为空" }]
       },
       shootingInfoRules: {
-        feeCategoryId: [{ required: true, message: "一级费用项不能为空" }],
-        feeChildCategoryId: [{ required: true, message: "二级费用项不能为空" }],
-        budgetAmount: [{ required: true, message: "预算金额不能为空" }],
-        realAmount: [{ required: true, message: "实际金额为空" }],
-        rankScore: [{ required: true, message: "评分不能为空" }]
+        feeCategoryId: [{ required: true, message: '一级费用项不能为空' }],
+        feeChildCategoryId: [{ required: true, message: '二级费用项不能为空' }],
+        budgetAmount: [{ required: true, message: '预算金额不能为空' }],
+        realAmount: [{ required: true, message: '实际金额为空' }],
+        rankScore: [{ required: true, message: '评分不能为空' }]
       },
       newStaff: {
-        name: "",
-        cellphone: "",
-        ascription: ""
+        name: '',
+        cellphone: '',
+        ascription: ''
       },
       staffRules: {
-        name: [{ required: true, message: "名称不能为空" }],
-        cellphone: [{ required: true, message: "电话不能为空" }],
-        ascription: [{ required: true, message: "员工类型不能为空" }]
+        name: [{ required: true, message: '名称不能为空' }],
+        cellphone: [{ required: true, message: '电话不能为空' }],
+        ascription: [{ required: true, message: '员工类型不能为空' }]
       },
       createStaffDialog: false,
       shootingArr: [],
       lastArr: [],
       firstShootingFeeVisible: false,
       firstLastFeeVisible: false,
-      fisrtShootingFee: "",
-      fisrtLastFee: "",
+      fisrtShootingFee: '',
+      fisrtLastFee: '',
       shootingTabs: [],
-      activeShooting: "",
-      activeLast: "",
+      activeShooting: '',
+      activeLast: '',
       lastTabs: [],
       tabsArr: {
         shootingTabsArr: [],
@@ -632,46 +694,42 @@ export default {
       projectInfo: {},
       budgets: 0,
       allMounts: 0,
-      tabsLoading: true,
-    };
+      tabsLoading: true
+    }
   },
   computed: {
     ...mapGetters([
-      "contractSubjects",
-      "memberTypes",
-      "allStaffs",
-      "feeCategories",
-      "allProviders",
-      "allCompanys"
+      'contractSubjects',
+      'memberTypes',
+      'allStaffs',
+      'feeCategories',
+      'allProviders',
+      'allCompanys'
     ]),
     // 内部员工
     insideStaffs() {
-      return this.allStaffs.filter(staff => staff.ascription === 1);
+      return this.allStaffs.filter(staff => staff.ascription === 1)
     },
     // 外部员工
     externalStaffs() {
-      return this.allStaffs.filter(staff => staff.ascription === 2);
+      return this.allStaffs.filter(staff => staff.ascription === 2)
     },
     // 一级拍摄费用
     firstShootingFee() {
-      return this.feeCategories.filter(
-        fee => fee.categoryType === 1 && fee.stage === 1
-      );
+      return this.feeCategories.filter(fee => fee.categoryType === 1 && fee.stage === 1)
     },
     // 1级后期费用
     firstLastFee() {
-      return this.feeCategories.filter(
-        fee => fee.categoryType === 1 && fee.stage === 2
-      );
+      return this.feeCategories.filter(fee => fee.categoryType === 1 && fee.stage === 2)
     },
     pId() {
-      return this.$route.params.projectId;
+      return this.$route.params.projectId
     },
     step() {
-      return this.$route.params.step;
+      return this.$route.params.step
     },
     canAddStaff() {
-      return hasPermission("staff", "manage");
+      return hasPermission('staff', 'manage')
     },
     canEditShootingInfo() {
       return hasPermission('project_shooting_info', 'manage_real_amount')
@@ -681,118 +739,68 @@ export default {
     }
   },
   beforeMount() {
-    this.getAllProviders();
-    this.getAllCompanys();
-    this.getFeeCategories().then(() => (this.secondFees = this.feeCategories));
-    this.getContractSubjects();
-    this.getAllStaffs();
-    this.getMemberTypes();
+    this.getAllProviders()
+    this.getAllCompanys()
+    this.getFeeCategories().then(() => (this.secondFees = this.feeCategories))
+    this.getContractSubjects()
+    this.getAllStaffs()
+    this.getMemberTypes()
 
     this.getBaseInfo(this.pId).then(res => {
       res.data.projectMembers.forEach(pMember => {
-        const { staffId } = pMember;
-        const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId);
-        pMember.ascriptionType = staff[0].ascription;
-      });
-      res.data.minute = Math.floor(res.data.filmDuration / 60);
-      res.data.second = res.data.filmDuration % 60;
-      this.baseInfo = res.data;
+        const { staffId } = pMember
+        const staff = this.allStaffs.filter(aStaff => aStaff.id === staffId)
+        pMember.ascriptionType = staff[0].ascription
+      })
+      res.data.minute = Math.floor(res.data.filmDuration / 60)
+      res.data.second = res.data.filmDuration % 60
+      this.baseInfo = res.data
       this.projectInfo = {
         name: res.data.name,
         sid: res.data.sid
-      };
-    });
-    this.step === "2" &&
+      }
+    })
+    this.step === '2' &&
       this.getShootingInfo(this.pId).then(res => {
-        this.feeInfo.shootingInfo = res.data.projectFees;
-        this.getShootingTabsArr(res.data.projectFees[0].feeCategoryId);
-        this.getSpanArr();
-        this.activeShooting = res.data.projectFees[0].feeCategoryId + "";
+        this.feeInfo.shootingInfo = res.data.projectFees
+        this.getShootingTabsArr(res.data.projectFees[0].feeCategoryId)
+        this.getSpanArr()
+        this.activeShooting = res.data.projectFees[0].feeCategoryId + ''
         this.budgets = reduce(
           res.data.projectFees,
           (sum, n) => {
-            return sum + n.budgetAmount;
-          },
-          0
-        );
-        this.allMounts = res.data.projectFees.reduce((prev, curr) => {
-          return prev.realAmount + curr.realAmount;
-        }, 0);
-      });
-    this.step === "3" &&
-      this.getLastStateInfo(this.pId).then(res => {
-        this.feeInfo.lastStateInfo = res.data.projectFees;
-        this.getLastTabsArr(res.data.projectFees[0].feeCategoryId);
-        this.getLastArr();
-        this.activeLast = res.data.projectFees[0].feeCategoryId + "";
-      });
-  },
-  filters: {
-    getFeeName(id, fees) {
-      const fee = fees.filter(f => f.id === id);
-      return fee[0].name;
-    },
-    getBudget(id, lists) {
-      if (id) {
-        return reduce(
-          lists,
-          (sum, item) => {
-            if (item.feeCategoryId === id) {
-              return sum + item.budgetAmount;
-            }
-            return sum;
-          },
-          0
-        );
-      } else {
-        return reduce(
-          lists,
-          (sum, item) => {
-            return sum + item.budgetAmount;
-          },
-          0
-        );
-      }
-    },
-    getRealAmount(id, lists) {
-      if (id) {
-        return reduce(
-        lists,
-        (sum, item) => {
-          if (item.feeCategoryId === id) {
-            return sum + item.realAmount;
-          }
-          return sum;
-        },
-        0
-      );
-      } else {
-        return reduce(
-          lists,
-          (sum, item) => {
-            return sum + item.realAmount;
+            return sum + n.budgetAmount
           },
           0
         )
-      }
-    }
+        this.allMounts = res.data.projectFees.reduce((prev, curr) => {
+          return prev.realAmount + curr.realAmount
+        }, 0)
+      })
+    this.step === '3' &&
+      this.getLastStateInfo(this.pId).then(res => {
+        this.feeInfo.lastStateInfo = res.data.projectFees
+        this.getLastTabsArr(res.data.projectFees[0].feeCategoryId)
+        this.getLastArr()
+        this.activeLast = res.data.projectFees[0].feeCategoryId + ''
+      })
   },
   methods: {
     ...mapActions([
-      "getContractSubjects",
-      "saveProjects",
-      "getMemberTypes",
-      "getAllStaffs",
-      "getAllProviders",
-      "getFeeCategories",
-      "getBaseInfo",
-      "saveBaseInfo",
-      "getShootingInfo",
-      "saveShootingInfo",
-      "getLastStateInfo",
-      "saveLastStateInfo",
-      "addStaff",
-      "getAllCompanys"
+      'getContractSubjects',
+      'saveProjects',
+      'getMemberTypes',
+      'getAllStaffs',
+      'getAllProviders',
+      'getFeeCategories',
+      'getBaseInfo',
+      'saveBaseInfo',
+      'getShootingInfo',
+      'saveShootingInfo',
+      'getLastStateInfo',
+      'saveLastStateInfo',
+      'addStaff',
+      'getAllCompanys'
     ]),
     // onFocus(index, field, step) {
     //   if (this.tabsArr[step][index][field] === 0) {
@@ -801,138 +809,141 @@ export default {
     //   console.log(this.tabsArr, index)
     // },
     getFeeName(id, fees) {
-      const fee = fees.filter(f => f.id === id);
-      return fee[0].name;
+      const fee = fees.filter(f => f.id === id)
+      return fee[0].name
     },
     handleShootingClick(tab) {
       this.$refs.shootingInfoForm.validate(valid => {
         if (valid) {
-          this.asyncShootingInfo(parseInt(this.activeShooting));
-          this.getShootingTabsArr(this.shootingTabs[tab.index]);
+          this.asyncShootingInfo(parseInt(this.activeShooting))
+          this.getShootingTabsArr(this.shootingTabs[tab.index])
         }
-      });
-      this.secondFees = this.feeCategories;
+      })
+      this.secondFees = this.feeCategories
     },
     handleLastClick(tab) {
       this.$refs.lastInfoForm.validate(valid => {
         if (valid) {
-          this.asyncLastInfo(parseInt(this.activeLast));
-          this.getLastTabsArr(this.lastTabs[tab.index]);
+          this.asyncLastInfo(parseInt(this.activeLast))
+          this.getLastTabsArr(this.lastTabs[tab.index])
         }
-      });
-      this.secondFees = this.feeCategories;
+      })
+      this.secondFees = this.feeCategories
     },
     onCompanyChange() {
-      this.baseInfo.childCompanyId = null;
+      this.baseInfo.childCompanyId = null
     },
     onMinChange(val) {
-      this.baseInfo.filmDuration =
-        parseInt(val * 60) + parseInt(this.baseInfo.second);
+      this.baseInfo.filmDuration = parseInt(val * 60) + parseInt(this.baseInfo.second)
     },
     onSecChange(val) {
-      this.baseInfo.filmDuration =
-        parseInt(this.baseInfo.minute) + parseInt(val);
+      this.baseInfo.filmDuration = parseInt(this.baseInfo.minute) + parseInt(val)
     },
     feeDisabled(fees, id) {
-      const hasFee = find(fees, fee => fee.feeCategoryId === id);
+      const hasFee = find(fees, fee => fee.feeCategoryId === id)
       if (hasFee) {
-        return hasFee.length !== 0;
+        return hasFee.length !== 0
       } else {
-        return false;
+        return false
       }
     },
     getShootingTabsArr(id) {
       this.tabsArr.shootingTabsArr = this.feeInfo.shootingInfo.filter(
         sInfo => sInfo.feeCategoryId === id
-      );
+      )
       this.tabsLoading = false
     },
     getLastTabsArr(id) {
       this.tabsArr.lastStateTabsArr = this.feeInfo.lastStateInfo.filter(
         sInfo => sInfo.feeCategoryId === id
-      );
-      this.tabsLoading = false      
+      )
+      this.tabsLoading = false
     },
     handleDeleteShooting(index) {
       let id = this.tabsArr.shootingTabsArr[index].id
       if (!id) {
         id = this.tabsArr.shootingTabsArr[index].timestamp
       }
-      this.tabsArr.shootingTabsArr.splice(index, 1);
-      const fIndex = findIndex(this.feeInfo.shootingInfo, sInfo => sInfo.id === id || sInfo.timestamp === id)
+      this.tabsArr.shootingTabsArr.splice(index, 1)
+      const fIndex = findIndex(
+        this.feeInfo.shootingInfo,
+        sInfo => sInfo.id === id || sInfo.timestamp === id
+      )
       this.feeInfo.shootingInfo.splice(fIndex, 1)
     },
     handleAddShooting(record) {
       this.tabsArr.shootingTabsArr.push({
         feeCategoryId: record,
-        feeChildCategoryId: "",
-        providerId: "",
+        feeChildCategoryId: '',
+        providerId: '',
         realAmount: 0,
         budgetAmount: 0,
-        remark: "",
-        rankScore: "",
+        remark: '',
+        rankScore: '',
         timestamp: new Date().getTime()
-      });
+      })
     },
     addFirstShootingFee() {
-      this.shootingTabs.push(this.fisrtShootingFee);
-      this.firstShootingFeeVisible = false;
-      this.fisrtShootingFee = "";
+      this.shootingTabs.push(this.fisrtShootingFee)
+      this.firstShootingFeeVisible = false
+      this.fisrtShootingFee = ''
     },
     addFirstLastFee() {
-      this.lastTabs.push(this.firstLastFee);
-      this.firstLastFeeVisible = false;
-      this.fisrtLastFee = "";
+      this.lastTabs.push(this.firstLastFee)
+      this.firstLastFeeVisible = false
+      this.fisrtLastFee = ''
     },
     handleDeleteLast(index) {
-       let id = this.tabsArr.lastStateTabsArr[index].id
+      let id = this.tabsArr.lastStateTabsArr[index].id
       if (!id) {
         id = this.tabsArr.lastStateTabsArr[index].timestamp
       }
-      this.tabsArr.lastStateTabsArr.splice(index, 1);
-      const fIndex = findIndex(this.feeInfo.lastStateInfo, sInfo => sInfo.id === id || sInfo.timestamp === id)
+      this.tabsArr.lastStateTabsArr.splice(index, 1)
+      const fIndex = findIndex(
+        this.feeInfo.lastStateInfo,
+        sInfo => sInfo.id === id || sInfo.timestamp === id
+      )
       this.feeInfo.lastStateInfo.splice(fIndex, 1)
     },
     handleAddLast(record) {
       this.tabsArr.lastStateTabsArr.push({
         feeCategoryId: record,
-        feeChildCategoryId: "",
-        providerId: "",
+        feeChildCategoryId: '',
+        providerId: '',
         realAmount: 0,
         budgetAmount: 0,
-        remark: "",
-        rankScore: "",
+        remark: '',
+        rankScore: '',
         timestamp: new Date().getTime()
-      });
+      })
     },
     editProject() {
       this.$refs.baseInfoForm.validate(valid => {
         if (valid) {
-          this.editLoading = true;
+          this.editLoading = true
           this.baseInfo.filmDuration = this.baseInfo.minute
-            ? parseInt(this.baseInfo.minute * 60) +
-              parseInt(this.baseInfo.second)
-            : parseInt(this.baseInfo.second);
+            ? parseInt(this.baseInfo.minute * 60) + parseInt(this.baseInfo.second)
+            : parseInt(this.baseInfo.second)
           this.saveBaseInfo({
             baseInfo: this.baseInfo,
             pId: this.pId
           }).then(res => {
-            this.editLoading = false;
-            this.$message.success("更新成功");
-            window.location.href = "/#/";
-          });
+            this.editLoading = false
+            this.$message.success('更新成功')
+            window.location.href = '/#/'
+          })
         }
-      });
+      })
     },
     addMemberType(id) {
-      const projectMembers = this.baseInfo.projectMembers;
+      const projectMembers = this.baseInfo.projectMembers
       projectMembers.push({
         projectId: this.pId,
         memberType: id,
-        staffId: "",
+        staffId: '',
         ascriptionType: 1
-      });
-      this.baseInfo.projectMembers = projectMembers;
+      })
+      this.baseInfo.projectMembers = projectMembers
     },
     asyncShootingInfo(id) {
       this.tabsArr.shootingTabsArr.forEach(sTab => {
@@ -940,7 +951,10 @@ export default {
           const index = findIndex(this.feeInfo.shootingInfo, sInfo => sInfo.id === sTab.id)
           this.feeInfo.shootingInfo.splice(index, 1, sTab)
         } else {
-          const index = findIndex(this.feeInfo.shootingInfo, sInfo => sInfo.timestamp === sTab.timestamp)
+          const index = findIndex(
+            this.feeInfo.shootingInfo,
+            sInfo => sInfo.timestamp === sTab.timestamp
+          )
           if (index !== -1) {
             this.feeInfo.shootingInfo.splice(index, 1, sTab)
           } else {
@@ -950,168 +964,163 @@ export default {
       })
     },
     asyncLastInfo(id) {
-    this.tabsArr.lastStateTabsArr.forEach(lTab => {
+      this.tabsArr.lastStateTabsArr.forEach(lTab => {
         if (lTab.id) {
           const index = findIndex(this.feeInfo.lastStateInfo, lInfo => lInfo.id === lTab.id)
           this.feeInfo.lastStateInfo.splice(index, 1, lTab)
         } else {
-          const index = findIndex(this.feeInfo.lastStateInfo, lInfo => lInfo.timestamp === lTab.timestamp)
+          const index = findIndex(
+            this.feeInfo.lastStateInfo,
+            lInfo => lInfo.timestamp === lTab.timestamp
+          )
           if (index !== -1) {
             this.feeInfo.lastStateInfo.splice(index, 1, lTab)
           } else {
             this.feeInfo.lastStateInfo.push(lTab)
           }
         }
-      })  
+      })
     },
     editShootingInfo() {
       this.$refs.shootingInfoForm.validate(valid => {
         if (valid) {
-          this.asyncShootingInfo(parseInt(this.activeShooting));
-          this.editLoading = true;
+          this.asyncShootingInfo(parseInt(this.activeShooting))
+          this.editLoading = true
           this.saveShootingInfo({
             shootingInfo: this.feeInfo.shootingInfo,
             pId: this.pId
           }).then(res => {
-            this.editLoading = false;
-            this.$message.success("更新成功");
-            window.location.href = "/#/";
-          });
+            this.editLoading = false
+            this.$message.success('更新成功')
+            window.location.href = '/#/'
+          })
         }
-      });
+      })
     },
     editLastStateInfo() {
       this.$refs.lastInfoForm.validate(valid => {
         if (valid) {
-          this.asyncLastInfo(parseInt(this.activeLast));
-          this.editLoading = true;
+          this.asyncLastInfo(parseInt(this.activeLast))
+          this.editLoading = true
           this.saveLastStateInfo({
             lastStateInfo: this.feeInfo.lastStateInfo,
             pId: this.pId
           }).then(res => {
-            this.$message.success("更新成功");
-            this.editLoading = false;
-            window.location.href = "/#/";
-          });
+            this.$message.success('更新成功')
+            this.editLoading = false
+            window.location.href = '/#/'
+          })
         }
-      });
+      })
     },
     createStaff() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
-          this.createLoading = true;
+          this.createLoading = true
           this.addStaff(this.newStaff).then(res => {
-            this.createStaffDialog = false;
-            this.createLoading = false;
-            this.$message.success("添加成功");
-            this.newStaff = {};
-            this.getAllStaffs();
-          });
+            this.createStaffDialog = false
+            this.createLoading = false
+            this.$message.success('添加成功')
+            this.newStaff = {}
+            this.getAllStaffs()
+          })
         }
-      });
+      })
     },
     onBlur(id) {
-      this.secondFees = this.feeCategories.filter(
-        fee => fee.parentCategoryId === id
-      );
+      this.secondFees = this.feeCategories.filter(fee => fee.parentCategoryId === id)
     },
     handleBaseDelete(i) {
-      this.$confirm("确定删除这条记录吗?", "提示", {
-        type: "warning"
+      this.$confirm('确定删除这条记录吗?', '提示', {
+        type: 'warning'
       }).then(() => {
-        this.baseInfo.projectMembers.splice(i, 1);
-      });
+        this.baseInfo.projectMembers.splice(i, 1)
+      })
     },
     handleShootingDelete(i) {
-      this.$confirm("确定删除这条记录吗?", "提示", {
-        type: "warning"
+      this.$confirm('确定删除这条记录吗?', '提示', {
+        type: 'warning'
       }).then(() => {
-        this.shootingInfo.splice(i, 1);
-      });
+        this.shootingInfo.splice(i, 1)
+      })
     },
     handleLastDelete(i) {
-      this.$confirm("确定删除这条记录吗?", "提示", {
-        type: "warning"
+      this.$confirm('确定删除这条记录吗?', '提示', {
+        type: 'warning'
       }).then(() => {
-        this.lastStateInfo.splice(i, 1);
-      });
+        this.lastStateInfo.splice(i, 1)
+      })
     },
     addShootingInfo() {
-      this.firstShootingFeeVisible = true;
+      this.firstShootingFeeVisible = true
     },
     addLastInfo() {
-      this.firstLastFeeVisible = true;
+      this.firstLastFeeVisible = true
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0 || columnIndex === 8) {
-        const _row = this.shootingArr[rowIndex];
-        const _col = _row > 0 ? 1 : 0;
+        const _row = this.shootingArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
           colspan: _col
-        };
+        }
       }
     },
     arrayLastMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0 || columnIndex === 8) {
-        const _row = this.lastArr[rowIndex];
-        const _col = _row > 0 ? 1 : 0;
+        const _row = this.lastArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
           colspan: _col
-        };
+        }
       }
     },
     getSpanArr() {
-      this.shootingArr = [];
+      this.shootingArr = []
       this.feeInfo.shootingInfo.forEach((item, i) => {
         if (i === 0) {
-          this.shootingArr.push(1);
-          this.pos = 0;
-          this.shootingTabs.push(item.feeCategoryId);
+          this.shootingArr.push(1)
+          this.pos = 0
+          this.shootingTabs.push(item.feeCategoryId)
         } else {
-          if (
-            item.feeCategoryId ===
-            this.feeInfo.shootingInfo[i - 1].feeCategoryId
-          ) {
-            this.shootingArr[this.pos] += 1;
-            this.shootingArr.push(0);
+          if (item.feeCategoryId === this.feeInfo.shootingInfo[i - 1].feeCategoryId) {
+            this.shootingArr[this.pos] += 1
+            this.shootingArr.push(0)
           } else {
-            this.shootingArr.push(1);
-            this.pos = i;
+            this.shootingArr.push(1)
+            this.pos = i
           }
           if (!this.shootingTabs.includes(item.feeCategoryId)) {
-            this.shootingTabs.push(item.feeCategoryId);
+            this.shootingTabs.push(item.feeCategoryId)
           }
         }
-      });
+      })
     },
     getLastArr() {
-      this.lastArr = [];
+      this.lastArr = []
       this.feeInfo.lastStateInfo.forEach((item, i) => {
         if (i === 0) {
-          this.lastArr.push(1);
-          this.pos = 0;
-          this.lastTabs.push(item.feeCategoryId);
+          this.lastArr.push(1)
+          this.pos = 0
+          this.lastTabs.push(item.feeCategoryId)
         } else {
-          if (
-            item.feeCategoryId ===
-            this.feeInfo.lastStateInfo[i - 1].feeCategoryId
-          ) {
-            this.lastArr[this.pos] += 1;
-            this.lastArr.push(0);
+          if (item.feeCategoryId === this.feeInfo.lastStateInfo[i - 1].feeCategoryId) {
+            this.lastArr[this.pos] += 1
+            this.lastArr.push(0)
           } else {
-            this.lastArr.push(1);
-            this.pos = i;
+            this.lastArr.push(1)
+            this.pos = i
           }
           if (!this.lastTabs.includes(item.feeCategoryId)) {
-            this.lastTabs.push(item.feeCategoryId);
+            this.lastTabs.push(item.feeCategoryId)
           }
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

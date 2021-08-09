@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" v-if="canEdit" @click="createRoleDialog = true">创建新角色</el-button>
+    <el-button v-if="canEdit" type="primary" @click="createRoleDialog = true">创建新角色</el-button>
     <el-table :data="roles">
       <el-table-column prop="id" label="角色id" />
       <el-table-column prop="name" label="名称" />
@@ -24,16 +24,16 @@
           <el-row>
             <el-col :span="24">
               <el-checkbox
-                :indeterminate="isIndeterminate"
                 v-model="checkAll"
+                :indeterminate="isIndeterminate"
                 @change="handleCheckAllChange"
               >全选</el-checkbox>
-              <div style="margin: 15px 0;"></div>
+              <div style="margin: 15px 0;" />
               <el-checkbox-group v-model="checkedPermissions">
                 <el-checkbox
                   v-for="permission in allPermissions"
-                  :label="permission.id"
                   :key="permission.id"
+                  :label="permission.id"
                 >{{ permission.desc }}</el-checkbox>
               </el-checkbox-group>
             </el-col>
@@ -49,8 +49,8 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-import { hasPermission } from "@/utils/auth";
+import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
 export default {
   data: function() {
     return {
@@ -64,7 +64,7 @@ export default {
       //   }
       // ],
       newRole: {
-        name: ""
+        name: ''
       },
       createRoleDialog: false,
       permissionDialog: false,
@@ -77,41 +77,41 @@ export default {
       checkedPermissions: [],
       checkAll: true,
       roleRules: {
-        name: [{ required: true, message: "名称不能为空" }]
+        name: [{ required: true, message: '名称不能为空' }]
       }
-    };
+    }
   },
   computed: {
-    ...mapGetters(["roles", "total", "allPermissions"]),
+    ...mapGetters(['roles', 'total', 'allPermissions']),
     canEdit() {
-      return hasPermission("role", "manage");
+      return hasPermission('role', 'manage')
     }
   },
   beforeMount() {
-    this.getRoles({ page: this.page, pageSize: this.pageSize });
-    this.getAllPermissions();
+    this.getRoles({ page: this.page, pageSize: this.pageSize })
+    this.getAllPermissions()
   },
   methods: {
     ...mapActions([
-      "getRoles",
-      "addRole",
-      "getAllPermissions",
-      "getRolePermission",
-      "updatePermission"
+      'getRoles',
+      'addRole',
+      'getAllPermissions',
+      'getRolePermission',
+      'updatePermission'
     ]),
     handleChange(row) {
       this.getRolePermission(row.id).then(res => {
-        this.newRole = row;
-        this.isEdit = true;
-        this.createRoleDialog = true;
-        this.checkedPermissions = res.data.map(item => item.id);
-      });
+        this.newRole = row
+        this.isEdit = true
+        this.createRoleDialog = true
+        this.checkedPermissions = res.data.map(item => item.id)
+      })
     },
     setPermission() {},
     createRole() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
-          this.createLoading = true;
+          this.createLoading = true
           if (this.isEdit) {
             this.updatePermission({
               id: this.newRole.id,
@@ -120,13 +120,13 @@ export default {
                 permissionIds: this.checkedPermissions
               }
             }).then(res => {
-              this.createRoleDialog = false;
-              this.getRoles({ page: this.page, pageSize: this.pageSize });
-              this.createLoading = false;
-              this.isEdit = false;
-              this.newRole = {};
-              this.$message.success("更新成功");
-            });
+              this.createRoleDialog = false
+              this.getRoles({ page: this.page, pageSize: this.pageSize })
+              this.createLoading = false
+              this.isEdit = false
+              this.newRole = {}
+              this.$message.success('更新成功')
+            })
           } else {
             this.addRole(this.newRole).then(res => {
               this.updatePermission({
@@ -136,37 +136,34 @@ export default {
                   permissionIds: this.checkedPermissions
                 }
               }).then(res => {
-                this.createRoleDialog = false;
-                this.getRoles({ page: this.page, pageSize: this.pageSize });
-                this.createLoading = false;
-                this.isEdit = false;
-                this.$message.success("添加成功");
-                this.newRole = {};
-              });
-            });
+                this.createRoleDialog = false
+                this.getRoles({ page: this.page, pageSize: this.pageSize })
+                this.createLoading = false
+                this.isEdit = false
+                this.$message.success('添加成功')
+                this.newRole = {}
+              })
+            })
           }
         }
-      });
+      })
     },
     handlePageChange(page) {
-      this.page = page;
-      this.getRoles({ page: this.page, pageSize: this.pageSize });
+      this.page = page
+      this.getRoles({ page: this.page, pageSize: this.pageSize })
     },
     handleStateChange(row) {},
     handleCheckAllChange(val) {
-      this.checkedPermissions = val
-        ? this.allPermissions.map(permission => permission.id)
-        : [];
-      this.isIndeterminate = false;
+      this.checkedPermissions = val ? this.allPermissions.map(permission => permission.id) : []
+      this.isIndeterminate = false
     },
     handleCheckedCitiesChange(value) {
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.allPermissions.length;
-      this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.allPermissions.length;
+      const checkedCount = value.length
+      this.checkAll = checkedCount === this.allPermissions.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.allPermissions.length
     }
   }
-};
+}
 </script>
 
 <style scoped>

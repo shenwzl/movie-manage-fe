@@ -17,7 +17,7 @@
           <span style="margin-left: 10px">{{ scope.row.state === 0 ? '正常' : '禁用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" v-if="canEdit || canGrant">
+      <el-table-column v-if="canEdit || canGrant" label="操作">
         <template slot-scope="scope">
           <el-button
             v-if="canEdit"
@@ -86,7 +86,7 @@
     <el-dialog title="绑定角色" :visible.sync="bindRoleDialog">
       <el-form ref="bindForm" :model="newRoles" :rules="bindRules">
         <el-form-item prop="roles" label="新角色" label-width="120px">
-          <el-select multiple v-model="newRoles.roles" autocomplete="off">
+          <el-select v-model="newRoles.roles" multiple autocomplete="off">
             <el-option v-for="role in allRoles" :key="role.id" :label="role.name" :value="role.id" />
           </el-select>
         </el-form-item>

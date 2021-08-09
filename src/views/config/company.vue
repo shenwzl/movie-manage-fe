@@ -10,14 +10,18 @@
         <el-col :span="5" :offset="1">
           <el-form-item label="类别">
             <el-select v-model="searchInfo.companyType" style="width: 200px;" autocomplete="off">
-              <el-option :value="1" label="一级"></el-option>
-              <el-option :value="2" label="二级"></el-option>
+              <el-option :value="1" label="一级" />
+              <el-option :value="2" label="二级" />
             </el-select>
           </el-form-item>
         </el-col>
-        </el-row>
+      </el-row>
     </el-form>
-    <el-button type="primary" v-if="canEdit" @click="createCompanyDialog = true">创建客户公司</el-button>
+    <el-button
+      v-if="canEdit"
+      type="primary"
+      @click="createCompanyDialog = true"
+    >创建客户公司</el-button>
     <el-button type="primary" @click="onSearch">查询</el-button>
     <el-table :data="companys">
       <el-table-column prop="id" label="客户公司id" />
@@ -29,7 +33,9 @@
       </el-table-column>
       <el-table-column prop="parent" label="父公司">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.parentCompanyId | getParent(allCompanys) }}</span>
+          <span style="margin-left: 10px">{{
+            scope.row.parentCompanyId | getParent(allCompanys)
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="state" label="状态">
@@ -40,15 +46,16 @@
       <el-table-column v-if="canEdit" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="text" @click="handleChange(scope.row)">修改</el-button>
-          <el-button
-            type="text"
-            size="small"
-            @click="handleStateChange(scope.row)"
-          >{{ scope.row.state ? '恢复' : '禁用' }}</el-button>
+          <el-button type="text" size="small" @click="handleStateChange(scope.row)">{{
+            scope.row.state ? '恢复' : '禁用'
+          }}</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="isEdit ? '编辑客户公司' : '新增客户公司'" :visible.sync="createCompanyDialog">
+    <el-dialog
+      :title="isEdit ? '编辑客户公司' : '新增客户公司'"
+      :visible.sync="createCompanyDialog"
+    >
       <el-form ref="createForm" :model="newCompany" :rules="companyRules">
         <el-form-item prop="name" label="名称" label-width="200px">
           <el-row>
@@ -68,8 +75,8 @@
           </el-row>
         </el-form-item>
         <el-form-item
-          prop="parentCompanyId"
           v-if="newCompany.companyType === 2"
+          prop="parentCompanyId"
           label="父公司"
           label-width="200px"
         >
@@ -101,18 +108,27 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-import { hasPermission } from "@/utils/auth";
+import { mapActions, mapGetters } from 'vuex'
+import { hasPermission } from '@/utils/auth'
 
 export default {
+  filters: {
+    getParent(parentId, companys) {
+      if (parentId) {
+        const parentCompany = companys.filter(fee => fee.id === parentId)
+        return parentCompany[0].name
+      }
+      return ''
+    }
+  },
   data: function() {
     return {
       searchInfo: {},
       newCompany: {
-        name: "",
-        stage: "",
-        categoryType: "",
-        parentCategoryId: ""
+        name: '',
+        stage: '',
+        categoryType: '',
+        parentCategoryId: ''
       },
       createCompanyDialog: false,
       permissionDialog: false,
@@ -122,101 +138,92 @@ export default {
       isEdit: false,
       createLoading: false,
       companyRules: {
-        name: [{ required: true, message: "名称不能为空" }],
-        companyType: [{ required: true, message: "类别不能为空" }],
-        parentCampanyId: [{ required: true, message: "父公司不能为空" }]
+        name: [{ required: true, message: '名称不能为空' }],
+        companyType: [{ required: true, message: '类别不能为空' }],
+        parentCampanyId: [{ required: true, message: '父公司不能为空' }]
       }
-    };
-  },
-  filters: {
-    getParent(parentId, companys) {
-      if (parentId) {
-        const parentCompany = companys.filter(fee => fee.id === parentId);
-        return parentCompany[0].name;
-      }
-      return "";
     }
   },
   computed: {
-    ...mapGetters(["companys", "total", "allCompanys"]),
+    ...mapGetters(['companys', 'total', 'allCompanys']),
     parentCompanys() {
-      return this.allCompanys.filter(company => company.companyType === 1);
+      return this.allCompanys.filter(company => company.companyType === 1)
     },
     canEdit() {
-      return hasPermission("customer_company", "manage");
+      return hasPermission('customer_company', 'manage')
     }
   },
   beforeMount() {
-    this.getAllCompanys();
-    this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo });
+    this.getAllCompanys()
+    this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
   },
   methods: {
     ...mapActions([
-      "getCompanys",
-      "addCompany",
-      "updateCompany",
-      "deleteCompany",
-      "recoverCompany",
-      "getAllCompanys"
+      'getCompanys',
+      'addCompany',
+      'updateCompany',
+      'deleteCompany',
+      'recoverCompany',
+      'getAllCompanys'
     ]),
     onSearch() {
-      this.getCompanys({ page: 1, pageSize: this.pageSize, ...this.searchInfo });
+      this.getCompanys({ page: 1, pageSize: this.pageSize, ...this.searchInfo })
     },
     handleChange(row) {
-      this.newCompany = row;
-      this.isEdit = true;
-      this.createCompanyDialog = true;
+      this.newCompany = row
+      this.isEdit = true
+      this.createCompanyDialog = true
     },
     saveCompany() {
       this.$refs.createForm.validate(valid => {
         if (valid) {
-          this.createLoading = true;
+          this.createLoading = true
           if (this.isEdit) {
-            this.editCompany();
+            this.editCompany()
           } else {
-            this.createCompany();
+            this.createCompany()
           }
         }
-      });
+      })
     },
     createCompany() {
       this.addCompany(this.newCompany).then(res => {
-        this.$message.success("添加成功");
-        this.resetPage();
-      });
+        this.$message.success('添加成功')
+        this.resetPage()
+      })
     },
     editCompany() {
       this.updateCompany(this.newCompany).then(res => {
-        this.$message.success("更新成功");
-        this.resetPage();
-      });
+        this.$message.success('更新成功')
+        this.resetPage()
+      })
     },
     resetPage() {
-      this.createCompanyDialog = false;
-      this.createLoading = false;
-      this.newCompany = {};
-      this.isEdit = false;
-      this.getCompanys({ page: this.page, pageSize: this.pageSize });
+      this.createCompanyDialog = false
+      this.createLoading = false
+      this.newCompany = {}
+      this.isEdit = false
+      this.getCompanys({ page: this.page, pageSize: this.pageSize })
     },
     handlePageChange(page) {
-      this.page = page;
-      this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo });
+      this.page = page
+      this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
     },
     handleStateChange(row) {
       if (!row.state) {
         this.deleteCompany(row.id).then(res => {
-          this.$message.success("更新成功");
-          this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo });
-        });
+          this.$message.success('更新成功')
+          this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
+        })
       } else {
         this.recoverCompany(row.id).then(res => {
-          this.$message.success("更新成功");
-          this.getCompanys({ page: this.page, pageSize: this.pageSize , ...this.searchInfo});
-        });
+          this.$message.success('更新成功')
+          this.getCompanys({ page: this.page, pageSize: this.pageSize, ...this.searchInfo })
+        })
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>
